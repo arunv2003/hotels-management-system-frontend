@@ -82,7 +82,7 @@ export default function Step6HotelDetails({ formData, updateFormData }) {
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Total Floors *
+            Total Floors <span className="text-red-500">*</span>
           </Label>
           <Input
             placeholder="Enter total floors"
@@ -93,7 +93,7 @@ export default function Step6HotelDetails({ formData, updateFormData }) {
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Total Rooms *
+            Total Rooms <span className="text-red-500">*</span>
           </Label>
           <Input
             placeholder="Enter total rooms"
@@ -106,7 +106,7 @@ export default function Step6HotelDetails({ formData, updateFormData }) {
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h4 className="font-bold text-slate-400">Room Types</h4>
+          <h4 className="font-bold text-slate-400">Room Types <span className="text-red-500">*</span></h4>
           <Button
             type="button"
             variant="ghost"

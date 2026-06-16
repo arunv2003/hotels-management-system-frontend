@@ -129,7 +129,7 @@ export function DashboardSidebar({ type = "hotel", }) {
       <SidebarHeader className="h-16 flex items-center px-6">
         <div className="flex items-center gap-2 font-bold text-xl text-primary">
           <Hotel className="h-6 w-6"/>
-          <span className="group-data-[collapsible=icon]:hidden">OmniStay</span>
+          <span className="group-data-[collapsible=icon]:hidden">HotelFlow</span>
         </div>
       </SidebarHeader>
       <SidebarContent>

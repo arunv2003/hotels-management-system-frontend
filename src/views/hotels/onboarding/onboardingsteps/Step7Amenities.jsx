@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 export default function Step7Amenities({ formData, updateFormData }) {
   return (
     <div className="space-y-10">
-      <h4 className="font-bold text-slate-400">Select available amenities</h4>
+      <h4 className="font-bold text-slate-400">Select available amenities <span className="text-red-500">*</span></h4>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {[
           "WiFi",

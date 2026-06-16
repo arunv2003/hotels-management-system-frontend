@@ -84,7 +84,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 to-transparent flex items-end p-12">
                   <div className="text-left">
                     <h3 className="text-3xl font-bold text-white mb-2">
-                      OmniStay Pro
+                      HotelFlow
                     </h3>
                     <p className="text-indigo-100 max-w-md text-sm">
                       Real-time room management and advanced analytics at your

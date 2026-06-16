@@ -86,15 +86,11 @@ export default function AddRoles({ isOpen, onClose, onSave }) {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const data ={
-      name,
-      description,
+    const data = {
+      name: name.trim(),
+      description: description.trim(),
       permissions,
-      users: 0,
-    }
-
-    console.log(data,"asasasasasa")
-
+    };
 
     onSave(data);
     setName("");

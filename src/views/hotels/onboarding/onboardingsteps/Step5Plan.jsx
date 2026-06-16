@@ -17,7 +17,24 @@ export default function Step5Plan({ formData, updateFormData }) {
       try {
         const result = await Plans.getAllActivePlans();
         if (active) {
-          setPlans(result?.data || []);
+          const fetchedPlans = result?.data || [];
+          setPlans(fetchedPlans);
+          
+          if (fetchedPlans.length > 0) {
+            const currentSelected = fetchedPlans.find(
+              (p) =>
+                p._id === formData.planSelected ||
+                p.id === formData.planSelected ||
+                p.name?.toLowerCase() === formData.planSelected ||
+                p.slug === formData.planSelected
+            );
+            const defaultPlan = currentSelected || fetchedPlans.find((p) => p.isPopular) || fetchedPlans[0];
+            const planId = defaultPlan._id || defaultPlan.id;
+            
+            if (planId && formData.planSelected !== planId) {
+              updateFormData({ planSelected: planId });
+            }
+          }
         }
       } catch (error) {
         console.error("Error fetching active plans:", error);
@@ -27,6 +44,7 @@ export default function Step5Plan({ formData, updateFormData }) {
     return () => {
       active = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selectedPlanObj = plans.find(
@@ -97,7 +115,7 @@ export default function Step5Plan({ formData, updateFormData }) {
 
       <div className="space-y-4">
         <Label className="text-xs font-bold uppercase text-slate-400">
-          Billing Cycle
+          Billing Cycle <span className="text-red-500">*</span>
         </Label>
         <div className="flex gap-4">
           <button

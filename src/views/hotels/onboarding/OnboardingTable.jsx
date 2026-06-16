@@ -303,6 +303,7 @@ export function OnboardingTable() {
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => router.push(`/super-admin/hotels/new?edit=${hotelId}`)}
                           className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg text-slate-300 hover:text-emerald-600 transition-colors cursor-pointer"
                           title="Edit"
                         >

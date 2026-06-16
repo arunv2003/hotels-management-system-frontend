@@ -47,9 +47,9 @@ const initialState = {
     panCard: null,
     hotelLicense: null,
     ownerId: null,
-    hotelImages: [],
-    logo: null,
   },
+  hotelImages: [],
+  hotelLogo: null,
   staff: [
     { fullName: "", role: "Receptionist", email: "", phone: "" },
     { fullName: "", role: "Manager", email: "", phone: "" },

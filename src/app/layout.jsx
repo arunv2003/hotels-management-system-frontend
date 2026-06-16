@@ -9,7 +9,7 @@ const inter = Inter({
     subsets: ["latin"],
 });
 export const metadata = {
-    title: "OmniStay | Scalable Hotel Management SaaS",
+    title: "HotelFlow | Scalable Hotel Management SaaS",
     description: "Advanced Multi-Tenant Hotel Management Platform",
 };
 import { OnboardingProvider } from "@/context/OnboardingContext";

@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/context/OnboardingContext";
+import { useToast } from "@/providers/ToastProvider";
 import Step1BasicInfo from "./onboardingsteps/Step1BasicInfo";
 import Step2OwnerDetails from "./onboardingsteps/Step2OwnerDetails";
 import Step3Location from "./onboardingsteps/Step3Location";
@@ -104,12 +105,107 @@ function OnboardingContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { formData, updateFormData, resetFormData } = useOnboarding();
+  const { notify } = useToast();
 
   const step = parseInt(searchParams.get("step") || "1");
+  const editId = searchParams.get("edit");
+  const [isInitializing, setIsInitializing] = useState(!!editId);
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  useEffect(() => {
+    // Auto-reset form data and move to step 1 on page refresh or initial visit
+    if (!editId) {
+      resetFormData();
+    }
+    if (step !== 1) {
+      setStep(1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!editId) return;
+
+    let isMounted = true;
+    const fetchHotelForEdit = async () => {
+      try {
+        const response = await HotelRoute.getHotelById(editId);
+        const data = response?.data || response;
+        if (isMounted && data) {
+          const mapDoc = (doc) => 
+            doc?.cloudUrl ? { 
+              cloudUrl: doc.cloudUrl, 
+              publicId: doc.publicId, 
+              previewUrl: doc.cloudUrl, 
+              type: doc.cloudUrl.endsWith(".pdf") ? "application/pdf" : "image/jpeg", 
+              name: "Uploaded Document" 
+            } : null;
+
+          const mappedData = {
+            hotelName: data.hotelName || "",
+            hotelType: data.hotelType || "Hotel",
+            brandName: data.brandName || "",
+            hotelDescription: data.hotelDescription || "",
+            establishedYear: data.establishedYear?.toString() || "",
+            starRating: data.starRating?.toString() || "3",
+            gstNumber: data.gstNumber || "",
+            panNumber: data.panNumber || "",
+            taxType: data.taxType || "GST",
+            website: data.website || "",
+            email: data.email || "",
+            ownerFullName: data.ownerFullName || "",
+            ownerEmail: data.ownerEmail || "",
+            mobileNumber: data.mobileNumber || "",
+            alternateNumber: data.alternateNumber || "",
+            country: data.country || "India",
+            state: data.state || "",
+            city: data.city || "",
+            fullAddress: data.fullAddress || "",
+            pincode: data.pincode || "",
+            mapLocation: data.mapLocation || "",
+            latitude: data.latitude || "",
+            longitude: data.longitude || "",
+            timezone: data.timezone || "Asia/Kolkata",
+            currency: data.currency || "INR",
+            checkInTime: data.checkInTime || "12:00",
+            checkOutTime: data.checkOutTime || "11:00",
+            invoicePrefix: data.invoicePrefix || "INV-",
+            financialYear: data.financialYear || "April-March (FY)",
+            dateFormat: data.dateFormat || "DD-MM-YYYY",
+            planSelected: data.planSelected?._id || data.planSelected || "premium",
+            billingCycle: data.billingCycle || "half-yearly",
+            couponCode: data.couponCode || "",
+            totalRooms: data.totalRooms?.toString() || "",
+            totalFloors: data.totalFloors?.toString() || "",
+            maxGuests: data.maxGuests?.toString() || "",
+            roomTypes: data.roomTypes?.map(r => r._id || r) || [],
+            amenities: data.amenities || [],
+            staff: data.staff || [],
+            hotelImages: Array.isArray(data.hotelImages) ? data.hotelImages.map(mapDoc).filter(Boolean) : [],
+            hotelLogo: mapDoc(data.hotelLogo),
+            documents: {
+              gstCertificate: mapDoc(data.documents?.gstCertificate),
+              panCard: mapDoc(data.documents?.panCard),
+              hotelLicense: mapDoc(data.documents?.hotelLicense),
+              ownerId: mapDoc(data.documents?.ownerId),
+            }
+          };
+          updateFormData(mappedData);
+        }
+      } catch (err) {
+        console.error("Failed to load hotel details for edit:", err);
+      } finally {
+        if (isMounted) setIsInitializing(false);
+      }
+    };
+    fetchHotelForEdit();
+
+    return () => { isMounted = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editId]);
 
   const setStep = (newStep) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -117,7 +213,61 @@ function OnboardingContent() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
+  const validateStep = (currentStep) => {
+    switch (currentStep) {
+      case 1:
+        if (!formData.hotelName || !formData.hotelType || !formData.hotelDescription || !formData.hotelLogo || !formData.hotelImages?.length) {
+          return "Please fill out all required fields (Hotel Name, Type, Description, Logo, and at least 1 Image).";
+        }
+        break;
+      case 2:
+        if (!formData.country || !formData.state || !formData.city || !formData.fullAddress || !formData.pincode || !formData.latitude || !formData.longitude) {
+          return "Please fill out all required location fields, including selecting a location on the map.";
+        }
+        break;
+      case 3:
+        if (!formData.mobileNumber || !formData.ownerFullName || !formData.ownerEmail || (!editId && !formData.password)) {
+          return "Please fill out all required contact fields" + (!editId ? " including a password." : ".");
+        }
+        break;
+      case 4:
+        if (!formData.currency || !formData.financialYear || !formData.taxType) {
+          return "Please fill out all required settings fields.";
+        }
+        break;
+      case 5:
+        if (!formData.planSelected || !formData.billingCycle) {
+          return "Please select a plan and billing cycle.";
+        }
+        break;
+      case 6:
+        if (!formData.totalRooms || !formData.totalFloors || !formData.roomTypes?.length) {
+          return "Please enter total rooms, floors, and add at least one room type.";
+        }
+        break;
+      case 7:
+        if (!formData.amenities?.length) {
+          return "Please select at least one amenity.";
+        }
+        break;
+      case 8:
+        if (!formData.documents?.gstCertificate || !formData.documents?.panCard || !formData.documents?.hotelLicense || !formData.documents?.ownerId) {
+          return "Please upload all required documents.";
+        }
+        break;
+      default:
+        return null;
+    }
+    return null;
+  };
+
   const nextStep = async () => {
+    const errorMsg = validateStep(step);
+    if (errorMsg) {
+      notify(errorMsg, "error");
+      return;
+    }
+
     if (step === 9) {
       setIsSubmitting(true);
       setSubmitError("");
@@ -179,17 +329,23 @@ function OnboardingContent() {
               ? { cloudUrl: formData.documents.ownerId.cloudUrl, publicId: formData.documents.ownerId.publicId }
               : null,
           },
-          hotelImages: Array.isArray(formData.documents?.hotelImages)
-            ? formData.documents.hotelImages.map((img) => ({ cloudUrl: img.cloudUrl, publicId: img.publicId }))
+          hotelImages: Array.isArray(formData.hotelImages)
+            ? formData.hotelImages.map((img) => ({ cloudUrl: img.cloudUrl, publicId: img.publicId }))
             : [],
-          hotelLogo: formData.documents?.logo
-            ? { cloudUrl: formData.documents.logo.cloudUrl, publicId: formData.documents.logo.publicId }
+          hotelLogo: formData.hotelLogo
+            ? { cloudUrl: formData.hotelLogo.cloudUrl, publicId: formData.hotelLogo.publicId }
             : null,
         };
 
-        console.log("Submitting hotel registration payload:", payload);
-        const result = await HotelRoute.registerHotel(payload);
-        console.log("Hotel registered successfully:", result);
+        console.log("Submitting hotel payload:", payload);
+        if (editId) {
+          if (!payload.password) { delete payload.password; } // don't send empty password if not changing
+          const result = await HotelRoute.updateHotel(editId, payload);
+          console.log("Hotel updated successfully:", result);
+        } else {
+          const result = await HotelRoute.registerHotel(payload);
+          console.log("Hotel registered successfully:", result);
+        }
         resetFormData();
         router.push("/super-admin/hotels");
       } catch (err) {
@@ -289,6 +445,15 @@ function OnboardingContent() {
 
     setShowSearchResults(false);
   };
+
+  if (isInitializing) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+        <p className="text-slate-500 font-medium">Loading hotel details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex overflow-hidden">

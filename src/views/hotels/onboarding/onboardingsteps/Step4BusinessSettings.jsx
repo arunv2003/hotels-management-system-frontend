@@ -8,7 +8,7 @@ export default function Step4BusinessSettings({ formData, updateFormData }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Currency *
+            Currency <span className="text-red-500">*</span>
           </Label>
 
           <select className="w-full h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-900 dark:text-white">
@@ -43,7 +43,7 @@ export default function Step4BusinessSettings({ formData, updateFormData }) {
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Tax Type *
+            Tax Type <span className="text-red-500">*</span>
           </Label>
 
           <select className="w-full h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-900 dark:text-white">
@@ -106,20 +106,20 @@ export default function Step4BusinessSettings({ formData, updateFormData }) {
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Invoice Prefix *
+            Invoice Prefix <span className="text-red-500">*</span>
           </Label>
           <Input defaultValue="INV-" className="h-12 rounded-xl" />
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Invoice Serial *
+            Invoice Serial <span className="text-red-500">*</span>
           </Label>
           <Input defaultValue="001" className="h-12 rounded-xl" />
         </div>
 
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Financial Year *
+            Financial Year <span className="text-red-500">*</span>
           </Label>
 
           <select className="w-full h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-900 dark:text-white">

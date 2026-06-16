@@ -262,7 +262,7 @@ export default function Step2OwnerDetails({
         {/* Full Name */}
         <div className="space-y-2 md:col-span-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Owner Full Name *
+            Owner Full Name <span className="text-red-500">*</span>
           </Label>
 
           <Input
@@ -280,7 +280,7 @@ export default function Step2OwnerDetails({
         {/* Email */}
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Email Address *
+            Email Address <span className="text-red-500">*</span>
           </Label>
 
           <Input
@@ -299,7 +299,7 @@ export default function Step2OwnerDetails({
         {/* Mobile */}
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Mobile Number *
+            Mobile Number <span className="text-red-500">*</span>
           </Label>
 
           <div className="flex gap-2">
@@ -327,7 +327,7 @@ export default function Step2OwnerDetails({
         {/* Password */}
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Password *
+            Password <span className="text-red-500">*</span>
           </Label>
 
           <Input
@@ -346,7 +346,7 @@ export default function Step2OwnerDetails({
         {/* Confirm Password */}
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Confirm Password *
+            Confirm Password <span className="text-red-500">*</span>
           </Label>
 
           <Input

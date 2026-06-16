@@ -19,7 +19,7 @@ export default function Step3Location({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl mb-6">
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Country
+            Country <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.country}
@@ -30,7 +30,7 @@ export default function Step3Location({
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            State
+            State <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.state}
@@ -41,7 +41,7 @@ export default function Step3Location({
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            City
+            City <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.city}
@@ -52,7 +52,7 @@ export default function Step3Location({
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Pincode *
+            Pincode <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.pincode}
@@ -66,7 +66,7 @@ export default function Step3Location({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2 md:col-span-2 relative">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Full Address *
+            Full Address <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.fullAddress}
@@ -108,7 +108,7 @@ export default function Step3Location({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl">
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Latitude
+            Latitude <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.latitude || ""}
@@ -119,7 +119,7 @@ export default function Step3Location({
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Longitude
+            Longitude <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.longitude || ""}

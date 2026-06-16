@@ -126,7 +126,14 @@ function DocUploadCard({ label, accept, folder, file, onChange }) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{file.name}</p>
-                <p className="text-[10px] text-slate-400">PDF Document</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className="text-[10px] text-slate-400">PDF Document</p>
+                  {(file.cloudUrl || file.previewUrl) && (
+                    <a href={file.cloudUrl || file.previewUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-indigo-500 hover:underline">
+                      View File
+                    </a>
+                  )}
+                </div>
               </div>
 
               {/* PDF progress badge */}

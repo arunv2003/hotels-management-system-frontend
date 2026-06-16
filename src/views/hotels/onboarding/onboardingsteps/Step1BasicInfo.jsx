@@ -94,10 +94,12 @@ function CroppableUpload({
       const res = await CloudinaryImage.uploadSingleImage(file, folder, (pct) =>
         setProgress(pct),
       );
+      const secure_url = res?.data?.secure_url || res?.secure_url;
+      const public_id = res?.data?.public_id || res?.public_id;
       onChange({
         previewUrl,
-        cloudUrl: res.secure_url,
-        publicId: res.public_id,
+        cloudUrl: secure_url,
+        publicId: public_id,
       });
       setProgress(100);
       setTimeout(() => setProgress(null), 800);
@@ -220,10 +222,12 @@ function MultiImageUpload({ label, folder, value = [], onChange }) {
       const res = await CloudinaryImage.uploadSingleImage(file, folder, (pct) =>
         setStates((s) => ({ ...s, [idx]: { progress: pct, error: false } })),
       );
+      const secure_url = res?.data?.secure_url || res?.secure_url;
+      const public_id = res?.data?.public_id || res?.public_id;
       onChange(
         newList.map((item, i) =>
           i === idx
-            ? { ...item, cloudUrl: res.secure_url, publicId: res.public_id }
+            ? { ...item, cloudUrl: secure_url, publicId: public_id }
             : item,
         ),
       );
@@ -349,7 +353,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Hotel Name *
+            Hotel Name <span className="text-red-500">*</span>
           </Label>
           <Input
             value={formData.hotelName}
@@ -360,7 +364,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Hotel Type *
+            Hotel Type <span className="text-red-500">*</span>
           </Label>
           <select
             value={formData.hotelType}
@@ -405,7 +409,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
         </div>
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Star Rating *
+            Star Rating <span className="text-red-500">*</span>
           </Label>
           <div className="flex gap-1 items-center">
             {[1, 2, 3, 4, 5].map((s) => (
@@ -445,7 +449,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
         </div>
         <div className="space-y-2 md:col-span-2">
           <Label className="text-xs font-bold uppercase text-slate-400">
-            Hotel Description *
+            Hotel Description <span className="text-red-500">*</span>
           </Label>
           <textarea
             value={formData.hotelDescription}
@@ -461,7 +465,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
       {/* Hotel Logo */}
       <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-3xl">
         <CroppableUpload
-          label="Hotel Logo *"
+          label={<>Hotel Logo <span className="text-red-500">*</span></>}
           hint="Square (1:1)"
           aspect={1}
           cropShape="rect"
@@ -474,7 +478,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
       {/* Hotel Images */}
       <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-3xl">
         <MultiImageUpload
-          label="Hotel Images * (1600 × 900)"
+          label={<>Hotel Images <span className="text-red-500">*</span> (1600 × 900)</>}
           hint="16:9"
           folder="hotel-images"
           value={formData.hotelImages || []}

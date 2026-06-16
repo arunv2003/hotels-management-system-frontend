@@ -1,4 +1,4 @@
-# OmniStay | Hotel Management SaaS Frontend
+# HotelFlow | Hotel Management SaaS Frontend
 
 A production-ready, multi-tenant Hotel Management SaaS platform built with Next.js 15, TypeScript, and modern design principles.
 

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useToast } from "@/providers/ToastProvider";
 import DashboardLayout from "@/components/shared/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -192,6 +193,7 @@ const buildDefaultPerms = (roleId) => {
 };
 
 export default function RolesPermissionsPage() {
+  const { showToast } = useToast();
   const [roles, setRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
@@ -199,13 +201,12 @@ export default function RolesPermissionsPage() {
   const [expandedModules, setExpandedModules] = useState({});
   const [filterAction, setFilterAction] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // permissions keyed by role id
-  const [allPermissions, setAllPermissions] = useState({
-    1: buildDefaultPerms("1"),
-    2: {},
-    3: {},
-  });
+  const [allPermissions, setAllPermissions] = useState({});
 
   const filteredRoles = roles.filter((role) =>
     role.name.toLowerCase().includes(search.toLowerCase()),
@@ -228,44 +229,38 @@ export default function RolesPermissionsPage() {
     return permissions[`${moduleId}_${action}`] || false;
   };
 
-  const getAllRoles = async () => {
-    const result = await Roles.getAllRoles();
-
-    const formattedRoles = result.data.map((role) => {
-      const formattedPermissions = {};
-
-      Object.entries(role.permissions || {}).forEach(([module, actions]) => {
-        actions.forEach((action) => {
-          formattedPermissions[`${module}_${action}`] = true;
+  const fetchAllRoles = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const result = await Roles.getAllRoles();
+      const formattedRoles = (result.data || []).map((role) => {
+        const formattedPermissions = {};
+        Object.entries(role.permissions || {}).forEach(([module, actions]) => {
+          actions.forEach((action) => {
+            formattedPermissions[`${module}_${action}`] = true;
+          });
         });
+        return { ...role, id: role._id, permissionsMap: formattedPermissions };
       });
-
-      return {
-        ...role,
-        id: role._id,
-        permissionsMap: formattedPermissions,
-      };
-    });
-
-    setRoles(formattedRoles);
-
-    // set permissions state
-    const permissionState = {};
-
-    formattedRoles.forEach((role) => {
-      permissionState[role.id] = role.permissionsMap;
-    });
-
-    setAllPermissions(permissionState);
-  };
-  useEffect(() => {
-    getAllRoles();
-  }, []);
-  useEffect(() => {
-    if (roles.length > 0 && !selectedRole) {
-      setSelectedRole(roles[0]);
+      setRoles(formattedRoles);
+      const permissionState = {};
+      formattedRoles.forEach((role) => {
+        permissionState[role.id] = role.permissionsMap;
+      });
+      setAllPermissions(permissionState);
+      if (formattedRoles.length > 0) {
+        setSelectedRole((prev) => prev || formattedRoles[0]);
+      }
+    } catch (error) {
+      showToast(error.response?.data?.message || "Failed to fetch roles", "error");
+    } finally {
+      setIsLoading(false);
     }
-  }, [roles]);
+  }, []);
+
+  useEffect(() => {
+    fetchAllRoles();
+  }, [fetchAllRoles]);
   const toggleModuleExpand = (moduleId) => {
     setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
   };
@@ -301,29 +296,53 @@ export default function RolesPermissionsPage() {
     }
   };
 
-  const handleSave = () => {
-    // TODO: connect to API
-    console.log("Saving permissions for", selectedRole.name, ":", permissions);
-    alert(`Permissions saved for ${selectedRole.name}`);
-  };
-
-  const handleDeleteRole = (roleId) => {
-    if (roles.length === 1) {
-      alert("Cannot delete the last role. At least one role must exist.");
-      return;
+  const handleSave = async () => {
+    if (!selectedRole) return;
+    try {
+      setIsSaving(true);
+      await Roles.updateRole(selectedRole.id, { permissions });
+      showToast(`Permissions saved for "${selectedRole.name}"`, "success");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Failed to save permissions", "error");
+    } finally {
+      setIsSaving(false);
     }
-
-    const remaining = roles.filter((r) => r.id !== roleId);
-    setRoles(remaining);
-    const next = remaining[0] || null;
-    setSelectedRole(next);
-    setShowDeleteConfirm(false);
   };
 
-  const handleCreateRole = (newRole) => {
-    setRoles((prev) => [...prev, newRole]);
-    setAllPermissions((prev) => ({ ...prev, [newRole.id]: {} }));
-    setSelectedRole(newRole);
+  const handleDeleteRole = async (roleId) => {
+    try {
+      setIsDeleting(true);
+      await Roles.deleteRole(roleId);
+      const remaining = roles.filter((r) => r.id !== roleId);
+      setRoles(remaining);
+      setSelectedRole(remaining[0] || null);
+      setShowDeleteConfirm(false);
+      showToast("Role deleted successfully", "success");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Failed to delete role", "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCreateRole = async (newRoleData) => {
+    try {
+      const result = await Roles.createRole(newRoleData);
+      const created = result.data;
+      const formattedPermissions = {};
+      Object.entries(created.permissions || {}).forEach(([module, actions]) => {
+        actions.forEach((action) => {
+          formattedPermissions[`${module}_${action}`] = true;
+        });
+      });
+      const newRole = { ...created, id: created._id, permissionsMap: formattedPermissions };
+      setRoles((prev) => [...prev, newRole]);
+      setAllPermissions((prev) => ({ ...prev, [newRole.id]: formattedPermissions }));
+      setSelectedRole(newRole);
+      showToast(`Role "${newRole.name}" created successfully`, "success");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Failed to create role", "error");
+    }
   };
 
   const getModulePermissionStats = (module) => {
@@ -354,15 +373,40 @@ export default function RolesPermissionsPage() {
 
   const stats = getOverallPermissionStats();
 
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-slate-500">Loading roles...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   if (!selectedRole) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <AlertCircle className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-500">No role selected</p>
+            <p className="text-slate-500 mb-6">No roles found. Create your first role to get started.</p>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 gap-2"
+            >
+              <Plus size={18} />
+              Create Role
+            </Button>
           </div>
         </div>
+        <AddRoles
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleCreateRole}
+        />
       </DashboardLayout>
     );
   }
@@ -722,15 +766,24 @@ export default function RolesPermissionsPage() {
                   <Button
                     variant="outline"
                     onClick={handleReset}
-                    className="cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    disabled={isSaving}
+                    className="cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50"
                   >
                     Reset
                   </Button>
                   <Button
                     onClick={handleSave}
-                    className="bg-indigo-600 hover:bg-indigo-700 cursor-pointer shadow-lg shadow-indigo-500/25"
+                    disabled={isSaving}
+                    className="bg-indigo-600 hover:bg-indigo-700 cursor-pointer shadow-lg shadow-indigo-500/25 disabled:opacity-50 gap-2"
                   >
-                    Save Permissions
+                    {isSaving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Permissions"
+                    )}
                   </Button>
                 </div>
               </div>
@@ -760,14 +813,23 @@ export default function RolesPermissionsPage() {
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
               >
                 Cancel
               </Button>
               <Button
                 onClick={() => handleDeleteRole(selectedRole.id)}
-                className="bg-red-600 hover:bg-red-700"
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 gap-2"
               >
-                Delete Role
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete Role"
+                )}
               </Button>
             </div>
           </div>

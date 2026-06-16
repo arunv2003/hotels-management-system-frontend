@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Star,
   Plus,
@@ -9,78 +9,17 @@ import {
   CheckCircle2,
   XCircle,
   Quote,
-  X,
   ThumbsUp,
   ThumbsDown,
   Building2,
   Award,
+  Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
-
-const MOCK_TESTIMONIALS = [
-  {
-    id: "tm-1",
-    author: "Rajesh Mehta",
-    role: "General Manager",
-    hotel: "Grand Hyatt New Delhi",
-    rating: 5,
-    content:
-      "Switching to HMS transformed our entire front-desk workflow. Check-in speeds improved by 40% and our staff now spends less time on manual entries. A truly world-class hotel management platform.",
-    status: "Approved",
-    submittedOn: "2026-05-10",
-    avatar: "RM",
-  },
-  {
-    id: "tm-2",
-    author: "Sophie Leclerc",
-    role: "Director of Operations",
-    hotel: "Paris Ritz Gateway",
-    rating: 5,
-    content:
-      "The integrated POS, housekeeping, and billing modules talk to each other seamlessly. We eliminated three legacy systems and consolidated everything into one beautiful interface.",
-    status: "Approved",
-    submittedOn: "2026-05-14",
-    avatar: "SL",
-  },
-  {
-    id: "tm-3",
-    author: "James Okafor",
-    role: "Revenue Manager",
-    hotel: "Lagos Continental",
-    rating: 4,
-    content:
-      "Solid analytics and reporting. The multi-currency billing has been a game-changer for our international guests. Would love deeper housekeeping granularity in future updates.",
-    status: "Pending",
-    submittedOn: "2026-05-18",
-    avatar: "JO",
-  },
-  {
-    id: "tm-4",
-    author: "Mei Lin Zhang",
-    role: "IT Head",
-    hotel: "Shanghai Marriott Tower",
-    rating: 4,
-    content:
-      "Deployment was surprisingly smooth for an enterprise product. The team onboarding support was exceptional. API documentation could be more detailed, but overall very impressed.",
-    status: "Pending",
-    submittedOn: "2026-05-20",
-    avatar: "MZ",
-  },
-  {
-    id: "tm-5",
-    author: "Carlos Rivera",
-    role: "Property Owner",
-    hotel: "Cancun Beach Resort",
-    rating: 3,
-    content:
-      "Good product overall but the mobile version needs more polish. Tablet responsiveness on Safari has occasional UI glitches. Desktop experience is excellent.",
-    status: "Rejected",
-    submittedOn: "2026-05-08",
-    avatar: "CR",
-  },
-];
+import { TestimonialDialog } from "@/components/dilogs/saas/testimonial/testimonial.dilogs";
+import { TestimonialRoutes } from "@/routes/saas/testimonial/testimonial.route";
+import { useToast } from "@/hooks/use-toast";
 
 const STAR_COLORS = [
   "text-rose-400",
@@ -99,14 +38,17 @@ const AVATAR_COLORS = [
 ];
 
 export default function TestimonialsView() {
-  const [testimonials, setTestimonials] = useState(MOCK_TESTIMONIALS);
+  const { toast } = useToast();
+  const [testimonials, setTestimonials] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [current, setCurrent] = useState({
-    id: "",
+    _id: "",
     author: "",
     role: "",
     hotel: "",
@@ -115,35 +57,106 @@ export default function TestimonialsView() {
     status: "Pending",
     submittedOn: new Date().toISOString().split("T")[0],
     avatar: "",
+    avatarPreview: "",
   });
+
+  // Fetch all testimonials
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        const response = await TestimonialRoutes.getAllTestimonials();
+        if (response.data && Array.isArray(response.data)) {
+          setTestimonials(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch testimonials:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load testimonials",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, [toast]);
 
   const filtered = testimonials.filter((t) => {
     const q = searchQuery.toLowerCase();
+    const hotelVal = t.hotel;
+    const hotelName = typeof hotelVal === "object" && hotelVal !== null
+      ? (hotelVal.name || hotelVal.hotelName || "")
+      : (hotelVal || "");
+    
     const matchesSearch =
       t.author.toLowerCase().includes(q) ||
-      t.hotel.toLowerCase().includes(q) ||
+      hotelName.toLowerCase().includes(q) ||
       t.content.toLowerCase().includes(q);
     const matchesStatus =
       filterStatus === "all" || t.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
-  const updateStatus = (id, status) => {
-    setTestimonials((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status } : t))
-    );
+  const updateStatus = async (id, status) => {
+    try {
+      setSubmitting(true);
+      const testimony = testimonials.find((t) => t._id === id);
+      if (!testimony) return;
+
+      const updatedData = { ...testimony, status };
+      await TestimonialRoutes.updateTestimonials(id, updatedData);
+
+      setTestimonials((prev) =>
+        prev.map((t) => (t._id === id ? { ...t, status } : t))
+      );
+      toast({
+        title: "Success",
+        description: `Testimonial ${status.toLowerCase()}`,
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update testimonial",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm("Delete this testimonial permanently?")) {
-      setTestimonials((prev) => prev.filter((t) => t.id !== id));
+      try {
+        setSubmitting(true);
+        await TestimonialRoutes.deletetestimonials(id);
+        setTestimonials((prev) => prev.filter((t) => t._id !== id));
+        toast({
+          title: "Success",
+          description: "Testimonial deleted",
+          variant: "default",
+        });
+      } catch (error) {
+        console.error("Failed to delete testimonial:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete testimonial",
+          variant: "destructive",
+        });
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
   const handleOpenCreate = () => {
     setIsEditMode(false);
     setCurrent({
-      id: `tm-${Date.now()}`,
+      _id: "",
       author: "",
       role: "",
       hotel: "",
@@ -152,37 +165,67 @@ export default function TestimonialsView() {
       status: "Pending",
       submittedOn: new Date().toISOString().split("T")[0],
       avatar: "",
+      avatarPreview: "",
     });
     setIsOpen(true);
   };
 
   const handleOpenEdit = (t) => {
     setIsEditMode(true);
-    setCurrent({ ...t });
+    setCurrent({ ...t, avatarPreview: t.avatar || "" });
     setIsOpen(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!current.author.trim() || !current.content.trim()) {
-      alert("Author and content are required.");
+      toast({
+        title: "Validation Error",
+        description: "Author and content are required.",
+        variant: "destructive",
+      });
       return;
     }
-    const initials = current.author
-      .split(" ")
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-    const entry = { ...current, avatar: initials };
-    if (isEditMode) {
-      setTestimonials((prev) =>
-        prev.map((t) => (t.id === current.id ? entry : t))
-      );
-    } else {
-      setTestimonials((prev) => [entry, ...prev]);
+
+    try {
+      setSubmitting(true);
+      // Strip avatarPreview (UI-only field) before sending to backend
+      const { avatarPreview, ...entry } = current;
+
+      if (isEditMode) {
+        await TestimonialRoutes.updateTestimonials(current._id, entry);
+        setTestimonials((prev) =>
+          prev.map((t) => (t._id === current._id ? entry : t))
+        );
+        toast({
+          title: "Success",
+          description: "Testimonial updated successfully",
+          variant: "default",
+        });
+      } else {
+        const response = await TestimonialRoutes.createTestimonials(entry);
+        if (response.data) {
+          setTestimonials((prev) => [response.data, ...prev]);
+        }
+        toast({
+          title: "Success",
+          description: "Testimonial created successfully",
+          variant: "default",
+        });
+      }
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Failed to save testimonial:", error);
+      toast({
+        title: "Error",
+        description: isEditMode
+          ? "Failed to update testimonial"
+          : "Failed to create testimonial",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
     }
-    setIsOpen(false);
   };
 
   const renderStars = (rating) =>
@@ -343,26 +386,36 @@ export default function TestimonialsView() {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
               {filtered.map((t, idx) => (
                 <tr
-                  key={t.id}
+                  key={t._id}
                   className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all"
                 >
                   {/* Author */}
                   <td className="p-4 pl-6">
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-extrabold shrink-0 ${
-                          AVATAR_COLORS[idx % AVATAR_COLORS.length]
-                        }`}
-                      >
-                        {t.avatar || t.author.slice(0, 2).toUpperCase()}
-                      </div>
+                      {t.avatar && t.avatar.startsWith("http") ? (
+                        <img
+                          src={t.avatar}
+                          alt={t.author}
+                          className={`w-9 h-9 rounded-xl object-cover shrink-0`}
+                        />
+                      ) : (
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-extrabold shrink-0 ${
+                            AVATAR_COLORS[idx % AVATAR_COLORS.length]
+                          }`}
+                        >
+                          {t.author.slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
                       <div>
                         <p className="font-bold text-slate-900 dark:text-white text-sm leading-tight">
                           {t.author}
                         </p>
                         <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
                           <Building2 size={10} />
-                          {t.hotel}
+                          {typeof t.hotel === "object" && t.hotel !== null
+                            ? (t.hotel.name || t.hotel.hotelName || "Unknown Hotel")
+                            : (t.hotel || "")}
                         </p>
                       </div>
                     </div>
@@ -409,36 +462,40 @@ export default function TestimonialsView() {
                     <div className="flex items-center justify-end gap-1.5">
                       {t.status !== "Approved" && (
                         <Button
+                          disabled={submitting}
                           variant="ghost"
-                          onClick={() => updateStatus(t.id, "Approved")}
-                          className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                          onClick={() => updateStatus(t._id, "Approved")}
+                          className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 disabled:opacity-50"
                           title="Approve"
                         >
-                          <CheckCircle2 size={15} />
+                          {submitting ? <Loader size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
                         </Button>
                       )}
                       {t.status !== "Rejected" && (
                         <Button
+                          disabled={submitting}
                           variant="ghost"
-                          onClick={() => updateStatus(t.id, "Rejected")}
-                          className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10"
+                          onClick={() => updateStatus(t._id, "Rejected")}
+                          className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 disabled:opacity-50"
                           title="Reject"
                         >
-                          <XCircle size={15} />
+                          {submitting ? <Loader size={15} className="animate-spin" /> : <XCircle size={15} />}
                         </Button>
                       )}
                       <Button
+                        disabled={submitting}
                         variant="ghost"
                         onClick={() => handleOpenEdit(t)}
-                        className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
                         title="Edit"
                       >
                         <Edit2 size={14} />
                       </Button>
                       <Button
+                        disabled={submitting}
                         variant="ghost"
-                        onClick={() => handleDelete(t.id)}
-                        className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        onClick={() => handleDelete(t._id)}
+                        className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
                         title="Delete"
                       >
                         <Trash2 size={14} />
@@ -453,7 +510,7 @@ export default function TestimonialsView() {
                     colSpan="6"
                     className="p-10 text-center text-slate-400 text-sm font-medium"
                   >
-                    No testimonials found.
+                    {loading ? "Loading testimonials..." : "No testimonials found."}
                   </td>
                 </tr>
               )}
@@ -462,153 +519,16 @@ export default function TestimonialsView() {
         </div>
       </div>
 
-      {/* Create / Edit Modal */}
-      <AnimatePresence>
-        {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
-            >
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                  {isEditMode ? "Edit Testimonial" : "Add Testimonial"}
-                </h3>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <form onSubmit={handleSave} className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                      Author Name
-                    </label>
-                    <Input
-                      value={current.author}
-                      onChange={(e) =>
-                        setCurrent({ ...current, author: e.target.value })
-                      }
-                      placeholder="E.g., Rajesh Mehta"
-                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                      Job Title / Role
-                    </label>
-                    <Input
-                      value={current.role}
-                      onChange={(e) =>
-                        setCurrent({ ...current, role: e.target.value })
-                      }
-                      placeholder="E.g., General Manager"
-                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    Hotel / Property Name
-                  </label>
-                  <Input
-                    value={current.hotel}
-                    onChange={(e) =>
-                      setCurrent({ ...current, hotel: e.target.value })
-                    }
-                    placeholder="E.g., Grand Hyatt New Delhi"
-                    className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Star Rating Picker */}
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                      Star Rating
-                    </label>
-                    <div className="mt-2.5 flex items-center gap-1.5">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <button
-                          key={n}
-                          type="button"
-                          onClick={() => setCurrent({ ...current, rating: n })}
-                          className="focus:outline-none transition-transform hover:scale-110"
-                        >
-                          <Star
-                            size={22}
-                            className={
-                              n <= current.rating
-                                ? "text-amber-400 fill-amber-400"
-                                : "text-slate-200 dark:text-slate-700"
-                            }
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                      Publication Status
-                    </label>
-                    <select
-                      value={current.status}
-                      onChange={(e) =>
-                        setCurrent({ ...current, status: e.target.value })
-                      }
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-600"
-                    >
-                      <option value="Pending">Pending Review</option>
-                      <option value="Approved">Approved &amp; Live</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    Testimonial Review Content
-                  </label>
-                  <textarea
-                    value={current.content}
-                    onChange={(e) =>
-                      setCurrent({ ...current, content: e.target.value })
-                    }
-                    placeholder="Enter the guest or partner testimonial review text here..."
-                    rows={4}
-                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-600 resize-none"
-                  />
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setIsOpen(false)}
-                    className="h-11 rounded-xl px-5 text-slate-500 font-semibold cursor-pointer"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="h-11 rounded-xl px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold cursor-pointer shadow-md"
-                  >
-                    {isEditMode ? "Save Changes" : "Submit Testimonial"}
-                  </Button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Create / Edit Modal – now in its own dialog component */}
+      <TestimonialDialog
+        isOpen={isOpen}
+        isEditMode={isEditMode}
+        current={current}
+        submitting={submitting}
+        onClose={() => setIsOpen(false)}
+        onSave={handleSave}
+        setCurrent={setCurrent}
+      />
     </div>
   );
 }

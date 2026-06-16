@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 const ToastContext = createContext(null);
 export const useToast = () => {
     const ctx = useContext(ToastContext);
@@ -17,6 +17,21 @@ export const ToastProvider = ({ children }) => {
             setToasts((s) => s.filter((x) => x.id !== id));
         }, 4000);
     }, []);
+
+    useEffect(() => {
+        const handleCustomToast = (event) => {
+            const { message, type } = event.detail;
+            notify(message, type);
+        };
+
+        if (typeof window !== "undefined") {
+            window.addEventListener("show-toast", handleCustomToast);
+            return () => {
+                window.removeEventListener("show-toast", handleCustomToast);
+            };
+        }
+    }, [notify]);
+
     return (<ToastContext.Provider value={{ notify }}>
       {children}
       <div className="fixed top-6 right-6 z-50 flex flex-col gap-3">
