@@ -31,7 +31,7 @@ export const EmployeeProvider = ({ children }) => {
     salary: "",
     aadharNumber: "",
     panNumber: "",
-    documents: []
+    documents: {}
   });
 
   console.log("Employee Form Data:", formData);

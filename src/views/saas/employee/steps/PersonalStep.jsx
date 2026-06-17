@@ -2,9 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useEmployeeContext } from "@/context/employee.contex";
 import { UploadCloud, X } from "lucide-react";
+import { CloudinaryImage } from "@/routes/saas/cloudinary/cloudinary.route";
 
 export default function PersonalStep() {
   const { formData, updateFormData } = useEmployeeContext();
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoProgress, setPhotoProgress] = useState(0);
+  const [photoError, setPhotoError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -12,14 +16,35 @@ export default function PersonalStep() {
     updateFormData({ [name]: value });
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      updateFormData({ profileImage: file, profileImagePreview: url });
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    setPhotoProgress(0);
+    setPhotoError("");
+
+    try {
+      const result = await CloudinaryImage.uploadSingleImage(file, "employeeProfileImages", (progress) => {
+        setPhotoProgress(progress);
+      });
+
+      const url =
+        result?.data?.secure_url || result?.secure_url || result?.data?.url || result?.url || "";
+
+      if (!url) {
+        throw new Error("No URL returned from upload");
+      }
+
+      updateFormData({ profileImage: url, profileImagePreview: URL.createObjectURL(file) });
+    } catch (error) {
+      console.error("Profile image upload failed:", error);
+      setPhotoError("Image upload failed. Please try again.");
+    } finally {
+      setUploadingPhoto(false);
+      setPhotoProgress(0);
     }
   };
-
 
   const removeImage = () => {
     updateFormData({ profileImage: null, profileImagePreview: null });
@@ -123,23 +148,31 @@ export default function PersonalStep() {
           <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Profile Image</label>
           
           {!formData.profileImagePreview ? (
-            <div className="flex items-center justify-center w-full">
-              <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 dark:hover:bg-slate-800/80 dark:bg-slate-800 hover:bg-slate-100 dark:border-slate-600 dark:hover:border-slate-500 transition-all">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <UploadCloud className="w-8 h-8 mb-3 text-slate-400 group-hover:text-indigo-500 transition-colors" />
-                  <p className="mb-2 text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                </div>
-                <input 
-                  id="dropzone-file" 
-                  type="file" 
-                  name="profileImage"
-                  className="hidden" 
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
-              </label>
-            </div>
+            <>
+              <div className="flex items-center justify-center w-full">
+                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 dark:hover:bg-slate-800/80 dark:bg-slate-800 hover:bg-slate-100 dark:border-slate-600 dark:hover:border-slate-500 transition-all">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <UploadCloud className="w-8 h-8 mb-3 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                    <p className="mb-2 text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                  </div>
+                  <input 
+                    id="dropzone-file" 
+                    type="file" 
+                    name="profileImage"
+                    className="hidden" 
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </label>
+              </div>
+              {uploadingPhoto && (
+                <p className="text-sm text-indigo-600">Uploading image... {photoProgress}%</p>
+              )}
+              {photoError && (
+                <p className="text-sm text-rose-500">{photoError}</p>
+              )}
+            </>
           ) : (
             <div className="relative w-32 h-32 rounded-2xl overflow-hidden border-4 border-white dark:border-slate-800 shadow-lg group">
               <img 

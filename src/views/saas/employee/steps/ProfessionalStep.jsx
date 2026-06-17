@@ -17,7 +17,11 @@ export default function ProfessionalStep() {
     };
   
     useEffect(() => {
-      getAllRoles();
+      const fetchRoles = async () => {
+        await getAllRoles();
+      };
+
+      fetchRoles();
     }, []);
 
   return (

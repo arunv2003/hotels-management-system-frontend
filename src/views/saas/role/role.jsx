@@ -193,7 +193,7 @@ const buildDefaultPerms = (roleId) => {
 };
 
 export default function RolesPermissionsPage() {
-  const { showToast } = useToast();
+  const { notify } = useToast();
   const [roles, setRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
@@ -252,15 +252,20 @@ export default function RolesPermissionsPage() {
         setSelectedRole((prev) => prev || formattedRoles[0]);
       }
     } catch (error) {
-      showToast(error.response?.data?.message || "Failed to fetch roles", "error");
+      notify(error.response?.data?.message || "Failed to fetch roles", "error");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchAllRoles();
+    const loadRoles = async () => {
+      await fetchAllRoles();
+    };
+
+    loadRoles();
   }, [fetchAllRoles]);
+
   const toggleModuleExpand = (moduleId) => {
     setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
   };
@@ -301,9 +306,9 @@ export default function RolesPermissionsPage() {
     try {
       setIsSaving(true);
       await Roles.updateRole(selectedRole.id, { permissions });
-      showToast(`Permissions saved for "${selectedRole.name}"`, "success");
+      notify(`Permissions saved for "${selectedRole.name}"`, "success");
     } catch (error) {
-      showToast(error.response?.data?.message || "Failed to save permissions", "error");
+      notify(error.response?.data?.message || "Failed to save permissions", "error");
     } finally {
       setIsSaving(false);
     }
@@ -317,9 +322,9 @@ export default function RolesPermissionsPage() {
       setRoles(remaining);
       setSelectedRole(remaining[0] || null);
       setShowDeleteConfirm(false);
-      showToast("Role deleted successfully", "success");
+      notify("Role deleted successfully", "success");
     } catch (error) {
-      showToast(error.response?.data?.message || "Failed to delete role", "error");
+      notify(error.response?.data?.message || "Failed to delete role", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -339,9 +344,9 @@ export default function RolesPermissionsPage() {
       setRoles((prev) => [...prev, newRole]);
       setAllPermissions((prev) => ({ ...prev, [newRole.id]: formattedPermissions }));
       setSelectedRole(newRole);
-      showToast(`Role "${newRole.name}" created successfully`, "success");
+      notify(`Role "${newRole.name}" created successfully`, "success");
     } catch (error) {
-      showToast(error.response?.data?.message || "Failed to create role", "error");
+      notify(error.response?.data?.message || "Failed to create role", "error");
     }
   };
 

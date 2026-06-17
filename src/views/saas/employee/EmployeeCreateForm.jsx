@@ -34,11 +34,26 @@ export default function EmployeeCreateForm() {
 
   const isLastStep = currentStep === steps.length - 1;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLastStep) {
-      console.log("Form Submitted Successfully:", formData);
-      const result = Employee.createEmployee(formData);
+      const payload = { ...formData };
+      delete payload.profileImagePreview;
+
+      if (payload.profileImage && typeof payload.profileImage !== "string") {
+        payload.profileImage = "";
+      }
+
+      if (payload.documents && typeof payload.documents === "object") {
+        payload.documents = Object.fromEntries(
+          Object.entries(payload.documents)
+            .filter(([, value]) => value && (value.cloudUrl || value.publicId))
+            .map(([key, value]) => [key, { cloudUrl: value.cloudUrl, publicId: value.publicId }])
+        );
+      }
+
+      console.log("Form Submitted Successfully:", payload);
+      await Employee.createEmployee(payload);
       router.push("/super-admin/employees");
       notify("Employee created successfully", "success");
     } else {
