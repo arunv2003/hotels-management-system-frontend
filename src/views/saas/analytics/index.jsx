@@ -53,9 +53,12 @@ const HOTEL_USAGE_DATA = [
   { id: '6', hotelName: 'Lake View Cabins', plan: 'Standard', rooms: 30, bookingsToday: 11, systemLoad: '22%', health: 'Good' },
 ];
 
+import { useIsMounted } from "@/hooks/use-is-mounted";
+
 export default function SaaSAnalyticsView() {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
+  const isMounted = useIsMounted();
 
   const filteredHotels = HOTEL_USAGE_DATA.filter(hotel =>
     hotel.hotelName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -174,10 +177,11 @@ export default function SaaSAnalyticsView() {
                 </div>
 
                 <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={GROWTH_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="colorActive" x1="0" y1="0" x2="0" y2="1">
+                  {isMounted && (
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                      <AreaChart data={GROWTH_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorActive" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1} />
                           <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
                         </linearGradient>
@@ -194,6 +198,7 @@ export default function SaaSAnalyticsView() {
                       <Area type="monotone" dataKey="newSignups" name="New Registrations" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorSignups)" />
                     </AreaChart>
                   </ResponsiveContainer>
+                  )}
                 </div>
               </div>
 
@@ -204,8 +209,9 @@ export default function SaaSAnalyticsView() {
                   <p className="text-sm text-slate-500 mb-6">Ratio breakdown of active plan tiers</p>
 
                   <div className="h-[200px] w-full flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
+                    {isMounted && (
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                        <PieChart>
                         <Pie
                           data={PLAN_DISTRIBUTION}
                           cx="50%"
@@ -222,6 +228,7 @@ export default function SaaSAnalyticsView() {
                         <Tooltip />
                       </PieChart>
                     </ResponsiveContainer>
+                    )}
                   </div>
                 </div>
 

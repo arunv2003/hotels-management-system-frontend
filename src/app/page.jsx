@@ -14,7 +14,7 @@ export default function LandingPage() {
               <Hotel className="w-6 h-6 text-white"/>
             </div>
             <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-              HotelFlow
+              VEDANTA TECH
             </span>
           </div>
           <div className="hidden md:flex items-center gap-10">
@@ -84,7 +84,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 to-transparent flex items-end p-12">
                   <div className="text-left">
                     <h3 className="text-3xl font-bold text-white mb-2">
-                      HotelFlow
+                      VEDANTA TECH
                     </h3>
                     <p className="text-indigo-100 max-w-md text-sm">
                       Real-time room management and advanced analytics at your
@@ -186,7 +186,7 @@ export default function LandingPage() {
                 Ready to revolutionize <br /> your hotel?
               </h2>
               <p className="text-indigo-100 text-xl max-w-2xl mx-auto mb-12">
-                Join 10,000+ properties managing their business with HotelFlow.
+                Join 10,000+ properties managing their business with VEDANTA TECH.
                 Free setup assistance included.
               </p>
               <Link href="/register">
@@ -214,7 +214,7 @@ export default function LandingPage() {
                 <Hotel className="w-5 h-5 text-white"/>
               </div>
               <span className="text-lg font-bold text-slate-900 dark:text-white">
-                HotelFlow
+                VEDANTA TECH
               </span>
             </div>
             <p className="text-sm text-slate-500">
@@ -236,7 +236,7 @@ export default function LandingPage() {
             </div>))}
         </div>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between pt-10 border-t border-slate-50 dark:border-slate-900 text-xs font-bold text-slate-400 uppercase tracking-widest">
-          <p>© 2024 HotelFlow TECHNOLOGIES INC.</p>
+          <p>© 2024 VEDANTA TECH TECHNOLOGIES INC.</p>
           <div className="flex gap-10 mt-6 md:mt-0">
             <Link href="#">Privacy Policy</Link>
             <Link href="#">Terms of Service</Link>

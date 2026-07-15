@@ -42,6 +42,8 @@ function reverseGeocode(lat, lng, callback) {
   });
 }
 
+import { GoogleMapsProvider } from "@/providers/GoogleMapsProvider";
+
 export default function GoogleMapComponent({
   onLocationChange,
   initialLocation = indiaCenter,
@@ -143,28 +145,30 @@ export default function GoogleMapComponent({
 
 
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={markerPosition}
-      zoom={zoom}
-      onZoomChanged={handleZoomChanged}
-      onLoad={onMapLoad}
-      onClick={handleMapClick}
-      options={{
-        gestureHandling: "greedy",
-        zoomControl: true,
-        fullscreenControl: true,
-        scrollwheel: true,
-        streetViewControl: false,
-        mapTypeControl: false,
-      }}
-    >
-      <Marker
-        position={markerPosition}
-        draggable={true}
-        onDragEnd={handleMarkerDragEnd}
-        title="Drag to change location or click on map"
-      />
-    </GoogleMap>
+    <GoogleMapsProvider>
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={markerPosition}
+        zoom={zoom}
+        onZoomChanged={handleZoomChanged}
+        onLoad={onMapLoad}
+        onClick={handleMapClick}
+        options={{
+          gestureHandling: "greedy",
+          zoomControl: true,
+          fullscreenControl: true,
+          scrollwheel: true,
+          streetViewControl: false,
+          mapTypeControl: false,
+        }}
+      >
+        <Marker
+          position={markerPosition}
+          draggable={true}
+          onDragEnd={handleMarkerDragEnd}
+          title="Drag to change location or click on map"
+        />
+      </GoogleMap>
+    </GoogleMapsProvider>
   );
 }

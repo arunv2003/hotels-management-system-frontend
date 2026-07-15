@@ -463,7 +463,7 @@ function OnboardingContent() {
           <div className="bg-indigo-600 p-2 rounded-xl">
             <Hotel className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-black tracking-tight">HotelFlow</span>
+          <span className="text-xl font-black tracking-tight">VEDANTA TECH</span>
         </div>
 
         <nav className="space-y-1">

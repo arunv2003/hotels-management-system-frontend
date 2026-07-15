@@ -113,11 +113,14 @@ const WEEKLY_BREAKDOWN = [
   { name: "Wk 21", Subscriptions: 2450, Addons: 600 },
 ];
 
+import { useIsMounted } from "@/hooks/use-is-mounted";
+
 export default function SaaSPaymentView() {
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedTx, setSelectedTx] = useState(null);
+  const isMounted = useIsMounted();
 
   const filteredTransactions = transactions.filter((tx) => {
     const matchesSearch =
@@ -408,42 +411,44 @@ export default function SaaSPaymentView() {
             </p>
 
             <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={WEEKLY_BREAKDOWN}
-                  margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f1f5f9"
-                  />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fill: "#94a3b8", fontSize: 10 }}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fill: "#94a3b8", fontSize: 10 }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      border: "none",
-                      borderRadius: "8px",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                    }}
-                  />
-                  <Bar
-                    dataKey="Subscriptions"
-                    fill="#4f46e5"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar dataKey="Addons" fill="#10b981" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              {isMounted && (
+                <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                  <BarChart
+                    data={WEEKLY_BREAKDOWN}
+                    margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="#f1f5f9"
+                    />
+                    <XAxis
+                      dataKey="name"
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: "#94a3b8", fontSize: 10 }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: "#94a3b8", fontSize: 10 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        border: "none",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                      }}
+                    />
+                    <Bar
+                      dataKey="Subscriptions"
+                      fill="#4f46e5"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar dataKey="Addons" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 

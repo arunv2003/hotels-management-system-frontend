@@ -19,7 +19,7 @@ export default function Step11Success() {
         Congratulations!
       </h2>
       <p className="text-lg text-slate-500 dark:text-slate-400 max-w-lg mb-12">
-        Your hotel account has been created successfully. Welcome to HotelFlow!
+        Your hotel account has been created successfully. Welcome to VEDANTA TECH!
         Let&apos;s grow your business together.
       </p>
       <Link href="/admin">

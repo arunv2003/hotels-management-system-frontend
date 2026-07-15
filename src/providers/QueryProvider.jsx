@@ -6,6 +6,7 @@ export default function QueryProvider({ children }) {
         defaultOptions: {
             queries: {
                 staleTime: 60 * 1000,
+                refetchOnWindowFocus: false,
             },
         },
     }));

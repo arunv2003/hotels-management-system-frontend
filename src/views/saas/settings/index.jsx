@@ -24,8 +24,8 @@ export default function SaaSGeneralSettingsView() {
 
   // Settings Form State
   const [formData, setFormData] = useState({
-    platformName: "HotelFlow SaaS",
-    supportEmail: "support@hotelflow.com",
+    platformName: "VEDANTA TECH SaaS",
+    supportEmail: "support@vedantatech.com",
     systemCurrency: "INR",
     maintenanceMode: false,
     stripePublicKey: "pk_test_51Nx...890a",
@@ -35,8 +35,8 @@ export default function SaaSGeneralSettingsView() {
     smtpHost: "smtp.sendgrid.net",
     smtpPort: 587,
     smtpUser: "apikey",
-    smtpSenderName: "HotelFlow Admin",
-    smtpSenderEmail: "noreply@hotelflow.com",
+    smtpSenderName: "VEDANTA TECH Admin",
+    smtpSenderEmail: "noreply@vedantatech.com",
     backupInterval: "daily",
     enforceMfa: true,
     sessionTimeout: 60,

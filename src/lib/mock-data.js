@@ -1,7 +1,7 @@
 export const MOCK_USER_SUPER_ADMIN = {
     id: 'sa_1',
     name: 'Alex SaaS Master',
-    email: 'admin@HotelFlow.com',
+    email: 'admin@vedantatech.com',
     role: 'SUPER_ADMIN',
     permissions: ['saas_hotel_manage', 'saas_subscription_manage', 'saas_analytics_view'],
     avatar: 'https://i.pravatar.cc/150?u=sa_1'

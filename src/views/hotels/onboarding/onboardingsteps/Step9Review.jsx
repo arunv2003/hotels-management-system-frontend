@@ -73,7 +73,7 @@ export default function Step9Review({ formData, nextStep }) {
           </h3>
           <p className="text-indigo-100 max-w-md">
             Click the button below to create your hotel account and start your
-            journey with HotelFlow.
+            Journey with VEDANTA TECH.
           </p>
         </div>
         <div className="relative z-10 w-full md:w-auto">

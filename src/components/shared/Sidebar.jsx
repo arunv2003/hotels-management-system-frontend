@@ -33,7 +33,7 @@ export const Sidebar = () => {
                 <BrandIcon className="w-6 h-6 text-white"/>
               </div>
               <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-                HotelFlow
+                VEDANTA TECH
               </span>
             </motion.div>)}
         </AnimatePresence>

@@ -2,7 +2,11 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { REVENUE_STATS } from '@/lib/mock-data';
+import { useIsMounted } from "@/hooks/use-is-mounted";
+
 export const RevenueChart = () => {
+    const isMounted = useIsMounted();
+
     return (<div className="glass-card p-6 rounded-2xl h-[400px]">
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -15,8 +19,9 @@ export const RevenueChart = () => {
         </select>
       </div>
       <div className="h-[300px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={REVENUE_STATS} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        {isMounted && (
+          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+            <AreaChart data={REVENUE_STATS} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1}/>
@@ -35,6 +40,7 @@ export const RevenueChart = () => {
             <Area type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)"/>
           </AreaChart>
         </ResponsiveContainer>
+        )}
       </div>
     </div>);
 };
