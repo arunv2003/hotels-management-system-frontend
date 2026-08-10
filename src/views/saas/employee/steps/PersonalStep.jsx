@@ -60,7 +60,7 @@ export default function PersonalStep() {
             name="firstName"
             value={formData.firstName || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="John"
           />
         </div>
@@ -71,7 +71,7 @@ export default function PersonalStep() {
             name="lastName"
             value={formData.lastName || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="Doe"
           />
         </div>
@@ -81,12 +81,12 @@ export default function PersonalStep() {
             name="gender"
             value={formData.gender || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white"
           >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Gender</option>
+            <option value="Male" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Male</option>
+            <option value="Female" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Female</option>
+            <option value="Other" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Other</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -96,7 +96,7 @@ export default function PersonalStep() {
             name="dob"
             value={formData.dob || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white [color-scheme:light] dark:[color-scheme:dark]"
           />
         </div>
         <div className="space-y-2">
@@ -106,7 +106,7 @@ export default function PersonalStep() {
             name="email"
             value={formData.email || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="john@example.com"
           />
         </div>
@@ -117,7 +117,7 @@ export default function PersonalStep() {
             name="password"
             value={formData.password || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="••••••••"
           />
         </div>
@@ -128,7 +128,7 @@ export default function PersonalStep() {
             name="phone"
             value={formData.phone || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="+1 (555) 000-0000"
           />
         </div>
@@ -140,7 +140,7 @@ export default function PersonalStep() {
             name="alternatePhone"
             value={formData.alternatePhone}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="e.g. 123-456-7890"
           />
         </div>

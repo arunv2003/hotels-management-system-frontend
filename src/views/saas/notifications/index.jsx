@@ -353,12 +353,12 @@ export default function NotificationsView() {
       {/* Trigger Dialog Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 border border-slate-205 dark:border-slate-850 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -367,7 +367,7 @@ export default function NotificationsView() {
                 </h3>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-550"
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500"
                 >
                   <X size={18} />
                 </button>
@@ -375,7 +375,7 @@ export default function NotificationsView() {
 
               <form onSubmit={handleSend} className="p-6 space-y-4.5">
                 <div>
-                  <label className="text-xs font-bold text-slate-455 dark:text-slate-500 uppercase tracking-widest">
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                     Notification Subject
                   </label>
                   <Input
@@ -387,13 +387,13 @@ export default function NotificationsView() {
                       })
                     }
                     placeholder="E.g., Urgent Plan Migration Notice"
-                    className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-955 border-slate-200 dark:border-slate-800"
+                    className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-slate-455 dark:text-slate-500 uppercase tracking-widest">
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                       Message Category
                     </label>
                     <select
@@ -404,17 +404,17 @@ export default function NotificationsView() {
                           category: e.target.value,
                         })
                       }
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-55 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                     >
-                      <option value="System">System Alert</option>
-                      <option value="Billing">Billing Alert</option>
-                      <option value="Support">Support Alert</option>
-                      <option value="Activity">User Activity Alert</option>
+                      <option value="System" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">System Alert</option>
+                      <option value="Billing" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Billing Alert</option>
+                      <option value="Support" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Support Alert</option>
+                      <option value="Activity" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">User Activity Alert</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-455 dark:text-slate-500 uppercase tracking-widest">
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                       Recipient Audience
                     </label>
                     <select
@@ -425,11 +425,11 @@ export default function NotificationsView() {
                           recipient: e.target.value,
                         })
                       }
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-55 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                     >
-                      <option value="All Users">All Dashboard Tenants</option>
-                      <option value="Admins">Hotel Admins Only</option>
-                      <option value="Support Staff">
+                      <option value="All Users" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Dashboard Tenants</option>
+                      <option value="Admins" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Hotel Admins Only</option>
+                      <option value="Support Staff" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                         SaaS Support Engineers
                       </option>
                     </select>
@@ -437,7 +437,7 @@ export default function NotificationsView() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-455 dark:text-slate-500 uppercase tracking-widest">
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                     Core Alert Message Body
                   </label>
                   <textarea
@@ -450,11 +450,11 @@ export default function NotificationsView() {
                     }
                     placeholder="Enter short, descriptive notice message details here..."
                     rows={4}
-                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-955 border border-slate-205 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650 resize-none"
+                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600 resize-none placeholder:text-slate-400"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-850 flex justify-end gap-3">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
                   <Button
                     type="button"
                     variant="ghost"

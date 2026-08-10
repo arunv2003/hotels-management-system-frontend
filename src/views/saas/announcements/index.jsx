@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/shared/DashboardLayout";
 import {
   Megaphone,
@@ -16,56 +16,19 @@ import {
   X,
   SlidersHorizontal,
   Eye,
+  Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-
-const MOCK_ANNOUNCEMENTS = [
-  {
-    id: "ann-1",
-    title: "Scheduled System Maintenance",
-    content: "The platform will undergo routine database optimization on Sunday, May 24th, between 02:00 AM and 04:00 AM UTC. Expect brief service interruptions of up to 10 minutes.",
-    type: "warning",
-    audience: "All",
-    status: "Active",
-    publishDate: "2026-05-20",
-    clicks: 145,
-  },
-  {
-    id: "ann-2",
-    title: "Version 4.2.0 Released!",
-    content: "We've rolled out new performance analytics, faster dashboard load times, and an improved multi-currency billing integration for all enterprise hotel tiers.",
-    type: "success",
-    audience: "Hotel Admins",
-    status: "Active",
-    publishDate: "2026-05-18",
-    clicks: 382,
-  },
-  {
-    id: "ann-3",
-    title: "New GST Configuration Policies",
-    content: "Please ensure your tax parameters are updated in alignment with the newly modified local standard rates. Refer to our latest compliance guides for details.",
-    type: "info",
-    audience: "Hotel Admins",
-    status: "Scheduled",
-    publishDate: "2026-05-25",
-    clicks: 0,
-  },
-  {
-    id: "ann-4",
-    title: "Security Update: Session Expirations",
-    content: "To bolster tenant data protection, inactive administrative sessions will now automatically terminate after 30 minutes. Make sure to save your drafts frequently.",
-    type: "alert",
-    audience: "All",
-    status: "Draft",
-    publishDate: "2026-05-15",
-    clicks: 0,
-  },
-];
+import { AnnouncementRoutes } from "@/routes/saas/anouncement/anouncement.route";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AnnouncementsView() {
-  const [announcements, setAnnouncements] = useState(MOCK_ANNOUNCEMENTS);
+  const { toast } = useToast();
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterAudience, setFilterAudience] = useState("all");
@@ -74,18 +37,43 @@ export default function AnnouncementsView() {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentAnn, setCurrentAnn] = useState({
-    id: "",
+    _id: "",
     title: "",
     content: "",
     type: "info",
     audience: "All",
-    status: "Draft",
+    status: "Active",
     publishDate: new Date().toISOString().split("T")[0],
   });
 
+  const fetchAnnouncements = async () => {
+    try {
+      setLoading(true);
+      const res = await AnnouncementRoutes.getAllAnnouncements();
+      if (res?.data && Array.isArray(res.data)) {
+        setAnnouncements(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch announcements:", err);
+      toast({
+        title: "Error",
+        description: err?.response?.data?.message || "Failed to load announcements",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
   const filteredAnnouncements = announcements.filter((ann) => {
-    const matchesSearch = ann.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          ann.content.toLowerCase().includes(searchQuery.toLowerCase());
+    const title = ann.title || "";
+    const content = ann.content || "";
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          content.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === "all" || ann.type === filterType;
     const matchesAudience = filterAudience === "all" || ann.audience === filterAudience;
     return matchesSearch && matchesType && matchesAudience;
@@ -94,7 +82,7 @@ export default function AnnouncementsView() {
   const handleOpenCreate = () => {
     setIsEditMode(false);
     setCurrentAnn({
-      id: `ann-${Date.now()}`,
+      _id: "",
       title: "",
       content: "",
       type: "info",
@@ -108,31 +96,91 @@ export default function AnnouncementsView() {
 
   const handleOpenEdit = (ann) => {
     setIsEditMode(true);
-    setCurrentAnn({ ...ann });
+    const pubDate = ann.publishDate
+      ? new Date(ann.publishDate).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0];
+    setCurrentAnn({ ...ann, publishDate: pubDate });
     setIsOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this announcement?")) {
-      setAnnouncements(announcements.filter((ann) => ann.id !== id));
+      try {
+        setSubmitting(true);
+        await AnnouncementRoutes.deleteAnnouncement(id);
+        setAnnouncements((prev) => prev.filter((ann) => (ann._id || ann.id) !== id));
+        toast({
+          title: "Success",
+          description: "Announcement deleted successfully",
+        });
+      } catch (err) {
+        console.error("Failed to delete announcement:", err);
+        toast({
+          title: "Error",
+          description: err?.response?.data?.message || "Failed to delete announcement",
+          variant: "destructive",
+        });
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!currentAnn.title.trim() || !currentAnn.content.trim()) {
-      alert("Please fill in both title and content.");
+      toast({
+        title: "Validation Error",
+        description: "Please fill in both title and content.",
+        variant: "destructive",
+      });
       return;
     }
 
-    if (isEditMode) {
-      setAnnouncements(
-        announcements.map((ann) => (ann.id === currentAnn.id ? currentAnn : ann))
-      );
-    } else {
-      setAnnouncements([currentAnn, ...announcements]);
+    try {
+      setSubmitting(true);
+      const payload = {
+        title: currentAnn.title,
+        content: currentAnn.content,
+        type: currentAnn.type,
+        audience: currentAnn.audience,
+        status: currentAnn.status,
+        publishDate: currentAnn.publishDate || new Date().toISOString().split("T")[0],
+      };
+
+      if (isEditMode) {
+        const id = currentAnn._id || currentAnn.id;
+        const res = await AnnouncementRoutes.updateAnnouncement(id, payload);
+        if (res?.data) {
+          setAnnouncements((prev) =>
+            prev.map((ann) => ((ann._id || ann.id) === id ? res.data : ann))
+          );
+        }
+        toast({
+          title: "Success",
+          description: "Announcement updated successfully",
+        });
+      } else {
+        const res = await AnnouncementRoutes.createAnnouncement(payload);
+        if (res?.data) {
+          setAnnouncements((prev) => [res.data, ...prev]);
+        }
+        toast({
+          title: "Success",
+          description: "Announcement created successfully",
+        });
+      }
+      setIsOpen(false);
+    } catch (err) {
+      console.error("Failed to save announcement:", err);
+      toast({
+        title: "Error",
+        description: err?.response?.data?.message || "Failed to save announcement",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
     }
-    setIsOpen(false);
   };
 
   // Status/Type helper details
@@ -218,7 +266,7 @@ export default function AnnouncementsView() {
           <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
-              <p className="text-2xl font-bold text-slate-950 dark:text-white mt-1">{stat.val}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
             <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
               {stat.icon}
@@ -237,7 +285,7 @@ export default function AnnouncementsView() {
               placeholder="Search announcements..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
             />
           </div>
           <div className="flex gap-3 w-full md:w-auto overflow-x-auto no-scrollbar">
@@ -292,9 +340,14 @@ export default function AnnouncementsView() {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
               {filteredAnnouncements.map((ann) => {
+                const annId = ann._id || ann.id;
                 const styles = getTypeStyles(ann.type);
+                const formattedDate = ann.publishDate
+                  ? new Date(ann.publishDate).toLocaleDateString()
+                  : "-";
+
                 return (
-                  <tr key={ann.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+                  <tr key={annId} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
                     <td className="p-4.5 pl-6 max-w-sm">
                       <div className="flex items-start gap-3">
                         <div className={`mt-0.5 p-2 rounded-lg border ${styles.bg}`}>
@@ -302,23 +355,23 @@ export default function AnnouncementsView() {
                         </div>
                         <div>
                           <p className="font-bold text-slate-900 dark:text-white leading-tight">{ann.title}</p>
-                          <p className="text-xs text-slate-450 dark:text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1 leading-relaxed">
                             {ann.content}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="p-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
-                      <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-slate-105 dark:bg-slate-800 rounded-lg text-xs font-bold">
+                    <td className="p-4.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold">
                         <Users size={12} className="text-slate-400" />
                         {ann.audience}
                       </span>
                     </td>
-                    <td className="p-4.5 text-sm text-slate-500 dark:text-slate-450 font-medium">
-                      {ann.publishDate}
+                    <td className="p-4.5 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                      {formattedDate}
                     </td>
                     <td className="p-4.5 text-sm font-semibold text-slate-800 dark:text-slate-200">
-                      {ann.clicks} views
+                      {ann.clicks || 0} views
                     </td>
                     <td className="p-4.5">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getStatusBadge(ann.status)}`}>
@@ -328,16 +381,18 @@ export default function AnnouncementsView() {
                     <td className="p-4.5 text-right pr-6">
                       <div className="flex items-center justify-end gap-2">
                         <Button
+                          disabled={submitting}
                           variant="ghost"
                           onClick={() => handleOpenEdit(ann)}
-                          className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-indigo-650 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
                         >
                           <Edit2 size={15} />
                         </Button>
                         <Button
+                          disabled={submitting}
                           variant="ghost"
-                          onClick={() => handleDelete(ann.id)}
-                          className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          onClick={() => handleDelete(annId)}
+                          className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
                         >
                           <Trash2 size={15} />
                         </Button>
@@ -349,7 +404,7 @@ export default function AnnouncementsView() {
               {filteredAnnouncements.length === 0 && (
                 <tr>
                   <td colSpan="6" className="p-10 text-center text-slate-400 text-sm font-medium">
-                    No announcements found.
+                    {loading ? "Loading announcements..." : "No announcements found."}
                   </td>
                 </tr>
               )}
@@ -361,12 +416,12 @@ export default function AnnouncementsView() {
       {/* Modal Dialog */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -374,7 +429,7 @@ export default function AnnouncementsView() {
                 </h3>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-550"
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500"
                 >
                   <X size={18} />
                 </button>
@@ -382,80 +437,80 @@ export default function AnnouncementsView() {
 
               <form onSubmit={handleSave} className="p-6 space-y-4.5">
                 <div>
-                  <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Title</label>
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Title</label>
                   <Input
                     value={currentAnn.title}
                     onChange={(e) => setCurrentAnn({ ...currentAnn, title: e.target.value })}
                     placeholder="E.g., System Update v4.2.1"
-                    className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+                    className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Type</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Type</label>
                     <select
                       value={currentAnn.type}
                       onChange={(e) => setCurrentAnn({ ...currentAnn, type: e.target.value })}
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                     >
-                      <option value="info">Info</option>
-                      <option value="success">Success</option>
-                      <option value="warning">Warning</option>
-                      <option value="alert">Alert</option>
+                      <option value="info" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Info</option>
+                      <option value="success" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Success</option>
+                      <option value="warning" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Warning</option>
+                      <option value="alert" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Alert</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Target Audience</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Target Audience</label>
                     <select
                       value={currentAnn.audience}
                       onChange={(e) => setCurrentAnn({ ...currentAnn, audience: e.target.value })}
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                     >
-                      <option value="All">All Tenants &amp; Users</option>
-                      <option value="Hotel Admins">Hotel Admins Only</option>
+                      <option value="All" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Tenants &amp; Users</option>
+                      <option value="Hotel Admins" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Hotel Admins Only</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Publish Date</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Publish Date</label>
                     <Input
                       type="date"
                       value={currentAnn.publishDate}
                       onChange={(e) => setCurrentAnn({ ...currentAnn, publishDate: e.target.value })}
-                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-sm"
+                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-sm text-slate-900 dark:text-white [color-scheme:light] dark:[color-scheme:dark]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Publish Status</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Publish Status</label>
                     <select
                       value={currentAnn.status}
                       onChange={(e) => setCurrentAnn({ ...currentAnn, status: e.target.value })}
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                     >
-                      <option value="Active">Active</option>
-                      <option value="Scheduled">Scheduled</option>
-                      <option value="Draft">Draft</option>
+                      <option value="Active" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Active</option>
+                      <option value="Scheduled" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Scheduled</option>
+                      <option value="Draft" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Draft</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Content</label>
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Content</label>
                   <textarea
                     value={currentAnn.content}
                     onChange={(e) => setCurrentAnn({ ...currentAnn, content: e.target.value })}
                     placeholder="Enter the broadcast message detailed body content here..."
                     rows={4}
-                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650 resize-none"
+                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600 resize-none placeholder:text-slate-400"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-850 flex justify-end gap-3">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
                   <Button
                     type="button"
                     variant="ghost"
@@ -466,9 +521,11 @@ export default function AnnouncementsView() {
                   </Button>
                   <Button
                     type="submit"
-                    className="h-11 rounded-xl px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold cursor-pointer shadow-md"
+                    disabled={submitting}
+                    className="h-11 rounded-xl px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold cursor-pointer shadow-md flex items-center gap-2 disabled:opacity-50"
                   >
-                    {isEditMode ? "Save Changes" : "Create &amp; Publish"}
+                    {submitting && <Loader className="animate-spin" size={16} />}
+                    {isEditMode ? "Save Changes" : "Create & Publish"}
                   </Button>
                 </div>
               </form>

@@ -172,7 +172,7 @@ export default function SupportTicketsView() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <LifeBuoy className="text-indigo-650 dark:text-indigo-400" size={32} />
+            <LifeBuoy className="text-indigo-600 dark:text-indigo-400" size={32} />
             Support Desk
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
@@ -184,15 +184,15 @@ export default function SupportTicketsView() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: "Active Open Tickets", val: openCount, icon: <AlertCircle className="text-rose-550" /> },
+          { label: "Active Open Tickets", val: openCount, icon: <AlertCircle className="text-rose-500" /> },
           { label: "Under Review", val: progressCount, icon: <Clock className="text-indigo-600" /> },
           { label: "Resolved Speed", val: resolvedCount, icon: <CheckCircle className="text-emerald-600" /> },
-          { label: "Avg SLA Response", val: "18.5 min", icon: <ArrowUpRight className="text-sky-650" /> },
+          { label: "Avg SLA Response", val: "18.5 min", icon: <ArrowUpRight className="text-sky-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-105 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
-              <p className="text-2xl font-bold text-slate-955 dark:text-white mt-1">{stat.val}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
             <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
               {stat.icon}
@@ -211,12 +211,12 @@ export default function SupportTicketsView() {
               placeholder="Search by hotel or ticket details..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
             />
           </div>
     
           <div className="flex gap-3 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1 pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
               <span className="text-xs text-slate-400 px-2.5 font-bold">Status:</span>
               {["all", "Open", "In Progress", "Resolved"].map((s) => (
                 <button
@@ -225,7 +225,7 @@ export default function SupportTicketsView() {
                   className={`text-xs px-3 py-1.5 rounded-lg capitalize font-bold transition-all ${
                     filterStatus === s
                       ? "bg-white dark:bg-slate-900 shadow-xs text-indigo-600 dark:text-indigo-400"
-                      : "text-slate-505 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   {s}
@@ -233,7 +233,7 @@ export default function SupportTicketsView() {
               ))}
             </div>
 
-            <div className="flex items-center gap-1 pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
               <span className="text-xs text-slate-400 px-2.5 font-bold">Priority:</span>
               {["all", "High", "Medium"].map((p) => (
                 <button
@@ -242,7 +242,7 @@ export default function SupportTicketsView() {
                   className={`text-xs px-3 py-1.5 rounded-lg font-bold transition-all ${
                     filterPriority === p
                       ? "bg-white dark:bg-slate-900 shadow-xs text-indigo-600 dark:text-indigo-400"
-                      : "text-slate-505 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   {p}
@@ -256,7 +256,7 @@ export default function SupportTicketsView() {
         <div className="flex-1 overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">ID &amp; Tenant Hotel</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Subject Issue</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
@@ -271,8 +271,8 @@ export default function SupportTicketsView() {
                 <tr key={tc.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
                   <td className="p-4.5 pl-6">
                     <div>
-                      <p className="font-mono text-xs font-extrabold text-indigo-650 dark:text-indigo-400 leading-none">{tc.id}</p>
-                      <p className="font-bold text-slate-905 dark:text-white mt-1">{tc.hotel}</p>
+                      <p className="font-mono text-xs font-extrabold text-indigo-600 dark:text-indigo-400 leading-none">{tc.id}</p>
+                      <p className="font-bold text-slate-900 dark:text-white mt-1">{tc.hotel}</p>
                     </div>
                   </td>
                   <td className="p-4.5 max-w-xs">
@@ -286,7 +286,7 @@ export default function SupportTicketsView() {
                       {tc.priority}
                     </span>
                   </td>
-                  <td className="p-4.5 text-sm text-slate-500 dark:text-slate-450 font-medium">
+                  <td className="p-4.5 text-sm text-slate-500 dark:text-slate-400 font-medium">
                     {tc.lastActivity}
                   </td>
                   <td className="p-4.5">
@@ -299,7 +299,7 @@ export default function SupportTicketsView() {
                       <Button
                         variant="ghost"
                         onClick={() => handleOpenTicket(tc)}
-                        className="h-8.5 px-3 rounded-lg text-indigo-650 hover:text-indigo-755 hover:bg-slate-105 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs"
+                        className="h-8.5 px-3 rounded-lg text-indigo-600 hover:text-indigo-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs"
                       >
                         <MessageSquare size={13} />
                         Assist
@@ -307,7 +307,7 @@ export default function SupportTicketsView() {
                       <Button
                         variant="ghost"
                         onClick={() => handleDelete(tc.id)}
-                        className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-105 dark:hover:bg-slate-800"
+                        className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
                         <Trash2 size={14} />
                       </Button>
@@ -330,30 +330,30 @@ export default function SupportTicketsView() {
       {/* Assist conversational dialogue drawer modal */}
       <AnimatePresence>
         {selectedTicket && (
-          <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-950/45 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-950/45 backdrop-blur-sm">
             <motion.div
               initial={{ x: "100%", opacity: 0.9 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0.9 }}
-              className="bg-white dark:bg-slate-900 border-l border-slate-205 dark:border-slate-850 w-full max-w-lg h-full shadow-2xl flex flex-col"
+              className="bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 w-full max-w-lg h-full shadow-2xl flex flex-col"
             >
               {/* Header */}
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <span className="font-mono text-xs font-extrabold text-indigo-650 dark:text-indigo-400">{selectedTicket.id}</span>
-                  <h3 className="text-lg font-bold text-slate-905 dark:text-white mt-1 leading-tight">{selectedTicket.hotel}</h3>
+                  <span className="font-mono text-xs font-extrabold text-indigo-600 dark:text-indigo-400">{selectedTicket.id}</span>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1 leading-tight">{selectedTicket.hotel}</h3>
                   <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{selectedTicket.subject}</p>
                 </div>
                 <button
                   onClick={() => setSelectedTicket(null)}
-                  className="p-1.5 rounded-lg hover:bg-slate-105 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-550"
+                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Status config section inside drawer */}
-              <div className="px-6 py-3 bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between text-xs font-bold">
+              <div className="px-6 py-3 bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold">
                 <span className="text-slate-400">STATUS TRIGGER:</span>
                 <div className="flex gap-1.5">
                   {["Open", "In Progress", "Resolved"].map((stat) => (
@@ -362,8 +362,8 @@ export default function SupportTicketsView() {
                       onClick={() => updateTicketStatus(selectedTicket.id, stat)}
                       className={`px-2 py-1 rounded transition-all ${
                         selectedTicket.status === stat
-                          ? "bg-slate-900 text-white dark:bg-indigo-650"
-                          : "bg-white border text-slate-600 hover:bg-slate-105 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400"
+                          ? "bg-slate-900 text-white dark:bg-indigo-600"
+                          : "bg-white border text-slate-600 hover:bg-slate-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400"
                       }`}
                     >
                       {stat}
@@ -389,7 +389,7 @@ export default function SupportTicketsView() {
                             className={`p-3.5 rounded-2xl text-xs font-medium leading-relaxed ${
                               isAdmin
                                 ? "bg-indigo-600 text-white rounded-tr-none"
-                                : "bg-white dark:bg-slate-900 border border-slate-105 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none shadow-sm"
+                                : "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none shadow-sm"
                             }`}
                           >
                             {msg.text}
@@ -410,7 +410,7 @@ export default function SupportTicketsView() {
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
                   placeholder="Enter detailed reply message content..."
-                  className="rounded-xl h-11 bg-slate-50 dark:bg-slate-955 border-slate-200 dark:border-slate-800 text-xs"
+                  className="rounded-xl h-11 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400"
                 />
                 <Button
                   type="submit"

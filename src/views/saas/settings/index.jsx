@@ -204,10 +204,10 @@ export default function SaaSGeneralSettingsView() {
                           systemCurrency: e.target.value,
                         }))
                       }
-                      className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       {currencies.map((currency) => (
-                        <option key={currency.value} value={currency.value}>
+                        <option key={currency.value} value={currency.value} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                           {currency.flag} {currency.value} ({currency.symbol}) -{" "}
                           {currency.label}
                         </option>
@@ -314,10 +314,10 @@ export default function SaaSGeneralSettingsView() {
                           onChange={handleChange}
                           className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white text-sm font-medium transition-all"
                         >
-                          <option value="sandbox">
+                          <option value="sandbox" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                             Sandbox (Development / Testing)
                           </option>
-                          <option value="live">Live (Real Operations)</option>
+                          <option value="live" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Live (Real Operations)</option>
                         </select>
                       </div>
 
@@ -454,13 +454,13 @@ export default function SaaSGeneralSettingsView() {
                         onChange={handleChange}
                         className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-900 dark:text-white text-sm font-medium transition-all"
                       >
-                        <option value="hourly">
+                        <option value="hourly" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                           Hourly Automated Snapshots
                         </option>
-                        <option value="daily">
+                        <option value="daily" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                           Daily Snapshots (Recommended)
                         </option>
-                        <option value="weekly">Weekly Full Archive</option>
+                        <option value="weekly" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Weekly Full Archive</option>
                       </select>
                     </div>
 

@@ -307,12 +307,12 @@ export default function CMSPageView() {
       {/* Editor Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 border border-slate-205 dark:border-slate-850 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             >
               <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -321,7 +321,7 @@ export default function CMSPageView() {
                 </h3>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-550"
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500"
                 >
                   <X size={18} />
                 </button>
@@ -331,24 +331,24 @@ export default function CMSPageView() {
                 {/* Form Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Page Name</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Page Name</label>
                     <Input
                       value={currentPage.title}
                       onChange={(e) => handleTitleChange(e.target.value)}
                       placeholder="E.g., Privacy Policy"
-                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-955 border-slate-200 dark:border-slate-800"
+                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Page Slug (Slug URL)</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Page Slug (Slug URL)</label>
                     <div className="relative mt-1.5">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 font-mono">/</span>
                       <Input
                         value={currentPage.slug}
                         onChange={(e) => setCurrentPage({ ...currentPage, slug: e.target.value })}
                         placeholder="privacy-policy"
-                        className="pl-7 h-11 rounded-xl bg-slate-55 dark:bg-slate-955 border-slate-205 dark:border-slate-800 font-mono text-xs"
+                        className="pl-7 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 font-mono text-xs text-slate-900 dark:text-white placeholder:text-slate-400"
                       />
                     </div>
                   </div>
@@ -356,41 +356,41 @@ export default function CMSPageView() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">SEO Meta Title</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">SEO Meta Title</label>
                     <Input
                       value={currentPage.metaTitle}
                       onChange={(e) => setCurrentPage({ ...currentPage, metaTitle: e.target.value })}
                       placeholder="Enter meta title tag..."
-                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-955 border-slate-200 dark:border-slate-800"
+                      className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">Publish Status</label>
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Publish Status</label>
                     <select
                       value={currentPage.status}
                       onChange={(e) => setCurrentPage({ ...currentPage, status: e.target.value })}
-                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-55 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                      className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                     >
-                      <option value="Published">Published (Live)</option>
-                      <option value="Draft">Draft (Offline)</option>
+                      <option value="Published" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Published (Live)</option>
+                      <option value="Draft" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Draft (Offline)</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest">SEO Meta Description</label>
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">SEO Meta Description</label>
                   <textarea
                     value={currentPage.metaDesc}
                     onChange={(e) => setCurrentPage({ ...currentPage, metaDesc: e.target.value })}
                     placeholder="Short description for Google search engine indexing snippets (150-160 characters suggested)..."
                     rows={2.5}
-                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650 resize-none"
+                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600 resize-none placeholder:text-slate-400"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center justify-between">
                     <span>Page Core Content</span>
                     <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded uppercase tracking-wider font-mono">HTML / Plain Text Supported</span>
                   </label>
@@ -399,11 +399,11 @@ export default function CMSPageView() {
                     onChange={(e) => setCurrentPage({ ...currentPage, content: e.target.value })}
                     placeholder="Type the full detailed page content markup or plain text guidelines here..."
                     rows={8}
-                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-55 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 text-sm font-mono text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650 resize-y"
+                    className="w-full mt-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600 resize-y placeholder:text-slate-400"
                   />
                 </div>
 
-                <div className="pt-5 border-t border-slate-100 dark:border-slate-850 flex justify-end gap-3">
+                <div className="pt-5 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
                   <Button
                     type="button"
                     variant="ghost"

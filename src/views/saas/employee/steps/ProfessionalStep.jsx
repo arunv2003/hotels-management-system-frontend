@@ -33,11 +33,11 @@ export default function ProfessionalStep() {
             name="roleId"
             value={formData.roleId || ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white"
           >
-            <option value="">Select a role</option>
+            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select a role</option>
             {allRole.map((role) => (
-              <option key={role._id} value={role._id}>
+              <option key={role._id} value={role._id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                 {role.name}
               </option>
             ))}
@@ -49,15 +49,15 @@ export default function ProfessionalStep() {
             name="department"
             value={formData.department}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white"
           >
-            <option value="">Select Department</option>
-            <option value="Human Resources">Human Resources</option>
-            <option value="Front Desk">Front Desk</option>
-            <option value="Management">Management</option>
-            <option value="Maintenance">Maintenance</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Support">Support</option>
+            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Department</option>
+            <option value="Human Resources" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Human Resources</option>
+            <option value="Front Desk" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Front Desk</option>
+            <option value="Management" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Management</option>
+            <option value="Maintenance" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Maintenance</option>
+            <option value="Marketing" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Marketing</option>
+            <option value="Support" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Support</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -67,7 +67,7 @@ export default function ProfessionalStep() {
             name="designation"
             value={formData.designation}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
             placeholder="Senior Housekeeper"
           />
         </div>
@@ -78,7 +78,7 @@ export default function ProfessionalStep() {
             name="joiningDate"
             value={formData.joiningDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white [color-scheme:light] dark:[color-scheme:dark]"
           />
         </div>
         <div className="space-y-2">
@@ -87,12 +87,12 @@ export default function ProfessionalStep() {
             name="employmentType"
             value={formData.employmentType}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white"
           >
-            <option value="">Select Type</option>
-            <option value="Full-Time">Full-Time</option>
-            <option value="Part-Time">Part-Time</option>
-            <option value="Contract">Contract</option>
+            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Type</option>
+            <option value="Full-Time" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Full-Time</option>
+            <option value="Part-Time" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Part-Time</option>
+            <option value="Contract" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Contract</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -101,12 +101,12 @@ export default function ProfessionalStep() {
             name="shift"
             value={formData.shift}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white"
           >
-            <option value="">Select Shift</option>
-            <option value="Morning">Morning</option>
-            <option value="Evening">Evening</option>
-            <option value="Night">Night</option>
+            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Shift</option>
+            <option value="Morning" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Morning</option>
+            <option value="Evening" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Evening</option>
+            <option value="Night" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Night</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -115,12 +115,12 @@ export default function ProfessionalStep() {
             name="salaryType"
             value={formData.salaryType}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white"
           >
-            <option value="">Select Salary Type</option>
-            <option value="Hourly">Hourly</option>
-            <option value="Monthly">Monthly</option>
-            <option value="Annually">Annually</option>
+            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Salary Type</option>
+            <option value="Hourly" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Hourly</option>
+            <option value="Monthly" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Monthly</option>
+            <option value="Annually" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Annually</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -132,7 +132,7 @@ export default function ProfessionalStep() {
               name="salary"
               value={formData.salary}
               onChange={handleChange}
-              className="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+              className="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
               placeholder="0.00"
             />
           </div>

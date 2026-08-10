@@ -205,39 +205,39 @@ export default function ReportsView() {
               <Zap className="text-indigo-600" size={18} />
               <h3 className="font-bold text-slate-900 dark:text-white text-base">Instant Report Generator</h3>
             </div>
-            <p className="text-xs text-slate-450 dark:text-slate-500 leading-relaxed mb-6">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
               Select variables and generate a filtered analytics spreadsheet immediately available for download.
             </p>
 
             <form onSubmit={handleGenerateReport} className="space-y-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Report Title Name</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Report Title Name</label>
                 <Input
                   value={newReportParams.name}
                   onChange={(e) => setNewReportParams({ ...newReportParams, name: e.target.value })}
                   placeholder="E.g., Q2 Customer SLA Speed"
-                  className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+                  className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-semibold">Report Audit Category</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-semibold">Report Audit Category</label>
                 <select
                   value={newReportParams.type}
                   onChange={(e) => setNewReportParams({ ...newReportParams, type: e.target.value })}
-                  className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-205 dark:border-slate-850 text-sm font-medium text-slate-800 dark:text-slate-250 focus:outline-none focus:ring-1 focus:ring-indigo-650"
+                  className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                 >
-                  <option value="Financial">Financial Audits</option>
-                  <option value="Platform Activity">Platform Activity Logs</option>
-                  <option value="Customer Support">Customer Support Speeds</option>
-                  <option value="Projections">Projections &amp; Estimates</option>
+                  <option value="Financial" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Financial Audits</option>
+                  <option value="Platform Activity" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Platform Activity Logs</option>
+                  <option value="Customer Support" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Customer Support Speeds</option>
+                  <option value="Projections" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Projections &amp; Estimates</option>
                 </select>
               </div>
 
               <Button
                 type="submit"
                 disabled={isGenerating}
-                className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-bold cursor-pointer transition-all shadow-md mt-2 flex items-center justify-center gap-2 dark:bg-indigo-600 dark:hover:bg-indigo-755"
+                className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-bold cursor-pointer transition-all shadow-md mt-2 flex items-center justify-center gap-2 dark:bg-indigo-600 dark:hover:bg-indigo-700"
               >
                 {isGenerating ? (
                   <>
@@ -270,7 +270,7 @@ export default function ReportsView() {
               placeholder="Search past logs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10.5 rounded-xl bg-slate-50 dark:bg-slate-955 border-slate-205 dark:border-slate-800"
+              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
             />
           </div>
           <div className="flex gap-2">

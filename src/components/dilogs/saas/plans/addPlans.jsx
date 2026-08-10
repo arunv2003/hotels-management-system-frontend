@@ -105,7 +105,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                     onChange={handleChange}
                     required
                     placeholder="e.g. Premium Plan"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
@@ -124,7 +124,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                       onChange={handleNumberChange}
                       required
                       placeholder="2999"
-                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
                     />
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                       onChange={handleNumberChange}
                       required
                       placeholder="4999"
-                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
                     />
                   </div>
                 </div>
@@ -156,11 +156,11 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white font-medium"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white font-medium"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Draft">Draft</option>
+                    <option value="Active" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Active</option>
+                    <option value="Inactive" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Inactive</option>
+                    <option value="Draft" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Draft</option>
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -175,7 +175,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                     onChange={handleNumberChange}
                     required
                     placeholder="e.g. 10 (or leave empty for unlimited)"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
@@ -190,7 +190,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                     onChange={handleNumberChange}
                     required
                     placeholder="e.g. 50"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
@@ -205,7 +205,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                     onChange={handleNumberChange}
                     required
                     placeholder="e.g. 50"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                   onChange={handleChange}
                   rows={3}
                   placeholder="Brief description of who this plan is for..."
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400 resize-none"
                 />
               </div>
 
@@ -253,7 +253,7 @@ export default function AddPlanDialog({ isOpen, onClose, getAllPlans }) {
                             handleFeatureChange(index, e.target.value)
                           }
                           placeholder="e.g. Unlimited users"
-                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white text-sm"
+                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all text-slate-900 dark:text-white text-sm placeholder:text-slate-400"
                         />
                       </div>
                       {formData.features.length > 1 && (
