@@ -8,11 +8,6 @@ import { MOCK_HOTELS, MOCK_USER_SUPER_ADMIN } from '@/lib/mock-data';
 import { useAuthStore } from '@/store/authStore';
 import { motion } from 'framer-motion';
 export default function SuperAdminDashboard() {
-    const login = useAuthStore((state) => state.login);
-    useEffect(() => {
-        // Auto-login as super admin for demo purposes
-        login(MOCK_USER_SUPER_ADMIN);
-    }, [login]);
     return (<DashboardLayout>
       <div className="space-y-8">
         <div className="flex items-center justify-between">

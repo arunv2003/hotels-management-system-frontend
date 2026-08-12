@@ -221,13 +221,13 @@ function OnboardingContent() {
         }
         break;
       case 2:
-        if (!formData.country || !formData.state || !formData.city || !formData.fullAddress || !formData.pincode || !formData.latitude || !formData.longitude) {
-          return "Please fill out all required location fields, including selecting a location on the map.";
+        if (!formData.mobileNumber || !formData.ownerFullName || !formData.ownerEmail || (!editId && !formData.password)) {
+          return "Please fill out all required contact fields" + (!editId ? " including a password." : ".");
         }
         break;
       case 3:
-        if (!formData.mobileNumber || !formData.ownerFullName || !formData.ownerEmail || (!editId && !formData.password)) {
-          return "Please fill out all required contact fields" + (!editId ? " including a password." : ".");
+        if (!formData.country || !formData.state || !formData.city || !formData.fullAddress || !formData.pincode || !formData.latitude || !formData.longitude) {
+          return "Please fill out all required location fields, including selecting a location on the map.";
         }
         break;
       case 4:

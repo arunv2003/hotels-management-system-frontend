@@ -8,13 +8,12 @@ import { useAuthStore } from '@/store/authStore';
 import { useTenantStore } from '@/store/tenantStore';
 import { motion } from 'framer-motion';
 export default function HotelOwnerDashboard() {
-    const login = useAuthStore((state) => state.login);
     const setTenant = useTenantStore((state) => state.setTenant);
     useEffect(() => {
-        // Auto-login as hotel owner and set tenant for demo
-        login(MOCK_USER_HOTEL_OWNER);
-        setTenant(MOCK_TENANT);
-    }, [login, setTenant]);
+        if (!useTenantStore.getState().currentTenant) {
+            setTenant(MOCK_TENANT);
+        }
+    }, [setTenant]);
     const recentBookings = [
         { id: '101', guest: 'Robert Fox', room: '302', type: 'Deluxe', date: '2024-05-16', status: 'Confirmed', amount: '$450' },
         { id: '102', guest: 'Jane Cooper', room: '105', type: 'Standard', date: '2024-05-16', status: 'Checked In', amount: '$220' },

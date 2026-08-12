@@ -36,7 +36,12 @@ export default function LoginPage() {
             Cookies.set("refreshToken", res?.data.refreshToken, { expires: 7 });
             login(res);
             notify("Signed in successfully", "success");
-            router.push("/super-admin");
+            const loggedUser = res?.data?.user || res?.user;
+            if (loggedUser?.userType === "hotel-owner" || loggedUser?.userType === "business" || loggedUser?.userType === "admin" || loggedUser?.userType === "staff") {
+              router.push("/admin");
+            } else {
+              router.push("/super-admin");
+            }
         }
         catch (err) {
             const message = err?.response?.data?.message || err.message || "Login failed";

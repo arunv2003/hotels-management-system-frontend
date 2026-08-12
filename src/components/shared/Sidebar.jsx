@@ -6,23 +6,66 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, LogOut, Search, Hotel as BrandIcon, } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
-import { SUPER_ADMIN_NAV, HOTEL_NAV } from "@/lib/navigation";
+import { SUPER_ADMIN_NAV, HOTEL_NAV, EMPLOYEE_NAV } from "@/lib/navigation";
 import { SubscriptionGuard } from "@/features/subscriptions/SubscriptionGuard";
 export const Sidebar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
-    const { user, logout } = useAuthStore();
+    const { user, logout, hasPermission } = useAuthStore();
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const getNavItems = () => {
-        // Primary: use URL path to determine sidebar (most reliable)
         if (pathname.startsWith("/super-admin")) {
-            return SUPER_ADMIN_NAV;
+            if (!mounted) return SUPER_ADMIN_NAV;
+        } else if (pathname.startsWith("/employee")) {
+            if (!mounted) return EMPLOYEE_NAV;
+        } else {
+            if (!mounted) return HOTEL_NAV;
         }
-        // Secondary: use userType from store
-        const type = user?.userType || user?.role;
-        if (type === "super-admin" || type === "Employee") {
-            return SUPER_ADMIN_NAV;
+
+        const rawType = String(user?.userType || user?.role || "").toLowerCase();
+        let rawItems = HOTEL_NAV;
+
+        if (pathname.startsWith("/super-admin") || rawType === "super-admin" || rawType === "super_admin" || (rawType === "employee" && pathname.startsWith("/super-admin"))) {
+            rawItems = SUPER_ADMIN_NAV;
+        } else if (rawType === "employee" && pathname.startsWith("/employee")) {
+            rawItems = EMPLOYEE_NAV;
+        } else {
+            rawItems = HOTEL_NAV;
         }
-        return HOTEL_NAV;
+
+        if (
+            rawType === "super-admin" ||
+            rawType === "super_admin" ||
+            rawType === "hotel-owner" ||
+            rawType === "hotel_owner" ||
+            rawType === "hotel" ||
+            rawType === "admin" ||
+            rawType === "business" ||
+            user?.permissions === "ALL"
+        ) {
+            return rawItems;
+        }
+
+        return rawItems.filter((item) => {
+            if (item.module) {
+                return hasPermission(item.module, "view");
+            }
+            let moduleId = "dashboard";
+            const parts = item.href.split("/").filter(Boolean);
+            if (parts.length > 1) {
+                moduleId = parts[parts.length - 1].replace("-", "_");
+            }
+            if (moduleId === "reports") moduleId = "global_reports";
+            if (moduleId === "cms_page") moduleId = "cms_pages";
+            if (moduleId === "support_tickets") moduleId = "support_tickets";
+
+            return hasPermission(moduleId, "view");
+        });
     };
     const navItems = getNavItems();
     return (<motion.aside animate={{ width: isCollapsed ? 80 : 280 }} className={cn("relative h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-300 ease-in-out z-50", isCollapsed ? "px-3" : "px-4")}>

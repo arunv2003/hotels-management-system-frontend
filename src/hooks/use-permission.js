@@ -1,22 +1,17 @@
 "use client";
-import { useMemo } from "react";
-// In a real app, this would come from a Zustand store or Auth session
-// For now, we'll mock it or define a way to hydrate it
+import { useAuthStore } from "@/store/authStore";
+
 export function usePermission() {
-    // Mocking permissions for now
-    // In production, this would be: const { user } = useAuth();
-    const permissions = useMemo(() => {
-        return {
-            "rooms": ["view", "create", "edit"],
-            "bookings": ["view", "create"],
-            "dashboard": ["view"],
-        };
-    }, []);
-    const hasPermission = (module, action) => {
-        return permissions[module]?.includes(action) ?? false;
+    const user = useAuthStore((state) => state.user);
+    const storeHasPermission = useAuthStore((state) => state.hasPermission);
+
+    const hasPermission = (module, action = "view") => {
+        return storeHasPermission(module, action);
     };
+
     const hasModule = (module) => {
-        return !!permissions[module] && permissions[module].length > 0;
+        return storeHasPermission(module, "view");
     };
-    return { hasPermission, hasModule, permissions };
+
+    return { hasPermission, hasModule, permissions: user?.permissions || null };
 }

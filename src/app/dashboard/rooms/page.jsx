@@ -22,18 +22,6 @@ export default function RoomsPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <PermissionGuard module="rooms" action="export">
-              <Button variant="outline">
-                <Download className="mr-2 h-4 w-4"/>
-                Export
-              </Button>
-            </PermissionGuard>
-            <PermissionGuard module="rooms" action="create">
-              <Button>
-                <Plus className="mr-2 h-4 w-4"/>
-                Add Room
-              </Button>
-            </PermissionGuard>
           </div>
         </div>
 
