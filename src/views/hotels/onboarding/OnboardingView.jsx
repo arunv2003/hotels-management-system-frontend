@@ -75,7 +75,7 @@ const ProgressHeader = ({ step }) => (
 
 const WhySection = ({ title, items }) => (
   <div className="hidden xl:block w-[300px] shrink-0">
-    <div className="glass-card p-6 rounded-3xl border-indigo-100 dark:border-indigo-500/10 bg-indigo-50/30">
+    <div className="glass-card p-6 rounded-lg border-indigo-100 dark:border-indigo-500/10 bg-indigo-50/30">
       <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
         <HelpCircle className="w-4 h-4 text-indigo-600" />
         {title}

@@ -112,7 +112,7 @@ export default function SaaSAnalyticsView() {
           >
             {/* Quick KPI Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="glass-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div className="glass-card p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">Monthly Active Hotels</p>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">158</h3>
@@ -120,12 +120,12 @@ export default function SaaSAnalyticsView() {
                     <TrendingUp size={12} /> +12.3%
                   </span>
                 </div>
-                <div className="p-4 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-2xl">
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-md">
                   <Hotel size={24} />
                 </div>
               </div>
 
-              <div className="glass-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div className="glass-card p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">New Subscriptions</p>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">+25</h3>
@@ -133,12 +133,12 @@ export default function SaaSAnalyticsView() {
                     <TrendingUp size={12} /> +18.4%
                   </span>
                 </div>
-                <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-md">
                   <Users size={24} />
                 </div>
               </div>
 
-              <div className="glass-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div className="glass-card p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">Global System Load</p>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">42%</h3>
@@ -146,12 +146,12 @@ export default function SaaSAnalyticsView() {
                     <TrendingDown size={12} /> +2.1%
                   </span>
                 </div>
-                <div className="p-4 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 rounded-2xl">
+                <div className="p-3 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 rounded-md">
                   <Activity size={24} />
                 </div>
               </div>
 
-              <div className="glass-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div className="glass-card p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">Average Load Speed</p>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">0.42s</h3>
@@ -159,7 +159,7 @@ export default function SaaSAnalyticsView() {
                     <TrendingUp size={12} /> -5.2%
                   </span>
                 </div>
-                <div className="p-4 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl">
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-md">
                   <TrendingUp size={24} />
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function SaaSAnalyticsView() {
             {/* Growth & Plan distribution Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Line chart: platform growth */}
-              <div className="lg:col-span-2 glass-card p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <div className="lg:col-span-2 glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">Platform Growth Trends</h3>
@@ -193,7 +193,7 @@ export default function SaaSAnalyticsView() {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                       <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
                       <YAxis tickLine={false} axisLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                      <Tooltip contentStyle={{ border: 'none', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }} />
+                      <Tooltip contentStyle={{ border: 'none', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }} />
                       <Area type="monotone" dataKey="activeHotels" name="Active Subscriptions" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorActive)" />
                       <Area type="monotone" dataKey="newSignups" name="New Registrations" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorSignups)" />
                     </AreaChart>
@@ -203,7 +203,7 @@ export default function SaaSAnalyticsView() {
               </div>
 
               {/* Plan Distribution Chart */}
-              <div className="glass-card p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between">
+              <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">Subscription Tiers</h3>
                   <p className="text-sm text-slate-500 mb-6">Ratio breakdown of active plan tiers</p>
@@ -239,7 +239,7 @@ export default function SaaSAnalyticsView() {
                         <span className="w-3 h-3 rounded-full" style={{ backgroundColor: plan.color }} />
                         <span className="font-semibold text-slate-700 dark:text-slate-300">{plan.name}</span>
                       </div>
-                      <span className="font-black text-slate-950 dark:text-white">{plan.value} Hotels</span>
+                      <span className="font-black text-slate-955 dark:text-white">{plan.value} Hotels</span>
                     </div>
                   ))}
                 </div>
@@ -255,7 +255,7 @@ export default function SaaSAnalyticsView() {
             className="space-y-6"
           >
             {/* Hotel Usage Lists */}
-            <div className="glass-card p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">Active Tenants Usage &amp; Load</h3>

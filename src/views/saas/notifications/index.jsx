@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
+import Pagination from "@/components/shared/Pagination";
 
 const MOCK_NOTIFICATIONS = [
   {
@@ -66,6 +67,8 @@ export default function NotificationsView() {
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   // Modal state
   const [isOpen, setIsOpen] = useState(false);
@@ -87,6 +90,12 @@ export default function NotificationsView() {
       filterCategory === "all" || nt.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const totalPages = Math.ceil(filteredNotifications.length / pageSize) || 1;
+  const paginatedNotifications = filteredNotifications.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleOpenCreate = () => {
     setCurrentNotif({
@@ -208,7 +217,7 @@ export default function NotificationsView() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-105 dark:border-slate-800/80 shadow-sm flex items-center justify-between"
+            className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-105 dark:border-slate-800/80 shadow-sm flex items-center justify-between"
           >
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -218,7 +227,7 @@ export default function NotificationsView() {
                 {stat.val}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
               {stat.icon}
             </div>
           </div>
@@ -226,7 +235,7 @@ export default function NotificationsView() {
       </div>
 
       {/* Main Grid View */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-80">
@@ -235,7 +244,7 @@ export default function NotificationsView() {
               placeholder="Search notifications..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
             />
           </div>
           <div className="flex gap-2">
@@ -256,10 +265,10 @@ export default function NotificationsView() {
         </div>
 
         {/* Notifications Table */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">
                   Notification Details
                 </th>
@@ -281,7 +290,7 @@ export default function NotificationsView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-              {filteredNotifications.map((nt) => {
+              {paginatedNotifications.map((nt) => {
                 const catDetails = getCategoryDetails(nt.category);
                 return (
                   <tr
@@ -348,6 +357,19 @@ export default function NotificationsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredNotifications.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       {/* Trigger Dialog Modal */}

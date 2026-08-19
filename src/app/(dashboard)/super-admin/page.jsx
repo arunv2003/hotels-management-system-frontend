@@ -15,7 +15,7 @@ export default function SuperAdminDashboard() {
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Platform Overview</h1>
             <p className="text-slate-500 mt-1">Welcome back, Alex. Here&apos;s what&apos;s happening today.</p>
           </div>
-          <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 cursor-pointer text-white px-4 py-2 rounded-xl font-medium transition-all shadow-lg shadow-indigo-500/20">
+          <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 cursor-pointer text-white px-4 py-2 rounded-lg font-medium transition-all shadow-md shadow-indigo-500/20">
             <ArrowUpRight size={18}/>
             Export Reports
           </button>
@@ -32,7 +32,7 @@ export default function SuperAdminDashboard() {
           <div className="lg:col-span-2">
             <RevenueChart />
           </div>
-          <div className="glass-card p-6 rounded-2xl flex flex-col h-full">
+          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col h-full">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">Recent Hotel Onboarding</h3>
               <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -41,7 +41,7 @@ export default function SuperAdminDashboard() {
             </div>
             <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar">
               {MOCK_HOTELS.map((hotel, i) => (<motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} key={hotel.id} className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-indigo-600 font-bold">
+                  <div className="w-12 h-12 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-indigo-600 font-bold">
                     {hotel.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -58,7 +58,7 @@ export default function SuperAdminDashboard() {
                   </div>
                 </motion.div>))}
             </div>
-            <button className="mt-6 w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="mt-6 w-full py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               View All Hotels
             </button>
           </div>

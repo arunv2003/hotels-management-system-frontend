@@ -30,6 +30,7 @@ import {
   Bar,
   Legend,
 } from "recharts";
+import Pagination from "@/components/shared/Pagination";
 
 const MOCK_REVENUE_DATA = [
   { month: "Jan", revenue: 4500, registrations: 12 },
@@ -85,6 +86,8 @@ export default function ReportsView() {
   const [reports, setReports] = useState(MOCK_REPORTS_LIST);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const isMounted = useIsMounted();
   
   // Custom generator state
@@ -100,6 +103,12 @@ export default function ReportsView() {
     const matchesType = filterType === "all" || rep.type === filterType;
     return matchesSearch && matchesType;
   });
+
+  const totalPages = Math.ceil(filteredReports.length / pageSize) || 1;
+  const paginatedReports = filteredReports.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleGenerateReport = (e) => {
     e.preventDefault();
@@ -152,10 +161,10 @@ export default function ReportsView() {
           { label: "Active Subscriptions", val: "94.2% Uptime", trend: "0.01% Latency Variance", icon: <CheckCircle className="text-indigo-500" />, trendBg: "bg-indigo-50 text-indigo-850 dark:bg-indigo-500/10 dark:text-indigo-400" },
           { label: "Support Resolution Rate", val: "18.5 min", trend: "-4.2 min decline", icon: <TrendingDown className="text-rose-500" />, trendBg: "bg-rose-50 text-rose-800 dark:bg-rose-500/10 dark:text-rose-400" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm">
+          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm">
             <div className="flex items-start justify-between">
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">{stat.label}</span>
-              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-lg flex items-center gap-1 ${stat.trendBg}`}>
+              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 ${stat.trendBg}`}>
                 {stat.icon}
                 {stat.trend}
               </span>
@@ -168,7 +177,7 @@ export default function ReportsView() {
       {/* Visual Analytics Graphs using Recharts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Revenue Area Chart */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col h-96">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col h-96">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="font-bold text-slate-900 dark:text-white text-base">Monthly Recurring Revenue Growth</h3>
@@ -199,7 +208,7 @@ export default function ReportsView() {
         </div>
 
         {/* Dynamic New Reports Generator */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Zap className="text-indigo-600" size={18} />
@@ -216,7 +225,7 @@ export default function ReportsView() {
                   value={newReportParams.name}
                   onChange={(e) => setNewReportParams({ ...newReportParams, name: e.target.value })}
                   placeholder="E.g., Q2 Customer SLA Speed"
-                  className="mt-1.5 h-11 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+                  className="mt-1.5 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
                 />
               </div>
 
@@ -225,7 +234,7 @@ export default function ReportsView() {
                 <select
                   value={newReportParams.type}
                   onChange={(e) => setNewReportParams({ ...newReportParams, type: e.target.value })}
-                  className="w-full mt-1.5 h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                  className="w-full mt-1.5 h-10 px-3.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-600"
                 >
                   <option value="Financial" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Financial Audits</option>
                   <option value="Platform Activity" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Platform Activity Logs</option>
@@ -237,7 +246,7 @@ export default function ReportsView() {
               <Button
                 type="submit"
                 disabled={isGenerating}
-                className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-bold cursor-pointer transition-all shadow-md mt-2 flex items-center justify-center gap-2 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+                className="w-full h-10 rounded-lg bg-slate-900 hover:bg-slate-950 text-white font-bold cursor-pointer transition-all shadow-md mt-2 flex items-center justify-center gap-2 dark:bg-indigo-600 dark:hover:bg-indigo-700"
               >
                 {isGenerating ? (
                   <>
@@ -261,7 +270,7 @@ export default function ReportsView() {
       </div>
 
       {/* Reports Audit Logs Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-80">
@@ -291,10 +300,10 @@ export default function ReportsView() {
         </div>
 
         {/* Audit Table */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Compiled Sheet Document Name</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Report Category</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Author Init</th>
@@ -305,7 +314,7 @@ export default function ReportsView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-105 dark:divide-slate-800/80">
-              {filteredReports.map((rep) => (
+              {paginatedReports.map((rep) => (
                 <tr key={rep.id} className="hover:bg-slate-55/50 dark:hover:bg-slate-800/30 transition-all">
                   <td className="p-4.5 pl-6 font-bold text-slate-900 dark:text-white max-w-sm truncate">
                     {rep.name}
@@ -359,7 +368,21 @@ export default function ReportsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredReports.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
     </div>
+
   );
 }

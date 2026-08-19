@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { RoomRoute } from '@/routes/business/roomRoute';
 import AddRoomDialog from '@/components/dilogs/business/AddRoomDialog';
+import Pagination from '@/components/shared/Pagination';
 
 export default function RoomsPage() {
   const { user } = useAuthStore();
@@ -21,6 +22,8 @@ export default function RoomsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [actionSuccess, setActionSuccess] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const loadData = async () => {
     setLoading(true);
@@ -79,6 +82,12 @@ export default function RoomsPage() {
     const matchesStatus = filterStatus === 'all' || rm.status === filterStatus;
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredRooms.length / pageSize) || 1;
+  const paginatedRooms = filteredRooms.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const statusColors = {
     Available: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400',
@@ -246,7 +255,7 @@ export default function RoomsPage() {
             <p className="font-semibold">{error}</p>
           </div>
         ) : filteredRooms.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 bg-white dark:bg-slate-900 rounded-3xl border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500">
+          <div className="flex flex-col items-center justify-center p-16 bg-white dark:bg-slate-900 rounded-lg border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500">
             <Bed className="w-12 h-12 text-slate-300 mb-3" />
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No Rooms Found</h3>
             <p className="text-sm mt-1">
@@ -254,11 +263,11 @@ export default function RoomsPage() {
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-xs uppercase font-extrabold tracking-wider text-slate-400">
+          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="overflow-auto max-h-[480px] relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap">
+                <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
                     <th className="py-4 px-6">Room Number</th>
                     <th className="py-4 px-6">Room Type</th>
                     <th className="py-4 px-6">Floor</th>
@@ -267,7 +276,7 @@ export default function RoomsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">
-                  {filteredRooms.map((room) => {
+                  {paginatedRooms.map((room) => {
                     const roomTypeName = room.roomType?.roomType || 'Standard';
                     const isDeleting = deleteConfirmId === room._id;
 
@@ -330,6 +339,19 @@ export default function RoomsPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Table Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredRooms.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         )}
 

@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { CouponRoutes } from "@/routes/saas/coupons/coupons.route";
 import { useToast } from "@/hooks/use-toast";
+import Pagination from "@/components/shared/Pagination";
 
 export default function CouponsView() {
   const { toast } = useToast();
@@ -30,6 +31,8 @@ export default function CouponsView() {
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   
   // Modal states
   const [isOpen, setIsOpen] = useState(false);
@@ -77,6 +80,12 @@ export default function CouponsView() {
     const matchesStatus = filterStatus === "all" || cp.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredCoupons.length / pageSize) || 1;
+  const paginatedCoupons = filteredCoupons.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const generateRandomCode = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -266,12 +275,12 @@ export default function CouponsView() {
           { label: "Total Claims", val: totalClaims, icon: <Layers className="text-sky-600" /> },
           { label: "Conversion Rate", val: `${Math.round((totalClaims / (coupons.reduce((s, c) => s + c.usageLimit, 0) || 1)) * 100)}%`, icon: <Percent className="text-amber-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
               {stat.icon}
             </div>
           </div>
@@ -279,7 +288,7 @@ export default function CouponsView() {
       </div>
 
       {/* Grid and Table layout */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
          <div className="relative w-full md:w-80">
@@ -288,7 +297,7 @@ export default function CouponsView() {
               placeholder="Search coupon codes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
             />
           </div>
           <div className="flex gap-2">
@@ -309,10 +318,10 @@ export default function CouponsView() {
         </div>
 
         {/* Table representation */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Coupon Code &amp; Type</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Discount Rate</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Min. Purchase Required</th>
@@ -322,8 +331,8 @@ export default function CouponsView() {
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-6">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-              {filteredCoupons.map((cp) => {
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {paginatedCoupons.map((cp) => {
                 const cpId = cp._id || cp.id;
                 const formattedDate = cp.expiryDate
                   ? new Date(cp.expiryDate).toLocaleDateString()
@@ -443,6 +452,19 @@ export default function CouponsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredCoupons.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       {/* Coupon Modal */}

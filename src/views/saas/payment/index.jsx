@@ -25,6 +25,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
+import Pagination from "@/components/shared/Pagination";
 
 const INITIAL_TRANSACTIONS = [
   {
@@ -120,6 +121,8 @@ export default function SaaSPaymentView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedTx, setSelectedTx] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const isMounted = useIsMounted();
 
   const filteredTransactions = transactions.filter((tx) => {
@@ -133,6 +136,12 @@ export default function SaaSPaymentView() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredTransactions.length / pageSize) || 1;
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleRefund = (id) => {
     setTransactions((prev) =>
@@ -179,9 +188,9 @@ export default function SaaSPaymentView() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 ">
+        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 ">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-2xl">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-md">
               <DollarSign size={22} />
             </div>
             <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
@@ -196,9 +205,9 @@ export default function SaaSPaymentView() {
           </div>
         </div>
 
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-md">
               <CreditCard size={22} />
             </div>
             <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
@@ -215,9 +224,9 @@ export default function SaaSPaymentView() {
           </div>
         </div>
 
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl">
+            <div className="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-md">
               <ArrowUpRight size={22} />
             </div>
             <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
@@ -234,9 +243,9 @@ export default function SaaSPaymentView() {
           </div>
         </div>
 
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-2xl">
+            <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-md">
               <AlertCircle size={22} />
             </div>
             <span className="flex items-center gap-1 text-xs font-bold text-rose-600 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full">
@@ -257,7 +266,7 @@ export default function SaaSPaymentView() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main transaction list */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-card p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col">
+          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -271,25 +280,25 @@ export default function SaaSPaymentView() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setStatusFilter("ALL")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${statusFilter === "ALL" ? "bg-indigo-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "ALL" ? "bg-indigo-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => setStatusFilter("SUCCESSFUL")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${statusFilter === "SUCCESSFUL" ? "bg-emerald-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "SUCCESSFUL" ? "bg-emerald-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
                 >
                   Success
                 </button>
                 <button
                   onClick={() => setStatusFilter("PENDING")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${statusFilter === "PENDING" ? "bg-amber-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "PENDING" ? "bg-amber-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
                 >
                   Pending
                 </button>
                 <button
                   onClick={() => setStatusFilter("FAILED")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${statusFilter === "FAILED" ? "bg-rose-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "FAILED" ? "bg-rose-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
                 >
                   Failed
                 </button>
@@ -302,14 +311,14 @@ export default function SaaSPaymentView() {
                 placeholder="Search transactions by hotel owner or invoice number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 rounded-xl bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="overflow-auto max-h-[480px] relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap">
+                <thead className="sticky top-0 z-10 bg-white dark:bg-slate-900 shadow-sm">
+                  <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
                     <th className="py-4">Tenant / Hotel</th>
                     <th className="py-4">Plan / Cycle</th>
                     <th className="py-4">Amount</th>
@@ -319,7 +328,7 @@ export default function SaaSPaymentView() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-                  {filteredTransactions.map((tx) => (
+                  {paginatedTransactions.map((tx) => (
                     <tr
                       key={tx.id}
                       onClick={() => setSelectedTx(tx)}
@@ -396,13 +405,26 @@ export default function SaaSPaymentView() {
                 </tbody>
               </table>
             </div>
+
+            {/* Table Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredTransactions.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         </div>
 
         {/* Right column: Weekly stats chart & selected transaction detailed overview */}
         <div className="space-y-6">
           {/* Weekly volume breakdown chart */}
-          <div className="glass-card p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
             <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-1">
               Weekly Growth
             </h4>
@@ -453,7 +475,7 @@ export default function SaaSPaymentView() {
           </div>
 
           {/* Transaction detailed view */}
-          <div className="glass-card p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  min-h-[300px] flex flex-col">
+          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  min-h-[300px] flex flex-col">
             {selectedTx ? (
               <div className="flex-1 flex flex-col justify-between">
                 <div>
@@ -467,7 +489,7 @@ export default function SaaSPaymentView() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40">
+                    <div className="p-4 rounded-md bg-slate-50 dark:bg-slate-800/40">
                       <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">
                         Total Paid
                       </p>
@@ -511,18 +533,18 @@ export default function SaaSPaymentView() {
                   {selectedTx.status === "Successful" && (
                     <Button
                       onClick={() => handleRefund(selectedTx.id)}
-                      className="w-full rounded-xl border border-rose-100 dark:border-rose-500/20 text-rose-600 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 h-11 px-4 cursor-pointer font-bold transition-all text-xs"
+                      className="w-full rounded-lg border border-rose-100 dark:border-rose-500/20 text-rose-600 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 h-10 px-4 cursor-pointer font-bold transition-all text-xs"
                     >
                       Issue Refund
                     </Button>
                   )}
-                  <Button className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white h-11 px-4 cursor-pointer font-bold transition-all text-xs">
+                  <Button className="w-full rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white h-10 px-4 cursor-pointer font-bold transition-all text-xs">
                     Download Invoice (PDF)
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg">
                 <CreditCard
                   className="text-slate-300 dark:text-slate-700 mb-3"
                   size={32}

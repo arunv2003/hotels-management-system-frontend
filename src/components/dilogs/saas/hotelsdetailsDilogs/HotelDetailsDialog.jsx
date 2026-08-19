@@ -182,7 +182,7 @@ export default function HotelDetailsDialog({ isOpen, onClose, hotel }) {
 
                   <div className="space-y-2">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Hotel Description</span>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800/80 shadow-sm">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed bg-white dark:bg-slate-900 p-4 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm">
                       {hotel.hotelDescription || "No description provided for this property."}
                     </p>
                   </div>
@@ -194,7 +194,7 @@ export default function HotelDetailsDialog({ isOpen, onClose, hotel }) {
                         hotel.amenities.map((amenity, i) => (
                           <span
                             key={i}
-                            className="px-4 py-2 rounded-2xl bg-indigo-50/50 hover:bg-indigo-50 dark:bg-indigo-500/5 dark:hover:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-bold border border-indigo-100/30 dark:border-indigo-500/5 transition-all"
+                            className="px-3 py-1.5 rounded-md bg-indigo-50/50 hover:bg-indigo-50 dark:bg-indigo-500/5 dark:hover:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-bold border border-indigo-100/30 dark:border-indigo-500/5 transition-all"
                           >
                             {amenity}
                           </span>
@@ -482,7 +482,7 @@ export default function HotelDetailsDialog({ isOpen, onClose, hotel }) {
                         const docDetails = hotel.documents?.[docItem.key];
                         const hasUrl = !!docDetails?.cloudUrl;
                         return (
-                          <div key={idx} className="p-5 rounded-3xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-800/50 flex flex-col justify-between min-h-44 gap-4">
+                          <div key={idx} className="p-4 rounded-lg bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-800/50 flex flex-col justify-between min-h-44 gap-4">
                             <div>
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">{docItem.label}</span>
                               <span className={cn(

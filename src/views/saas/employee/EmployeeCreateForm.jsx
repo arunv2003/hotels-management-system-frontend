@@ -133,7 +133,7 @@ export default function EmployeeCreateForm() {
       {/* Form Area */}
       <form
         onSubmit={handleSubmit}
-        className="glass-card rounded-[2.5rem] p-8 md:p-10 shadow-xl border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl"
+        className="glass-card rounded-lg p-6 md:p-8 shadow-sm border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900"
       >
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">

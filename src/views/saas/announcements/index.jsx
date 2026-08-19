@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnnouncementRoutes } from "@/routes/saas/anouncement/anouncement.route";
 import { useToast } from "@/hooks/use-toast";
+import Pagination from "@/components/shared/Pagination";
 
 export default function AnnouncementsView() {
   const { toast } = useToast();
@@ -32,6 +33,8 @@ export default function AnnouncementsView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterAudience, setFilterAudience] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   
   // Modal states
   const [isOpen, setIsOpen] = useState(false);
@@ -78,6 +81,12 @@ export default function AnnouncementsView() {
     const matchesAudience = filterAudience === "all" || ann.audience === filterAudience;
     return matchesSearch && matchesType && matchesAudience;
   });
+
+  const totalPages = Math.ceil(filteredAnnouncements.length / pageSize) || 1;
+  const paginatedAnnouncements = filteredAnnouncements.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleOpenCreate = () => {
     setIsEditMode(false);
@@ -248,7 +257,7 @@ export default function AnnouncementsView() {
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white h-11 px-6 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10"
+          className="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white h-10 px-5 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10"
         >
           <Plus size={18} />
           Create Announcement
@@ -263,12 +272,12 @@ export default function AnnouncementsView() {
           { label: "Scheduled", val: scheduledCount, icon: <Calendar className="text-amber-600" /> },
           { label: "Total Views/Clicks", val: totalClicks, icon: <Eye className="text-sky-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
               {stat.icon}
             </div>
           </div>
@@ -276,7 +285,7 @@ export default function AnnouncementsView() {
       </div>
 
       {/* Main Layout: Filters and Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filter bar */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-80">
@@ -285,11 +294,11 @@ export default function AnnouncementsView() {
               placeholder="Search announcements..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10.5 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
             />
           </div>
           <div className="flex gap-3 w-full md:w-auto overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-950 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800">
+            <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-950 p-1 rounded-lg border border-slate-200/80 dark:border-slate-800">
               <span className="text-xs text-slate-400 px-2.5 font-bold">Type:</span>
               {["all", "info", "success", "warning", "alert"].map((t) => (
                 <button
@@ -325,11 +334,11 @@ export default function AnnouncementsView() {
           </div>
         </div>
 
-        {/* Table View */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        {/* Announcements Table */}
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Title &amp; Type</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Audience</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Publish Date</th>
@@ -339,7 +348,7 @@ export default function AnnouncementsView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-              {filteredAnnouncements.map((ann) => {
+              {paginatedAnnouncements.map((ann) => {
                 const annId = ann._id || ann.id;
                 const styles = getTypeStyles(ann.type);
                 const formattedDate = ann.publishDate
@@ -411,6 +420,19 @@ export default function AnnouncementsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredAnnouncements.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       {/* Modal Dialog */}

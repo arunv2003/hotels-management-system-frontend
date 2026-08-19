@@ -50,7 +50,7 @@ export default function HotelOwnerDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 glass-card rounded-2xl overflow-hidden border-none shadow-xl">
+          <div className="lg:col-span-2 glass-card rounded-lg overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-white">Recent Bookings</h3>
               <button className="text-sm text-indigo-600 font-semibold hover:underline">View All</button>
@@ -95,7 +95,7 @@ export default function HotelOwnerDashboard() {
           </div>
 
           <div className="space-y-6">
-            <div className="glass-card p-6 rounded-2xl">
+            <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800">
               <h3 className="font-bold text-slate-900 dark:text-white mb-6">Room Status</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -131,7 +131,7 @@ export default function HotelOwnerDashboard() {
               </div>
             </div>
 
-            <div className="glass-card p-6 rounded-2xl bg-indigo-600 text-white relative overflow-hidden">
+            <div className="glass-card p-6 rounded-lg bg-indigo-600 text-white relative overflow-hidden">
               <div className="relative z-10">
                 <h3 className="font-bold text-white mb-2 text-lg">Quick Tasks</h3>
                 <p className="text-indigo-100 text-sm mb-6">You have 5 pending maintenance requests.</p>

@@ -7,13 +7,13 @@ import { useIsMounted } from "@/hooks/use-is-mounted";
 export const RevenueChart = () => {
     const isMounted = useIsMounted();
 
-    return (<div className="glass-card p-6 rounded-2xl h-[400px]">
+    return (<div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 h-[400px]">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">Revenue Overview</h3>
           <p className="text-sm text-slate-500">Monthly SaaS growth performance</p>
         </div>
-        <select className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm px-3 py-1.5 focus:ring-2 focus:ring-indigo-500/20">
+        <select className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm px-3 py-1.5 focus:ring-2 focus:ring-indigo-500/20">
           <option>Last 6 Months</option>
           <option>Last Year</option>
         </select>
@@ -33,7 +33,7 @@ export const RevenueChart = () => {
             <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={(value) => `$${value / 1000}k`}/>
             <Tooltip contentStyle={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: 'none',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
         }}/>

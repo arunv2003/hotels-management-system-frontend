@@ -463,7 +463,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
       </div>
 
       {/* Hotel Logo */}
-      <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-3xl">
+      <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-lg">
         <CroppableUpload
           label={<>Hotel Logo <span className="text-red-500">*</span></>}
           hint="Square (1:1)"
@@ -476,7 +476,7 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
       </div>
 
       {/* Hotel Images */}
-      <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-3xl">
+      <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-lg">
         <MultiImageUpload
           label={<>Hotel Images <span className="text-red-500">*</span> (1600 × 900)</>}
           hint="16:9"

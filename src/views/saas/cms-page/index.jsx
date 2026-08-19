@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
+import Pagination from "@/components/shared/Pagination";
 
 const MOCK_CMS_PAGES = [
   {
@@ -66,6 +67,8 @@ export default function CMSPageView() {
   const [pages, setPages] = useState(MOCK_CMS_PAGES);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [activePage, setActivePage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   
   // Modal states
   const [isOpen, setIsOpen] = useState(false);
@@ -88,6 +91,12 @@ export default function CMSPageView() {
     const matchesStatus = filterStatus === "all" || p.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredPages.length / pageSize) || 1;
+  const paginatedPages = filteredPages.slice(
+    (activePage - 1) * pageSize,
+    activePage * pageSize
+  );
 
   const handleTitleChange = (val) => {
     const slug = val
@@ -150,7 +159,7 @@ export default function CMSPageView() {
   };
 
   // Metrics
-  const totalPages = pages.length;
+  const totalPagesCount = pages.length;
   const publishedPages = pages.filter((p) => p.status === "Published").length;
   const draftPages = pages.filter((p) => p.status === "Draft").length;
 
@@ -164,7 +173,7 @@ export default function CMSPageView() {
             CMS Pages
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Build, publish, and manage legal agreements, policies, and rich-text pages for your public platform.
+            Build and publish legal notices, platform terms, and dynamic CMS pages.
           </p>
         </div>
         <Button
@@ -179,16 +188,16 @@ export default function CMSPageView() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: "Total Platform Pages", val: totalPages, icon: <Layers className="text-indigo-600" /> },
+          { label: "Total Platform Pages", val: totalPagesCount, icon: <Layers className="text-indigo-600" /> },
           { label: "Published & Active", val: publishedPages, icon: <CheckCircle className="text-emerald-600" /> },
           { label: "Draft pages", val: draftPages, icon: <FileEdit className="text-amber-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-105 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-105 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
               <p className="text-2xl font-bold text-slate-950 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
               {stat.icon}
             </div>
           </div>
@@ -196,7 +205,7 @@ export default function CMSPageView() {
       </div>
 
       {/* Grid List & Filters */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-80">
@@ -205,7 +214,7 @@ export default function CMSPageView() {
               placeholder="Search by slug, title or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
             />
           </div>
           <div className="flex gap-2">
@@ -225,11 +234,11 @@ export default function CMSPageView() {
           </div>
         </div>
 
-        {/* Table representation */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        {/* CMS Audit Table */}
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Page &amp; Route URL</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">SEO Meta Title</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Modified</th>
@@ -238,7 +247,7 @@ export default function CMSPageView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-              {filteredPages.map((p) => (
+              {paginatedPages.map((p) => (
                 <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
                   <td className="p-4.5 pl-6 max-w-xs">
                     <div className="flex items-center gap-3">
@@ -302,6 +311,19 @@ export default function CMSPageView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={activePage}
+          totalPages={totalPages}
+          totalItems={filteredPages.length}
+          pageSize={pageSize}
+          onPageChange={setActivePage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setActivePage(1);
+          }}
+        />
       </div>
 
       {/* Editor Modal */}

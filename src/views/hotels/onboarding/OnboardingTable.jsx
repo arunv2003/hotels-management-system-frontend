@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { HotelRoute } from "@/routes/saas/hotels/hotels.route";
 import HotelDetailsDialog from "@/components/dilogs/saas/hotelsdetailsDilogs/HotelDetailsDialog";
+import Pagination from "@/components/shared/Pagination";
 
 export function OnboardingTable() {
   const router = useRouter();
@@ -87,12 +88,12 @@ export function OnboardingTable() {
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
-            className="h-11 rounded-xl gap-2 font-bold text-sm cursor-pointer"
+            className="h-10 rounded-lg gap-2 font-bold text-sm cursor-pointer"
           >
             <Download className="w-4 h-4" /> Export CSV
           </Button>
           <Button
-            className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-lg shadow-indigo-500/20 cursor-pointer"
+            className="h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-md shadow-indigo-500/20 cursor-pointer"
             onClick={() => router.push("/super-admin/hotels/new")}
           >
             <Plus className="w-4 h-4" /> Add New Hotel
@@ -134,9 +135,9 @@ export function OnboardingTable() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
+            className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
           >
-            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", stat.bg)}>
+            <div className={cn("w-12 h-12 rounded-md flex items-center justify-center", stat.bg)}>
               <stat.icon className={cn("w-6 h-6", stat.color)} />
             </div>
             <div>
@@ -152,7 +153,7 @@ export function OnboardingTable() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white dark:bg-slate-900 rounded-[0.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Toolbar */}
         <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="relative w-full sm:w-96">
@@ -164,19 +165,19 @@ export function OnboardingTable() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-11 h-12 rounded-2xl border-slate-100 dark:border-slate-800 focus-visible:ring-indigo-500/20"
+              className="pl-11 h-11 rounded-lg border-slate-100 dark:border-slate-800 focus-visible:ring-indigo-500/20"
             />
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              className="h-12 rounded-2xl gap-2 font-bold text-sm flex-1 sm:flex-none"
+              className="h-11 rounded-lg gap-2 font-bold text-sm flex-1 sm:flex-none"
             >
               <Filter className="w-4 h-4" /> Filters
             </Button>
             <Button
               variant="outline"
-              className="h-12 w-12 rounded-2xl p-0 flex-none"
+              className="h-11 w-11 rounded-lg p-0 flex-none"
             >
               <ArrowUpDown className="w-4 h-4" />
             </Button>
@@ -184,9 +185,9 @@ export function OnboardingTable() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-slate-50/50 dark:bg-slate-800/50">
+        <div className="overflow-auto max-h-[480px] relative">
+          <table className="w-full text-sm text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
               <tr>
                 <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Hotel Name
@@ -325,7 +326,7 @@ export function OnboardingTable() {
 
           {filteredHotels.length === 0 && (
             <div className="py-20 text-center">
-              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-slate-200" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -339,48 +340,15 @@ export function OnboardingTable() {
         </div>
 
         {/* Pagination */}
-        <div className="p-6 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Showing{" "}
-            {filteredHotels.length === 0 ? 0 : (currentPage - 1) * limit + 1}–
-            {Math.min(currentPage * limit, filteredHotels.length)} of{" "}
-            {filteredHotels.length} results
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="h-10 px-4 rounded-xl text-xs font-bold"
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-            >
-              Previous
-            </Button>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <Button
-                  key={n}
-                  variant={n === currentPage ? "default" : "outline"}
-                  onClick={() => handlePageChange(n)}
-                  className={cn(
-                    "w-10 h-10 p-0 rounded-xl text-xs font-bold",
-                    n === currentPage && "bg-indigo-600 shadow-lg shadow-indigo-500/20"
-                  )}
-                >
-                  {n}
-                </Button>
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              className="h-10 px-4 rounded-xl text-xs font-bold"
-              disabled={currentPage === totalPages || totalPages === 0}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredHotels.length}
+          pageSize={limit}
+          onPageChange={handlePageChange}
+        />
       </div>
+
 
       {/* Details Dialog — rendered from external component */}
       <HotelDetailsDialog

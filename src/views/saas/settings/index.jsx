@@ -119,7 +119,7 @@ export default function SaaSGeneralSettingsView() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         {/* Left Side: Tabs List */}
-        <div className="lg:col-span-1 glass-card p-4 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  space-y-1">
+        <div className="lg:col-span-1 glass-card p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  space-y-1">
           {tabItems.map((tab) => {
             const Icon = tab.icon;
             const isSelected = activeTab === tab.id;
@@ -127,7 +127,7 @@ export default function SaaSGeneralSettingsView() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-md text-sm font-bold transition-all ${
                   isSelected
                     ? "bg-indigo-600 text-white"
                     : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
@@ -144,7 +144,7 @@ export default function SaaSGeneralSettingsView() {
         <div className="lg:col-span-3">
           <form
             onSubmit={handleSave}
-            className="glass-card p-8 rounded-3xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  space-y-8"
+            className="glass-card p-6 md:p-8 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  space-y-8"
           >
             <AnimatePresence mode="wait">
               {/* General Tab */}

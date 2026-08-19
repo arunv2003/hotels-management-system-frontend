@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
+import Pagination from "@/components/shared/Pagination";
 
 const MOCK_TICKETS = [
   {
@@ -78,6 +79,8 @@ export default function SupportTicketsView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   
   // Drawer / Detail modal state
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -91,6 +94,12 @@ export default function SupportTicketsView() {
     const matchesPriority = filterPriority === "all" || tc.priority === filterPriority;
     return matchesSearch && matchesStatus && matchesPriority;
   });
+
+  const totalPages = Math.ceil(filteredTickets.length / pageSize) || 1;
+  const paginatedTickets = filteredTickets.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleOpenTicket = (tc) => {
     setSelectedTicket({ ...tc });
@@ -189,12 +198,12 @@ export default function SupportTicketsView() {
           { label: "Resolved Speed", val: resolvedCount, icon: <CheckCircle className="text-emerald-600" /> },
           { label: "Avg SLA Response", val: "18.5 min", icon: <ArrowUpRight className="text-sky-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
               {stat.icon}
             </div>
           </div>
@@ -202,7 +211,7 @@ export default function SupportTicketsView() {
       </div>
 
       {/* Filter and Table Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-80">
@@ -211,12 +220,12 @@ export default function SupportTicketsView() {
               placeholder="Search by hotel or ticket details..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
             />
           </div>
     
           <div className="flex gap-3 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
               <span className="text-xs text-slate-400 px-2.5 font-bold">Status:</span>
               {["all", "Open", "In Progress", "Resolved"].map((s) => (
                 <button
@@ -253,10 +262,10 @@ export default function SupportTicketsView() {
         </div>
 
         {/* Tickets Table */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">ID &amp; Tenant Hotel</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Subject Issue</th>
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
@@ -267,7 +276,7 @@ export default function SupportTicketsView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-              {filteredTickets.map((tc) => (
+              {paginatedTickets.map((tc) => (
                 <tr key={tc.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
                   <td className="p-4.5 pl-6">
                     <div>
@@ -325,6 +334,19 @@ export default function SupportTicketsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredTickets.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       {/* Assist conversational dialogue drawer modal */}

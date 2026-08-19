@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { TestimonialDialog } from "@/components/dilogs/saas/testimonial/testimonial.dilogs";
 import { TestimonialRoutes } from "@/routes/saas/testimonial/testimonial.route";
 import { useToast } from "@/hooks/use-toast";
+import Pagination from "@/components/shared/Pagination";
 
 const STAR_COLORS = [
   "text-rose-400",
@@ -44,6 +45,8 @@ export default function TestimonialsView() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -99,6 +102,12 @@ export default function TestimonialsView() {
       filterStatus === "all" || t.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+  const paginated = filtered.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const updateStatus = async (id, status) => {
     try {
@@ -311,7 +320,7 @@ export default function TestimonialsView() {
         ].map((s, i) => (
           <div
             key={i}
-            className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between"
+            className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between"
           >
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -321,7 +330,7 @@ export default function TestimonialsView() {
                 {s.val}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
               {s.icon}
             </div>
           </div>
@@ -329,7 +338,7 @@ export default function TestimonialsView() {
       </div>
 
       {/* Table Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
         <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-80">
@@ -338,7 +347,7 @@ export default function TestimonialsView() {
               placeholder="Search by author, hotel or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
             />
           </div>
           <div className="flex gap-2">
@@ -359,10 +368,10 @@ export default function TestimonialsView() {
         </div>
 
         {/* Table */}
-        <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex-1 overflow-auto max-h-[480px] relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">
                   Author &amp; Hotel
                 </th>
@@ -384,7 +393,7 @@ export default function TestimonialsView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-              {filtered.map((t, idx) => (
+              {paginated.map((t, idx) => (
                 <tr
                   key={t._id}
                   className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all"
@@ -517,6 +526,19 @@ export default function TestimonialsView() {
             </tbody>
           </table>
         </div>
+
+        {/* Table Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       {/* Create / Edit Modal – now in its own dialog component */}

@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AddPlanDialog from "@/components/dilogs/saas/plans/addPlans";
 import { Plans } from "@/routes/saas/plans/plans.route";
+import Pagination from "@/components/shared/Pagination";
 
 export default function PlanTable() {
   const router = useRouter();
@@ -138,11 +139,11 @@ export default function PlanTable() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
+            className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
           >
             <div
               className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center",
+                "w-12 h-12 rounded-md flex items-center justify-center",
                 stat.bg,
               )}
             >
@@ -161,7 +162,7 @@ export default function PlanTable() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white dark:bg-slate-900 rounded-[0.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Table Toolbar */}
         <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="relative w-full sm:w-96">
@@ -173,19 +174,19 @@ export default function PlanTable() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-80"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-80"
             />
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              className="h-12 rounded-2xl gap-2 font-bold text-sm flex-1 sm:flex-none"
+              className="h-10 rounded-lg gap-2 font-bold text-sm flex-1 sm:flex-none"
             >
               <Filter className="w-4 h-4" /> Filters
             </Button>
             <Button
               variant="outline"
-              className="h-12 w-12 rounded-2xl p-0 flex-none"
+              className="h-10 w-10 rounded-lg p-0 flex-none"
             >
               <ArrowUpDown className="w-4 h-4" />
             </Button>
@@ -193,9 +194,9 @@ export default function PlanTable() {
         </div>
 
         {/* Table Content */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-slate-50/50 dark:bg-slate-800/50">
+        <div className="overflow-auto max-h-[480px] relative">
+          <table className="w-full text-sm text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
               <tr>
                 <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Plan Name
@@ -330,7 +331,7 @@ export default function PlanTable() {
 
           {filteredPlans.length === 0 && !loading && (
             <div className="py-20 text-center">
-              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-slate-200" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -345,53 +346,16 @@ export default function PlanTable() {
 
         {/* Table Pagination */}
         {filteredPlans.length > 0 && (
-          <div className="p-6 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Showing{" "}
-              {filteredPlans.length === 0 ? 0 : (currentPage - 1) * limit + 1}–
-              {Math.min(currentPage * limit, filteredPlans.length)} of{" "}
-              {filteredPlans.length} results
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                className="h-10 px-4 rounded-xl text-xs font-bold"
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                Previous
-              </Button>
-              <div className="flex items-center gap-1">
-                {Array.from(
-                  { length: Math.min(totalPages, 5) },
-                  (_, i) => i + 1,
-                ).map((n) => (
-                  <Button
-                    key={n}
-                    variant={n === currentPage ? "default" : "outline"}
-                    onClick={() => handlePageChange(n)}
-                    className={cn(
-                      "w-10 h-10 p-0 rounded-xl text-xs font-bold",
-                      n === currentPage &&
-                        "bg-indigo-600 shadow-lg shadow-indigo-500/20",
-                    )}
-                  >
-                    {n}
-                  </Button>
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                className="h-10 px-4 rounded-xl text-xs font-bold"
-                disabled={currentPage === totalPages || totalPages === 0}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredPlans.length}
+            pageSize={limit}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
+
 
       <AddPlanDialog
         isOpen={isAddPlanOpen}

@@ -38,6 +38,7 @@ import { useAuthStore } from "@/store/authStore";
 import { BookingRoute } from "@/routes/business/bookingRoute";
 import { RoomRoute } from "@/routes/business/roomRoute";
 import { CloudinaryImage } from "@/routes/saas/cloudinary/cloudinary.route";
+import Pagination from "@/components/shared/Pagination";
 
 export default function BookingsPage() {
   const { user } = useAuthStore();
@@ -51,6 +52,8 @@ export default function BookingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [paymentFilter, setPaymentFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -148,6 +151,12 @@ export default function BookingsPage() {
 
     return matchesSearch && matchesStatus && matchesPayment;
   });
+
+  const totalPages = Math.ceil(filteredBookings.length / pageSize) || 1;
+  const paginatedBookings = filteredBookings.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   // Compute stats
   const totalBookingsCount = bookings.length;
@@ -561,10 +570,10 @@ export default function BookingsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800">
+            <div className="overflow-auto max-h-[480px] relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap">
+                <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+                  <tr className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800">
                     <th className="py-4 px-6">Guest Info</th>
                     <th className="py-4 px-6">Guest ID Proof</th>
                     <th className="py-4 px-6">Room</th>
@@ -575,7 +584,7 @@ export default function BookingsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
-                  {filteredBookings.map((b) => {
+                  {paginatedBookings.map((b) => {
                     const guest = b.guestId || {};
                     const room = b.room || {};
                     const checkIn = b.checkInDate
@@ -764,6 +773,21 @@ export default function BookingsPage() {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {/* Table Pagination */}
+          {!loading && filteredBookings.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredBookings.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
           )}
         </div>
 
