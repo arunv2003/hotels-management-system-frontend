@@ -1,21 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, LogOut, Search, Hotel as BrandIcon, } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { SUPER_ADMIN_NAV, HOTEL_NAV, EMPLOYEE_NAV } from "@/lib/navigation";
-import { SubscriptionGuard } from "@/features/subscriptions/SubscriptionGuard";
 export const Sidebar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
     const { user, logout, hasPermission } = useAuthStore();
 
+    const handleLogout = async () => {
+        await logout();
+        router.push("/login");
+    };
+
     React.useEffect(() => {
-        setMounted(true);
+        const timer = setTimeout(() => setMounted(true), 0);
+        return () => clearTimeout(timer);
     }, []);
 
     const getNavItems = () => {
@@ -52,19 +58,18 @@ export const Sidebar = () => {
         }
 
         return rawItems.filter((item) => {
-            if (item.module) {
-                return hasPermission(item.module, "view");
+            // Dashboard is always accessible to logged-in users
+            if (
+                item.label === "Dashboard" ||
+                item.href === "/admin" ||
+                item.href === "/super-admin" ||
+                item.href === "/employee"
+            ) {
+                return true;
             }
-            let moduleId = "dashboard";
-            const parts = item.href.split("/").filter(Boolean);
-            if (parts.length > 1) {
-                moduleId = parts[parts.length - 1].replace("-", "_");
-            }
-            if (moduleId === "reports") moduleId = "global_reports";
-            if (moduleId === "cms_page") moduleId = "cms_pages";
-            if (moduleId === "support_tickets") moduleId = "support_tickets";
 
-            return hasPermission(moduleId, "view");
+            const targetModule = item.module || item.href.split("/").filter(Boolean).pop()?.replace("-", "_") || "dashboard";
+            return hasPermission(targetModule, "view");
         });
     };
     const navItems = getNavItems();
@@ -101,46 +106,67 @@ export const Sidebar = () => {
         {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
-            const content = (<Link key={item.href} href={item.href} className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative", isActive
-                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                    : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100")}>
-              <Icon className={cn("w-5 h-5 shrink-0", isActive
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "group-hover:scale-110 transition-transform")}/>
-              {!isCollapsed && (<span className="font-medium text-sm">{item.label}</span>)}
-              {isActive && !isCollapsed && (<motion.div layoutId="active-pill" className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full"/>)}
-              {isCollapsed && isActive && (<div className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full"/>)}
-            </Link>);
-            if (item.module) {
-                return (<SubscriptionGuard key={item.href} moduleId={item.module} fallback={!isCollapsed ? (<div className="flex items-center gap-3 px-3 py-2.5 opacity-50 cursor-not-allowed">
-                      <Icon className="w-5 h-5 shrink-0"/>
-                      <span className="font-medium text-sm">{item.label}</span>
-                      <div className="ml-auto bg-slate-100 dark:bg-slate-800 p-1 rounded">
-                        <LogOut size={12} className="rotate-180"/>
-                      </div>
-                    </div>) : null}>
-                {content}
-              </SubscriptionGuard>);
-            }
-            return content;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
+                  isActive
+                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold"
+                    : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
+                )}
+              >
+                <Icon
+                  className={cn(
+                    "w-5 h-5 shrink-0",
+                    isActive
+                      ? "text-indigo-600 dark:text-indigo-400"
+                      : "group-hover:scale-110 transition-transform"
+                  )}
+                />
+                {!isCollapsed && <span className="font-medium text-sm">{item.label}</span>}
+                {isActive && !isCollapsed && (
+                  <motion.div
+                    layoutId="active-pill"
+                    className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full"
+                  />
+                )}
+                {isCollapsed && isActive && (
+                  <div className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full" />
+                )}
+              </Link>
+            );
         })}
       </nav>
 
       <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
-        {!isCollapsed && (<div className="flex items-center gap-3 px-2 mb-4">
-            <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-indigo-600">
-              {user?.name.charAt(0)}
+        {!isCollapsed && (
+          <Link
+            href={
+              pathname.startsWith("/super-admin")
+                ? "/super-admin/profile"
+                : pathname.startsWith("/employee")
+                ? "/employee/profile"
+                : "/admin/profile"
+            }
+            className="flex items-center gap-3 px-2 py-1.5 mb-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors group cursor-pointer"
+            title="View Profile Details"
+          >
+            <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center font-bold text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform shrink-0">
+              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                {user?.name}
+              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                {user?.name || "Logged User"}
               </p>
               <p className="text-xs text-slate-500 truncate uppercase tracking-tighter">
-                {(user?.userType || user?.role || "").replace("_", " ")}
+                {String(user?.userType || user?.role?.name || user?.role || "").replace("_", " ")}
               </p>
             </div>
-          </div>)}
-        <button onClick={logout} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-200", isCollapsed && "justify-center")}>
+          </Link>
+        )}
+        <button onClick={handleLogout} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-200", isCollapsed && "justify-center")}>
           <LogOut className="w-5 h-5"/>
           {!isCollapsed && <span className="font-medium text-sm">Logout</span>}
         </button>

@@ -530,7 +530,11 @@ export default function RestaurantPage() {
                       const isLow = !isOutOfStock && Number(dish.quantity) <= 5;
                       const isImageUrl =
                         dish.image &&
-                        (dish.image.startsWith("http://") || dish.image.startsWith("https://"));
+                        typeof dish.image === "string" &&
+                        (dish.image.startsWith("http://") ||
+                          dish.image.startsWith("https://") ||
+                          dish.image.startsWith("/") ||
+                          dish.image.startsWith("data:"));
 
                       return (
                         <tr
@@ -1003,10 +1007,28 @@ export default function RestaurantPage() {
               className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 md:p-8 max-w-md w-full space-y-5"
             >
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{selectedItem.image || "🍽️"}</span>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-lg overflow-hidden shrink-0">
+                    {selectedItem.image &&
+                    typeof selectedItem.image === "string" &&
+                    (selectedItem.image.startsWith("http://") ||
+                      selectedItem.image.startsWith("https://") ||
+                      selectedItem.image.startsWith("/") ||
+                      selectedItem.image.startsWith("data:")) ? (
+                      <img
+                        src={selectedItem.image}
+                        alt={selectedItem.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      selectedItem.image || "🍽️"
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
                       Adjust Stock: {selectedItem.name}
                     </h3>
                     <p className="text-xs text-slate-400">Current Stock: {selectedItem.quantity || 0} servings</p>

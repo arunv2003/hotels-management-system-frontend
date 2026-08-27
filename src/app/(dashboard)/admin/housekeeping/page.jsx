@@ -241,7 +241,25 @@ export default function HousekeepingPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{item.image || "🛏️"}</span>
+                        <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
+                          {item.image &&
+                          typeof item.image === "string" &&
+                          (item.image.startsWith("http://") ||
+                            item.image.startsWith("https://") ||
+                            item.image.startsWith("/") ||
+                            item.image.startsWith("data:")) ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            item.image || "🛏️"
+                          )}
+                        </div>
                         <div>
                           <h4 className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{item.name}</h4>
                           <p className="text-xs text-slate-400">{item.category}</p>
@@ -406,13 +424,31 @@ export default function HousekeepingPage() {
               className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 md:p-8 max-w-md w-full space-y-5"
             >
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{dispatchItem.image || "🛏️"}</span>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-lg overflow-hidden shrink-0">
+                    {dispatchItem.image &&
+                    typeof dispatchItem.image === "string" &&
+                    (dispatchItem.image.startsWith("http://") ||
+                      dispatchItem.image.startsWith("https://") ||
+                      dispatchItem.image.startsWith("/") ||
+                      dispatchItem.image.startsWith("data:")) ? (
+                      <img
+                        src={dispatchItem.image}
+                        alt={dispatchItem.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      dispatchItem.image || "🛏️"
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
                       Dispatch Housekeeping Supply
                     </h3>
-                    <p className="text-xs text-slate-400">{dispatchItem.name}</p>
+                    <p className="text-xs text-slate-400 truncate">{dispatchItem.name}</p>
                   </div>
                 </div>
                 <button

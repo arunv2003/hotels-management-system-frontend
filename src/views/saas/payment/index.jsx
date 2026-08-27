@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   CreditCard,
   ArrowUpRight,
@@ -13,6 +13,7 @@ import {
   DollarSign,
   ChevronRight,
   RefreshCcw,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,104 +27,57 @@ import {
   CartesianGrid,
 } from "recharts";
 import Pagination from "@/components/shared/Pagination";
-
-const INITIAL_TRANSACTIONS = [
-  {
-    id: "tx_1",
-    hotelName: "Ocean Breeze Inn",
-    owner: "Alice Smith",
-    plan: "Premium",
-    amount: 99.0,
-    status: "Successful",
-    date: "2026-05-19",
-    invoice: "INV-2026-042",
-    method: "Visa ending in 4242",
-  },
-  {
-    id: "tx_2",
-    hotelName: "Mountain Peak Lodge",
-    owner: "Bob Jones",
-    plan: "Standard",
-    amount: 49.0,
-    status: "Successful",
-    date: "2026-05-18",
-    invoice: "INV-2026-041",
-    method: "MasterCard ending in 5555",
-  },
-  {
-    id: "tx_3",
-    hotelName: "Desert Oasis Resort",
-    owner: "David Wilson",
-    plan: "Premium",
-    amount: 99.0,
-    status: "Successful",
-    date: "2026-05-15",
-    invoice: "INV-2026-040",
-    method: "Visa ending in 9876",
-  },
-  {
-    id: "tx_4",
-    hotelName: "Urban Suite Hotel",
-    owner: "Charlie Brown",
-    plan: "Standard",
-    amount: 49.0,
-    status: "Pending",
-    date: "2026-05-14",
-    invoice: "INV-2026-039",
-    method: "Bank Transfer",
-  },
-  {
-    id: "tx_5",
-    hotelName: "Forest Hideaway",
-    owner: "Eva Green",
-    plan: "Premium",
-    amount: 99.0,
-    status: "Failed",
-    date: "2026-05-10",
-    invoice: "INV-2026-038",
-    method: "Amex ending in 1001",
-  },
-  {
-    id: "tx_6",
-    hotelName: "Grand View Resort",
-    owner: "John Hotelier",
-    plan: "Premium",
-    amount: 99.0,
-    status: "Successful",
-    date: "2026-05-08",
-    invoice: "INV-2026-037",
-    method: "Visa ending in 8811",
-  },
-  {
-    id: "tx_7",
-    hotelName: "Lake View Cabins",
-    owner: "Sarah Connor",
-    plan: "Standard",
-    amount: 49.0,
-    status: "Successful",
-    date: "2026-05-05",
-    invoice: "INV-2026-036",
-    method: "MasterCard ending in 1234",
-  },
-];
-
-const WEEKLY_BREAKDOWN = [
-  { name: "Wk 18", Subscriptions: 1450, Addons: 200 },
-  { name: "Wk 19", Subscriptions: 1850, Addons: 400 },
-  { name: "Wk 20", Subscriptions: 2100, Addons: 350 },
-  { name: "Wk 21", Subscriptions: 2450, Addons: 600 },
-];
-
 import { useIsMounted } from "@/hooks/use-is-mounted";
+import { SaaSAnalyticsRoute } from "@/routes/saas/analytics/analytics.route";
 
 export default function SaaSPaymentView() {
-  const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
+  const [stats, setStats] = useState({
+    grossVolume: 0,
+    mrr: 0,
+    avgPlanPrice: 0,
+    failedPaymentsCount: 0,
+  });
+  const [weeklyBreakdown, setWeeklyBreakdown] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedTx, setSelectedTx] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const isMounted = useIsMounted();
+
+  const fetchPaymentData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [statsRes, txRes] = await Promise.all([
+        SaaSAnalyticsRoute.getPaymentStats(),
+        SaaSAnalyticsRoute.getTransactions({ search: searchQuery, status: statusFilter }),
+      ]);
+
+      if (statsRes?.data) {
+        setStats({
+          grossVolume: statsRes.data.grossVolume || 0,
+          mrr: statsRes.data.mrr || 0,
+          avgPlanPrice: statsRes.data.avgPlanPrice || 0,
+          failedPaymentsCount: statsRes.data.failedPaymentsCount || 0,
+        });
+        setWeeklyBreakdown(statsRes.data.weeklyBreakdown || []);
+      }
+
+      if (txRes?.data?.transactions) {
+        setTransactions(txRes.data.transactions);
+      }
+    } catch (error) {
+      console.error("Failed to fetch payment dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchQuery, statusFilter]);
+
+  useEffect(() => {
+    fetchPaymentData();
+  }, [fetchPaymentData]);
 
   const filteredTransactions = transactions.filter((tx) => {
     const matchesSearch =
@@ -132,7 +86,10 @@ export default function SaaSPaymentView() {
       tx.invoice.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "ALL" || tx.status.toUpperCase() === statusFilter;
+      statusFilter === "ALL" ||
+      (statusFilter === "SUCCESSFUL" && (tx.status === "Successful" || tx.status === "Paid")) ||
+      (statusFilter === "PENDING" && tx.status === "Pending") ||
+      (statusFilter === "FAILED" && tx.status === "Failed");
 
     return matchesSearch && matchesStatus;
   });
@@ -143,22 +100,43 @@ export default function SaaSPaymentView() {
     currentPage * pageSize
   );
 
-  const handleRefund = (id) => {
-    setTransactions((prev) =>
-      prev.map((tx) => {
-        if (tx.id === id) {
-          return { ...tx, status: "Refunded", amount: -tx.amount };
-        }
-        return tx;
-      }),
-    );
-    if (selectedTx?.id === id) {
-      setSelectedTx((prev) => ({
-        ...prev,
-        status: "Refunded",
-        amount: -prev.amount,
-      }));
+  const handleRefund = async (id) => {
+    try {
+      await SaaSAnalyticsRoute.refundTransaction(id);
+      setTransactions((prev) =>
+        prev.map((tx) => {
+          if (tx.id === id) {
+            return { ...tx, status: "Refunded", amount: -Math.abs(tx.amount) };
+          }
+          return tx;
+        })
+      );
+      if (selectedTx?.id === id) {
+        setSelectedTx((prev) => ({
+          ...prev,
+          status: "Refunded",
+          amount: -Math.abs(prev.amount),
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to issue refund:", error);
     }
+  };
+
+  const handleExportCSV = () => {
+    const headers = "ID,Hotel,Owner,Plan,Amount,Status,Date,Invoice,Method\n";
+    const rows = filteredTransactions
+      .map(
+        (t) =>
+          `"${t.id}","${t.hotelName}","${t.owner}","${t.plan}",${t.amount},"${t.status}","${t.date}","${t.invoice}","${t.method}"`
+      )
+      .join("\n");
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `saas-transactions-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
   };
 
   return (
@@ -176,11 +154,16 @@ export default function SaaSPaymentView() {
         <div className="flex gap-3">
           <Button
             variant="outline"
-            className="h-11 rounded-xl border-slate-200 dark:border-slate-800 gap-2"
+            onClick={fetchPaymentData}
+            disabled={loading}
+            className="h-11 rounded-xl border-slate-200 dark:border-slate-800 gap-2 cursor-pointer"
           >
-            <RefreshCcw size={16} /> Sync Gateway
+            <RefreshCcw size={16} className={loading ? "animate-spin" : ""} /> Sync Gateway
           </Button>
-          <Button className="rounded-xl bg-indigo-600 hover:bg-indigo-700 h-11 px-5 gap-2 cursor-pointer text-white font-bold">
+          <Button
+            onClick={handleExportCSV}
+            className="rounded-xl bg-indigo-600 hover:bg-indigo-700 h-11 px-5 gap-2 cursor-pointer text-white font-bold"
+          >
             <Download size={18} /> Export CSV
           </Button>
         </div>
@@ -188,7 +171,7 @@ export default function SaaSPaymentView() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 ">
+        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <div className="flex justify-between items-start mb-4">
             <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-md">
               <DollarSign size={22} />
@@ -200,7 +183,7 @@ export default function SaaSPaymentView() {
           <div>
             <p className="text-sm font-semibold text-slate-500">Gross Volume</p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-              $128,430
+              ₹{stats.grossVolume.toLocaleString()}
             </h3>
           </div>
         </div>
@@ -219,7 +202,7 @@ export default function SaaSPaymentView() {
               Monthly Recurring Revenue
             </p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-              $24,550
+              ₹{stats.mrr.toLocaleString()}
             </h3>
           </div>
         </div>
@@ -238,7 +221,7 @@ export default function SaaSPaymentView() {
               Average Subscription Plan
             </p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-              $84.20
+              ₹{stats.avgPlanPrice.toFixed(2)}
             </h3>
           </div>
         </div>
@@ -249,7 +232,7 @@ export default function SaaSPaymentView() {
               <AlertCircle size={22} />
             </div>
             <span className="flex items-center gap-1 text-xs font-bold text-rose-600 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full">
-              <TrendingDown size={12} /> -24%
+              <TrendingDown size={12} /> Live
             </span>
           </div>
           <div>
@@ -257,7 +240,7 @@ export default function SaaSPaymentView() {
               Failed / Disputed Payments
             </p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-              2
+              {stats.failedPaymentsCount}
             </h3>
           </div>
         </div>
@@ -278,30 +261,22 @@ export default function SaaSPaymentView() {
               </div>
 
               <div className="flex gap-2">
-                <button
-                  onClick={() => setStatusFilter("ALL")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "ALL" ? "bg-indigo-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setStatusFilter("SUCCESSFUL")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "SUCCESSFUL" ? "bg-emerald-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
-                >
-                  Success
-                </button>
-                <button
-                  onClick={() => setStatusFilter("PENDING")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "PENDING" ? "bg-amber-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
-                >
-                  Pending
-                </button>
-                <button
-                  onClick={() => setStatusFilter("FAILED")}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors ${statusFilter === "FAILED" ? "bg-rose-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
-                >
-                  Failed
-                </button>
+                {["ALL", "SUCCESSFUL", "PENDING", "FAILED"].map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => {
+                      setStatusFilter(st);
+                      setCurrentPage(1);
+                    }}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors capitalize ${
+                      statusFilter === st
+                        ? "bg-indigo-600 text-white"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    {st.toLowerCase()}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -310,100 +285,113 @@ export default function SaaSPaymentView() {
               <Input
                 placeholder="Search transactions by hotel owner or invoice number..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
 
             <div className="overflow-auto max-h-[480px] relative">
-              <table className="w-full text-left border-collapse whitespace-nowrap">
-                <thead className="sticky top-0 z-10 bg-white dark:bg-slate-900 shadow-sm">
-                  <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
-                    <th className="py-4">Tenant / Hotel</th>
-                    <th className="py-4">Plan / Cycle</th>
-                    <th className="py-4">Amount</th>
-                    <th className="py-4">Status</th>
-                    <th className="py-4">Date</th>
-                    <th className="py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-                  {paginatedTransactions.map((tx) => (
-                    <tr
-                      key={tx.id}
-                      onClick={() => setSelectedTx(tx)}
-                      className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 cursor-pointer transition-colors"
-                    >
-                      <td className="py-4 font-bold text-slate-900 dark:text-white">
-                        <div>
-                          <p>{tx.hotelName}</p>
-                          <p className="text-xs text-slate-500 font-normal">
-                            {tx.owner}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="py-4">
-                        <span className="text-xs font-bold px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-md text-indigo-600 dark:text-indigo-400 uppercase">
-                          {tx.plan}
-                        </span>
-                      </td>
-                      <td
-                        className={`py-4 font-black ${tx.amount < 0 ? "text-rose-500" : "text-slate-900 dark:text-white"}`}
+              {loading ? (
+                <div className="py-12 flex items-center justify-center text-slate-400 gap-2">
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Loading live transactions...</span>
+                </div>
+              ) : (
+                <table className="w-full text-left border-collapse whitespace-nowrap">
+                  <thead className="sticky top-0 z-10 bg-white dark:bg-slate-900 shadow-sm">
+                    <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
+                      <th className="py-4">Tenant / Hotel</th>
+                      <th className="py-4">Plan / Cycle</th>
+                      <th className="py-4">Amount</th>
+                      <th className="py-4">Status</th>
+                      <th className="py-4">Date</th>
+                      <th className="py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+                    {paginatedTransactions.map((tx) => (
+                      <tr
+                        key={tx.id}
+                        onClick={() => setSelectedTx(tx)}
+                        className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 cursor-pointer transition-colors"
                       >
-                        ${Math.abs(tx.amount).toFixed(2)}
-                      </td>
-                      <td className="py-4">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                            tx.status === "Successful"
-                              ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10"
-                              : tx.status === "Pending"
-                                ? "text-amber-600 bg-amber-50 dark:bg-amber-500/10"
-                                : tx.status === "Refunded"
-                                  ? "text-blue-600 bg-blue-50 dark:bg-blue-500/10"
-                                  : "text-rose-600 bg-rose-50 dark:bg-rose-500/10"
+                        <td className="py-4 font-bold text-slate-900 dark:text-white">
+                          <div>
+                            <p>{tx.hotelName}</p>
+                            <p className="text-xs text-slate-500 font-normal">
+                              {tx.owner}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="py-4">
+                          <span className="text-xs font-bold px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-md text-indigo-600 dark:text-indigo-400 uppercase">
+                            {tx.plan}
+                          </span>
+                        </td>
+                        <td
+                          className={`py-4 font-black ${
+                            tx.amount < 0 ? "text-rose-500" : "text-slate-900 dark:text-white"
                           }`}
                         >
-                          {tx.status === "Successful" && (
-                            <CheckCircle2 size={12} />
-                          )}
-                          {tx.status === "Pending" && <AlertCircle size={12} />}
-                          {tx.status === "Failed" && <XCircle size={12} />}
-                          {tx.status}
-                        </span>
-                      </td>
-                      <td className="py-4 text-slate-500 font-medium">
-                        {tx.date}
-                      </td>
-                      <td
-                        className="py-4 text-right"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                          ₹{Math.abs(tx.amount).toFixed(2)}
+                        </td>
+                        <td className="py-4">
+                          <span
+                            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                              tx.status === "Successful" || tx.status === "Paid"
+                                ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10"
+                                : tx.status === "Pending"
+                                ? "text-amber-600 bg-amber-50 dark:bg-amber-500/10"
+                                : tx.status === "Refunded"
+                                ? "text-blue-600 bg-blue-50 dark:bg-blue-500/10"
+                                : "text-rose-600 bg-rose-50 dark:bg-rose-500/10"
+                            }`}
                           >
-                            <Download size={15} />
-                          </Button>
-                          <ChevronRight size={18} className="text-slate-400" />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredTransactions.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan="6"
-                        className="py-8 text-center text-slate-400"
-                      >
-                        No transactions found matching the filter criteria.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                            {(tx.status === "Successful" || tx.status === "Paid") && (
+                              <CheckCircle2 size={12} />
+                            )}
+                            {tx.status === "Pending" && <AlertCircle size={12} />}
+                            {tx.status === "Failed" && <XCircle size={12} />}
+                            {tx.status}
+                          </span>
+                        </td>
+                        <td className="py-4 text-slate-500 font-medium">
+                          {tx.date}
+                        </td>
+                        <td
+                          className="py-4 text-right"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setSelectedTx(tx)}
+                              className="h-8 w-8 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                            >
+                              <Download size={15} />
+                            </Button>
+                            <ChevronRight size={18} className="text-slate-400" />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredTransactions.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan="6"
+                          className="py-8 text-center text-slate-400"
+                        >
+                          No transactions found matching the filter criteria.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
 
             {/* Table Pagination */}
@@ -436,7 +424,7 @@ export default function SaaSPaymentView() {
               {isMounted && (
                 <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                   <BarChart
-                    data={WEEKLY_BREAKDOWN}
+                    data={weeklyBreakdown}
                     margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
                   >
                     <CartesianGrid
@@ -475,7 +463,7 @@ export default function SaaSPaymentView() {
           </div>
 
           {/* Transaction detailed view */}
-          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900  min-h-[300px] flex flex-col">
+          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 min-h-[300px] flex flex-col">
             {selectedTx ? (
               <div className="flex-1 flex flex-col justify-between">
                 <div>
@@ -494,7 +482,7 @@ export default function SaaSPaymentView() {
                         Total Paid
                       </p>
                       <h2 className="text-2xl font-black text-slate-900 dark:text-white">
-                        ${Math.abs(selectedTx.amount).toFixed(2)}
+                        ₹{Math.abs(selectedTx.amount).toFixed(2)}
                       </h2>
                     </div>
 
@@ -530,7 +518,7 @@ export default function SaaSPaymentView() {
                 </div>
 
                 <div className="space-y-3 pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
-                  {selectedTx.status === "Successful" && (
+                  {(selectedTx.status === "Successful" || selectedTx.status === "Paid") && (
                     <Button
                       onClick={() => handleRefund(selectedTx.id)}
                       className="w-full rounded-lg border border-rose-100 dark:border-rose-500/20 text-rose-600 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 h-10 px-4 cursor-pointer font-bold transition-all text-xs"
@@ -538,7 +526,10 @@ export default function SaaSPaymentView() {
                       Issue Refund
                     </Button>
                   )}
-                  <Button className="w-full rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white h-10 px-4 cursor-pointer font-bold transition-all text-xs">
+                  <Button
+                    onClick={() => alert(`Downloading Invoice PDF for ${selectedTx.invoice}...`)}
+                    className="w-full rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white h-10 px-4 cursor-pointer font-bold transition-all text-xs"
+                  >
                     Download Invoice (PDF)
                   </Button>
                 </div>

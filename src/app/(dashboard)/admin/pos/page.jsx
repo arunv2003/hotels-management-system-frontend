@@ -923,7 +923,13 @@ function OrdersHistoryModal({ isOpen, onClose }) {
 
                   <div className="space-y-1.5 pt-1">
                     {order.items?.map((item, idx) => {
-                      const isImg = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"));
+                      const isImg =
+                        item.image &&
+                        typeof item.image === "string" &&
+                        (item.image.startsWith("http://") ||
+                          item.image.startsWith("https://") ||
+                          item.image.startsWith("/") ||
+                          item.image.startsWith("data:"));
                       return (
                         <div key={idx} className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-400">
                           <span className="flex items-center gap-1.5">

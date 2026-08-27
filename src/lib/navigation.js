@@ -23,6 +23,7 @@ import {
   LifeBuoy,
   BellRing,
   TicketPercent,
+  UserCircle,
 } from "lucide-react";
 
 export const SUPER_ADMIN_NAV = [
@@ -53,62 +54,73 @@ export const SUPER_ADMIN_NAV = [
     icon: MessageSquareQuote,
   },
   { label: "Settings", href: "/super-admin/settings", icon: Settings },
+  { label: "My Profile", href: "/super-admin/profile", icon: UserCircle },
 ];
 
 export const HOTEL_NAV = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Rooms", href: "/admin/rooms", icon: Bed },
-  { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
-  { label: "Guests", href: "/admin/guests", icon: UserSquare2 },
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard, module: "dashboard" },
+  { label: "Rooms", href: "/admin/rooms", icon: Bed, module: "rooms" },
+  { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck, module: "bookings" },
+  { label: "Guests", href: "/admin/guests", icon: UserSquare2, module: "guests" },
   {
     label: "POS",
     href: "/admin/pos",
     icon: Store,
-    module: "pos_access",
+    module: "pos",
   },
   {
     label: "Restaurant",
     href: "/admin/restaurant",
     icon: Utensils,
-    module: "pos_access",
+    module: "pos",
   },
   {
     label: "Housekeeping",
     href: "/admin/housekeeping",
     icon: Wrench,
+    module: "housekeeping",
   },
   {
     label: "Inventory",
     href: "/admin/inventory",
     icon: Box,
-    module: "inventory_manage",
+    module: "inventory",
   },
   {
     label: "Staff",
     href: "/admin/staff",
     icon: Users,
+    module: "staff",
   },
   {
     label: "Payroll",
     href: "/admin/payroll",
     icon: Wallet,
-    module: "payroll_manage",
+    module: "payroll",
   },
   {
     label: "Roles & Permissions",
     href: "/admin/roles",
     icon: ShieldCheck,
+    module: "settings",
   },
   {
     label: "Reports",
     href: "/admin/reports",
     icon: BarChart3,
-    module: "reports_export",
+    module: "reports",
   },
   {
     label: "Settings",
     href: "/admin/settings",
     icon: Settings,
+    module: "settings",
+  },
+  {
+    label: "My Profile",
+    href: "/admin/profile",
+    icon: UserCircle,
+    module: "dashboard",
   },
 ];
 
@@ -132,5 +144,10 @@ export const EMPLOYEE_NAV = [
     label: "Notifications",
     href: "/employee/notifications",
     icon: Bell,
+  },
+  {
+    label: "My Profile",
+    href: "/employee/profile",
+    icon: UserCircle,
   },
 ];

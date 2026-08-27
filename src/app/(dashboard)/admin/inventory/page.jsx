@@ -677,8 +677,24 @@ export default function InventoryPage() {
                           {/* Item & SKU */}
                           <td className="py-4 px-6">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-lg shrink-0">
-                                {item.image || "📦"}
+                              <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
+                                {item.image &&
+                                typeof item.image === "string" &&
+                                (item.image.startsWith("http://") ||
+                                  item.image.startsWith("https://") ||
+                                  item.image.startsWith("/") ||
+                                  item.image.startsWith("data:")) ? (
+                                  <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.target.style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  item.image || "📦"
+                                )}
                               </div>
                               <div>
                                 <p className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
@@ -1147,10 +1163,28 @@ export default function InventoryPage() {
               className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 md:p-8 max-w-md w-full space-y-5"
             >
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{adjustTargetItem.image || "📦"}</span>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-lg overflow-hidden shrink-0">
+                    {adjustTargetItem.image &&
+                    typeof adjustTargetItem.image === "string" &&
+                    (adjustTargetItem.image.startsWith("http://") ||
+                      adjustTargetItem.image.startsWith("https://") ||
+                      adjustTargetItem.image.startsWith("/") ||
+                      adjustTargetItem.image.startsWith("data:")) ? (
+                      <img
+                        src={adjustTargetItem.image}
+                        alt={adjustTargetItem.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      adjustTargetItem.image || "📦"
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
                       Adjust Stock: {adjustTargetItem.name}
                     </h3>
                     <p className="text-xs text-slate-400">

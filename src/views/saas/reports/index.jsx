@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FileBarChart2,
   Calendar,
@@ -15,6 +15,7 @@ import {
   PieChart as PieIcon,
   RefreshCcw,
   Zap,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,70 +27,22 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  Legend,
 } from "recharts";
 import Pagination from "@/components/shared/Pagination";
-
-const MOCK_REVENUE_DATA = [
-  { month: "Jan", revenue: 4500, registrations: 12 },
-  { month: "Feb", revenue: 5800, registrations: 19 },
-  { month: "Mar", revenue: 8900, registrations: 26 },
-  { month: "Apr", revenue: 12400, registrations: 34 },
-  { month: "May", revenue: 16800, registrations: 45 },
-  { month: "Jun", revenue: 21000, registrations: 62 },
-];
-
-const MOCK_REPORTS_LIST = [
-  {
-    id: "rep-1",
-    name: "Q1 Financial Audit Summary",
-    type: "Financial",
-    generatedBy: "System Auto",
-    date: "2026-04-01",
-    status: "Completed",
-    size: "1.4 MB",
-  },
-  {
-    id: "rep-2",
-    name: "May Tenant Growth Matrix",
-    type: "Platform Activity",
-    generatedBy: "Admin Staff",
-    date: "2026-05-18",
-    status: "Completed",
-    size: "820 KB",
-  },
-  {
-    id: "rep-3",
-    name: "SLA Tickets Resolution Speed Report",
-    type: "Customer Support",
-    generatedBy: "Lead Engineer",
-    date: "2026-05-20",
-    status: "Completed",
-    size: "2.1 MB",
-  },
-  {
-    id: "rep-4",
-    name: "Annual Recurring Subscription Projections",
-    type: "Projections",
-    generatedBy: "System Auto",
-    date: "2026-05-21",
-    status: "Pending",
-    size: "N/A",
-  },
-];
-
 import { useIsMounted } from "@/hooks/use-is-mounted";
+import { SaaSAnalyticsRoute } from "@/routes/saas/analytics/analytics.route";
 
 export default function ReportsView() {
-  const [reports, setReports] = useState(MOCK_REPORTS_LIST);
+  const [reports, setReports] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [mrrText, setMrrText] = useState("₹21,000");
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const isMounted = useIsMounted();
-  
+
   // Custom generator state
   const [isGenerating, setIsGenerating] = useState(false);
   const [newReportParams, setNewReportParams] = useState({
@@ -97,9 +50,30 @@ export default function ReportsView() {
     type: "Financial",
   });
 
+  const fetchReportsData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await SaaSAnalyticsRoute.getPlatformReports();
+      if (res?.data) {
+        setReports(res.data.reports || []);
+        setRevenueData(res.data.revenueData || []);
+        if (res.data.mrr) setMrrText(res.data.mrr);
+      }
+    } catch (error) {
+      console.error("Failed to fetch reports data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchReportsData();
+  }, [fetchReportsData]);
+
   const filteredReports = reports.filter((rep) => {
-    const matchesSearch = rep.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          rep.type.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      rep.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      rep.type.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === "all" || rep.type === filterType;
     return matchesSearch && matchesType;
   });
@@ -110,7 +84,7 @@ export default function ReportsView() {
     currentPage * pageSize
   );
 
-  const handleGenerateReport = (e) => {
+  const handleGenerateReport = async (e) => {
     e.preventDefault();
     if (!newReportParams.name.trim()) {
       alert("Please enter a report name.");
@@ -118,24 +92,32 @@ export default function ReportsView() {
     }
 
     setIsGenerating(true);
-    setTimeout(() => {
-      const generated = {
-        id: `rep-${Date.now()}`,
+    try {
+      const res = await SaaSAnalyticsRoute.generateReport({
         name: newReportParams.name,
         type: newReportParams.type,
-        generatedBy: "Admin Staff",
-        date: new Date().toISOString().split("T")[0],
-        status: "Completed",
-        size: `${(Math.random() * 2 + 0.1).toFixed(1)} MB`,
-      };
-      setReports([generated, ...reports]);
-      setNewReportParams({ name: "", type: "Financial" });
+      });
+
+      if (res?.data) {
+        setReports([res.data, ...reports]);
+        setNewReportParams({ name: "", type: "Financial" });
+      }
+    } catch (error) {
+      console.error("Error generating report:", error);
+      alert("Failed to generate report.");
+    } finally {
       setIsGenerating(false);
-    }, 1500);
+    }
   };
 
   const handleDownload = (name) => {
-    alert(`Downloading: ${name}... Simulated file download has started.`);
+    const csvData = `Report Title,Category,Date,DownloadedAt\n"${name}","Financial","${new Date().toISOString()}","${new Date().toLocaleString()}"`;
+    const blob = new Blob([csvData], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name.toLowerCase().replace(/\s+/g, "_")}.csv`;
+    a.click();
   };
 
   return (
@@ -151,14 +133,22 @@ export default function ReportsView() {
             Analyze multi-tenant subscription transactions, user growth trends, and generate audited PDF summaries.
           </p>
         </div>
+        <Button
+          variant="outline"
+          onClick={fetchReportsData}
+          disabled={loading}
+          className="h-10 rounded-xl border-slate-200 dark:border-slate-800 gap-2 cursor-pointer"
+        >
+          <RefreshCcw size={16} className={loading ? "animate-spin" : ""} /> Refresh Reports
+        </Button>
       </div>
 
       {/* Overview Analytics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: "Monthly Recurring Revenue", val: "$21,000", trend: "+24.5% vs Q1", icon: <TrendingUp className="text-emerald-500" />, trendBg: "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400" },
+          { label: "Monthly Recurring Revenue", val: mrrText, trend: "+24.5% vs Q1", icon: <TrendingUp className="text-emerald-500" />, trendBg: "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400" },
           { label: "Enterprise Registrations", val: "62 Tiers", trend: "+12.1% MoM", icon: <ArrowUpRight className="text-emerald-500" />, trendBg: "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400" },
-          { label: "Active Subscriptions", val: "94.2% Uptime", trend: "0.01% Latency Variance", icon: <CheckCircle className="text-indigo-500" />, trendBg: "bg-indigo-50 text-indigo-850 dark:bg-indigo-500/10 dark:text-indigo-400" },
+          { label: "Active Subscriptions", val: "99.4% Uptime", trend: "0.01% Latency Variance", icon: <CheckCircle className="text-indigo-500" />, trendBg: "bg-indigo-50 text-indigo-850 dark:bg-indigo-500/10 dark:text-indigo-400" },
           { label: "Support Resolution Rate", val: "18.5 min", trend: "-4.2 min decline", icon: <TrendingDown className="text-rose-500" />, trendBg: "bg-rose-50 text-rose-800 dark:bg-rose-500/10 dark:text-rose-400" },
         ].map((stat, i) => (
           <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm">
@@ -189,7 +179,7 @@ export default function ReportsView() {
           <div className="flex-1 w-full text-xs">
             {isMounted && (
               <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-                <AreaChart data={MOCK_REVENUE_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.2} />
@@ -287,7 +277,7 @@ export default function ReportsView() {
               <button
                 key={type}
                 onClick={() => setFilterType(type)}
-                className={`text-xs px-4 py-2 rounded-xl font-bold border transition-all ${
+                className={`text-xs px-4 py-2 rounded-xl font-bold border transition-all cursor-pointer ${
                   filterType === type
                     ? "bg-slate-900 border-slate-900 text-white dark:bg-indigo-650 dark:border-indigo-650"
                     : "bg-white border-slate-200 text-slate-655 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
@@ -301,72 +291,79 @@ export default function ReportsView() {
 
         {/* Audit Table */}
         <div className="flex-1 overflow-auto max-h-[480px] relative">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
-            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-              <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Compiled Sheet Document Name</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Report Category</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Author Init</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Compilation Date</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Size</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Audit Status</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-6">Export</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-105 dark:divide-slate-800/80">
-              {paginatedReports.map((rep) => (
-                <tr key={rep.id} className="hover:bg-slate-55/50 dark:hover:bg-slate-800/30 transition-all">
-                  <td className="p-4.5 pl-6 font-bold text-slate-900 dark:text-white max-w-sm truncate">
-                    {rep.name}
-                  </td>
-                  <td className="p-4.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                    {rep.type}
-                  </td>
-                  <td className="p-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
-                    {rep.generatedBy}
-                  </td>
-                  <td className="p-4.5 text-sm text-slate-500 dark:text-slate-450 font-medium">
-                    {rep.date}
-                  </td>
-                  <td className="p-4.5 text-xs text-slate-500 font-mono font-bold">
-                    {rep.size}
-                  </td>
-                  <td className="p-4.5">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                        rep.status === "Completed"
-                          ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-400"
-                          : "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 animate-pulse"
-                      }`}
-                    >
-                      {rep.status}
-                    </span>
-                  </td>
-                  <td className="p-4.5 text-right pr-6">
-                    {rep.status === "Completed" ? (
-                      <Button
-                        variant="ghost"
-                        onClick={() => handleDownload(rep.name)}
-                        className="h-8.5 px-3 rounded-lg text-slate-500 hover:text-indigo-650 hover:bg-slate-105 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs"
+          {loading ? (
+            <div className="py-12 flex items-center justify-center text-slate-400 gap-2">
+              <Loader2 className="animate-spin" size={20} />
+              <span>Loading compiled reports...</span>
+            </div>
+          ) : (
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
+                <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Compiled Sheet Document Name</th>
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Report Category</th>
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Author Init</th>
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Compilation Date</th>
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Size</th>
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Audit Status</th>
+                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-6">Export</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-105 dark:divide-slate-800/80">
+                {paginatedReports.map((rep) => (
+                  <tr key={rep._id || rep.id} className="hover:bg-slate-55/50 dark:hover:bg-slate-800/30 transition-all">
+                    <td className="p-4.5 pl-6 font-bold text-slate-900 dark:text-white max-w-sm truncate">
+                      {rep.name}
+                    </td>
+                    <td className="p-4.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                      {rep.type}
+                    </td>
+                    <td className="p-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
+                      {rep.generatedBy}
+                    </td>
+                    <td className="p-4.5 text-sm text-slate-500 dark:text-slate-450 font-medium">
+                      {rep.date}
+                    </td>
+                    <td className="p-4.5 text-xs text-slate-500 font-mono font-bold">
+                      {rep.size}
+                    </td>
+                    <td className="p-4.5">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                          rep.status === "Completed"
+                            ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-400"
+                            : "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 animate-pulse"
+                        }`}
                       >
-                        <Download size={13} />
-                        Export
-                      </Button>
-                    ) : (
-                      <span className="text-xs text-slate-400 font-bold">Pending...</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {filteredReports.length === 0 && (
-                <tr>
-                  <td colSpan="7" className="p-10 text-center text-slate-400 text-sm font-medium">
-                    No generated sheets logged in the archives.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                        {rep.status}
+                      </span>
+                    </td>
+                    <td className="p-4.5 text-right pr-6">
+                      {rep.status === "Completed" ? (
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleDownload(rep.name)}
+                          className="h-8.5 px-3 rounded-lg text-slate-500 hover:text-indigo-650 hover:bg-slate-105 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs cursor-pointer"
+                        >
+                          <Download size={13} />
+                          Export
+                        </Button>
+                      ) : (
+                        <span className="text-xs text-slate-400 font-bold">Pending...</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {filteredReports.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="p-10 text-center text-slate-400 text-sm font-medium">
+                      No generated sheets logged in the archives.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Table Pagination */}
@@ -383,6 +380,5 @@ export default function ReportsView() {
         />
       </div>
     </div>
-
   );
 }

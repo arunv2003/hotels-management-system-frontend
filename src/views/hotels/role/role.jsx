@@ -1,466 +1,794 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useCallback, useEffect, useState } from "react";
+import { useToast } from "@/providers/ToastProvider";
 import DashboardLayout from "@/components/shared/DashboardLayout";
-import {
-  ShieldCheck,
-  Plus,
-  Search,
-  Edit2,
-  Trash2,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
-import AddRoles from "@/components/dilogs/saas/roles/roles.Permission";
+import {
+  Plus,
+  Search,
+  ShieldCheck,
+  Trash2,
+  Check,
+  Users,
+  Key,
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
+import { usePermission } from "@/hooks/use-permission";
+import AddHotelRoles from "@/components/dilogs/hotels/roles/roles.Permission";
+import { StaffRoles } from "@/routes/hotels/role/role.route";
 
-const MOCK_ROLES = [
+const MODULES = [
   {
-    id: "r1",
-    name: "Platform Admin",
-    type: "SAAS",
-    users: 3,
-    permissions: [
-      "dashboard",
-      "saas_hotels",
-      "saas_subscriptions",
-      "saas_payments",
-      "saas_analytics",
-      "saas_employees",
-      "settings",
-    ],
-    description: "Full access to platform settings and global analytics.",
+    id: "dashboard",
+    label: "Dashboard",
+    actions: ["view", "global_view"],
+    icon: "📊",
   },
   {
-    id: "r2",
-    name: "Support Specialist",
-    type: "SAAS",
-    users: 12,
-    permissions: ["dashboard", "saas_hotels", "saas_analytics"],
-    description: "Can manage hotel accounts and view performance metrics.",
+    id: "rooms",
+    label: "Rooms",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "🛏️",
   },
   {
-    id: "r3",
-    name: "Billing Manager",
-    type: "SAAS",
-    users: 2,
-    permissions: ["dashboard", "saas_subscriptions", "saas_payments"],
-    description: "Responsible for payments, invoices, and subscription plans.",
+    id: "bookings",
+    label: "Bookings",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "📅",
   },
-];
-
-const PERMISSION_GROUPS = [
   {
-    title: "Hotel Operations",
-    perms: [
-      {
-        id: "dashboard",
-        label: "Dashboard",
-        desc: "Access the hotel management dashboard",
-      },
-
-      {
-        id: "rooms",
-        label: "Rooms",
-        desc: "Manage hotel rooms and room types",
-      },
-      {
-        id: "bookings",
-        label: "Bookings",
-        desc: "Manage reservations and bookings",
-      },
-      {
-        id: "guests",
-        label: "Guests",
-        desc: "View and manage guest information",
-      },
-
-      {
-        id: "pos",
-        label: "POS",
-        desc: "Access Point of Sale operations",
-      },
-
-      {
-        id: "restaurant",
-        label: "Restaurant",
-        desc: "Manage restaurant and dining services",
-      },
-
-      {
-        id: "housekeeping",
-        label: "Housekeeping",
-        desc: "Manage housekeeping tasks and room status",
-      },
-
-      {
-        id: "inventory",
-        label: "Inventory",
-        desc: "Track inventory and stock management",
-      },
-
-      {
-        id: "staff",
-        label: "Staff",
-        desc: "Manage hotel employees and staff members",
-      },
-
-      {
-        id: "payroll",
-        label: "Payroll",
-        desc: "Access payroll and salary management",
-      },
-
-      {
-        id: "reports",
-        label: "Reports",
-        desc: "View hotel analytics and reports",
-      },
-
-      {
-        id: "settings",
-        label: "Settings",
-        desc: "Manage hotel settings and configurations",
-      },
-
-      {
-        id: "employee_dashboard",
-        label: "Employee Dashboard",
-        desc: "Access employee dashboard panel",
-      },
-
-      {
-        id: "tasks",
-        label: "Tasks",
-        desc: "Manage assigned employee tasks",
-      },
-
-      {
-        id: "attendance",
-        label: "Attendance",
-        desc: "Track employee attendance records",
-      },
-
-      {
-        id: "notifications",
-        label: "Notifications",
-        desc: "Access employee notifications and alerts",
-      },
-    ],
+    id: "guests",
+    label: "Guests",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "👥",
+  },
+  {
+    id: "pos",
+    label: "Restaurant / POS",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "🍽️",
+  },
+  {
+    id: "housekeeping",
+    label: "Housekeeping",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "🧹",
+  },
+  {
+    id: "inventory",
+    label: "Inventory",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "📦",
+  },
+  {
+    id: "staff",
+    label: "Staff Management",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "👨‍💼",
+  },
+  {
+    id: "payroll",
+    label: "Payroll",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "💰",
+  },
+  {
+    id: "attendance",
+    label: "Attendance",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "⏰",
+  },
+  {
+    id: "reports",
+    label: "Reports & Analytics",
+    actions: ["view", "global_view"],
+    icon: "📈",
+  },
+  {
+    id: "settings",
+    label: "Hotel Settings",
+    actions: ["view", "edit", "global_view"],
+    icon: "⚙️",
+  },
+  {
+    id: "tasks",
+    label: "Tasks",
+    actions: ["add", "view", "edit", "delete", "global_view"],
+    icon: "📋",
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    actions: ["view", "global_view"],
+    icon: "🔔",
   },
 ];
 
-export default function RolesPage() {
-  const pathname = usePathname();
-  const isSuperAdmin = pathname?.startsWith("/super-admin");
+const ACTIONS = [
+  {
+    id: "add",
+    label: "Add",
+    icon: "➕",
+    color: "emerald",
+    description: "Create new records",
+  },
+  {
+    id: "view",
+    label: "View",
+    icon: "👁️",
+    color: "blue",
+    description: "Read access",
+  },
+  {
+    id: "edit",
+    label: "Edit",
+    icon: "✏️",
+    color: "amber",
+    description: "Modify existing records",
+  },
+  {
+    id: "delete",
+    label: "Delete",
+    icon: "🗑️",
+    color: "red",
+    description: "Remove records",
+  },
+  {
+    id: "global_view",
+    label: "Global View",
+    icon: "🌍",
+    color: "purple",
+    description: "Full hotel view",
+  },
+];
 
-  const [roles, setRoles] = useState(MOCK_ROLES);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+export default function HotelRolesPermissionsPage() {
+  const { notify } = useToast();
+  const { hasPermission: checkUserPermission } = usePermission();
+  const [roles, setRoles] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [expandedModules, setExpandedModules] = useState({});
+  const [filterAction, setFilterAction] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Filter roles based on context (SaaS/Hotel) and search query
-  const filteredRoles = roles
-    .filter((r) => (isSuperAdmin ? r.type === "HOTEL" : r.type !== "HOTEL"))
-    .filter((r) => r.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  // permissions keyed by role id
+  const [allPermissions, setAllPermissions] = useState({});
 
-  const [selectedRole, setSelectedRole] = useState(() => {
-    return (
-      MOCK_ROLES.find((r) =>
-        isSuperAdmin ? r.type === "HOTEL" : r.type !== "HOTEL",
-      ) || MOCK_ROLES[0]
-    );
-  });
+  const filteredRoles = roles.filter((role) =>
+    role.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const [rolePermissions, setRolePermissions] = useState(() => {
-    const def =
-      MOCK_ROLES.find((r) =>
-        isSuperAdmin ? r.type === "HOTEL" : r.type !== "HOTEL",
-      ) || MOCK_ROLES[0];
-    return def ? def.permissions : [];
-  });
+  const permissions = allPermissions[selectedRole?.id] || {};
 
-  const visibleGroups = PERMISSION_GROUPS.filter((group) => {
-    if (isSuperAdmin) {
-      return group.title === "Hotel Operations";
-    }
-    return group.title === "Hotel Operations";
-  });
-
-  const handleSelectRole = (role) => {
-    setSelectedRole(role);
-    setRolePermissions(role.permissions);
+  const togglePermission = (moduleId, action) => {
+    const key = `${moduleId}_${action}`;
+    setAllPermissions((prev) => ({
+      ...prev,
+      [selectedRole.id]: {
+        ...(prev[selectedRole.id] || {}),
+        [key]: !(prev[selectedRole.id] || {})[key],
+      },
+    }));
   };
 
-  const togglePermission = (permId) => {
-    setRolePermissions((prev) =>
-      prev.includes(permId)
-        ? prev.filter((id) => id !== permId)
-        : [...prev, permId],
-    );
+  const hasPermission = (moduleId, action) => {
+    return permissions[`${moduleId}_${action}`] || false;
+  };
+
+  const fetchAllRoles = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const result = await StaffRoles.getAllRoles();
+      const formattedRoles = (result.data || []).map((role) => {
+        const formattedPermissions = {};
+        Object.entries(role.permissions || {}).forEach(([module, actions]) => {
+          if (Array.isArray(actions)) {
+            actions.forEach((action) => {
+              formattedPermissions[`${module}_${action}`] = true;
+            });
+          }
+        });
+        return { ...role, id: role._id, permissionsMap: formattedPermissions };
+      });
+      setRoles(formattedRoles);
+      const permissionState = {};
+      formattedRoles.forEach((role) => {
+        permissionState[role.id] = role.permissionsMap;
+      });
+      setAllPermissions(permissionState);
+      if (formattedRoles.length > 0) {
+        setSelectedRole((prev) => prev || formattedRoles[0]);
+      }
+    } catch (error) {
+      notify(error.response?.data?.message || "Failed to fetch staff roles", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [notify]);
+
+  useEffect(() => {
+    const loadRoles = async () => {
+      await fetchAllRoles();
+    };
+
+    loadRoles();
+  }, [fetchAllRoles]);
+
+  const toggleModuleExpand = (moduleId) => {
+    setExpandedModules((prev) => ({ ...prev, [moduleId]: !prev[moduleId] }));
+  };
+
+  const selectAllForModule = (module) => {
+    const newPermissions = { ...permissions };
+    module.actions.forEach((action) => {
+      newPermissions[`${module.id}_${action}`] = true;
+    });
+    setAllPermissions((prev) => ({
+      ...prev,
+      [selectedRole.id]: newPermissions,
+    }));
+  };
+
+  const clearAllForModule = (module) => {
+    const newPermissions = { ...permissions };
+    module.actions.forEach((action) => {
+      newPermissions[`${module.id}_${action}`] = false;
+    });
+    setAllPermissions((prev) => ({
+      ...prev,
+      [selectedRole.id]: newPermissions,
+    }));
   };
 
   const handleReset = () => {
-    if (selectedRole) {
-      setRolePermissions(selectedRole.permissions);
+    if (confirm("Reset all permissions for this role?")) {
+      const origMap = selectedRole?.permissionsMap || {};
+      setAllPermissions((prev) => ({
+        ...prev,
+        [selectedRole.id]: { ...origMap },
+      }));
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedRole) return;
-    setRoles((prev) =>
-      prev.map((r) =>
-        r.id === selectedRole.id ? { ...r, permissions: rolePermissions } : r,
-      ),
-    );
-    console.log(
-      "Saving permissions for",
-      selectedRole.name,
-      ":",
-      rolePermissions,
-    );
-    // TODO: connect to API
-  };
-
-  const handleDeleteRole = (roleId) => {
-    const remaining = roles.filter((r) => r.id !== roleId);
-    setRoles(remaining);
-    const nextRole =
-      remaining.find((r) =>
-        isSuperAdmin ? r.type === "SAAS" : r.type !== "SAAS",
-      ) || remaining[0];
-    if (nextRole) {
-      setSelectedRole(nextRole);
-      setRolePermissions(nextRole.permissions);
-    } else {
-      setSelectedRole(null);
-      setRolePermissions([]);
+    try {
+      setIsSaving(true);
+      await StaffRoles.updateRole(selectedRole.id, { permissions });
+      notify(`Permissions saved for "${selectedRole.name}"`, "success");
+    } catch (error) {
+      notify(error.response?.data?.message || "Failed to save permissions", "error");
+    } finally {
+      setIsSaving(false);
     }
   };
+
+  const handleDeleteRole = async (roleId) => {
+    try {
+      setIsDeleting(true);
+      await StaffRoles.deleteRole(roleId);
+      const remaining = roles.filter((r) => r.id !== roleId);
+      setRoles(remaining);
+      setSelectedRole(remaining[0] || null);
+      setShowDeleteConfirm(false);
+      notify("Staff role deleted successfully", "success");
+    } catch (error) {
+      notify(error.response?.data?.message || "Failed to delete staff role", "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCreateRole = async (newRoleData) => {
+    try {
+      const result = await StaffRoles.createRole(newRoleData);
+      const created = result.data;
+      const formattedPermissions = {};
+      Object.entries(created.permissions || {}).forEach(([module, actions]) => {
+        if (Array.isArray(actions)) {
+          actions.forEach((action) => {
+            formattedPermissions[`${module}_${action}`] = true;
+          });
+        }
+      });
+      const newRole = {
+        ...created,
+        id: created._id,
+        permissionsMap: formattedPermissions,
+      };
+      setRoles((prev) => [...prev, newRole]);
+      setAllPermissions((prev) => ({
+        ...prev,
+        [newRole.id]: formattedPermissions,
+      }));
+      setSelectedRole(newRole);
+      notify(`Staff Role "${newRole.name}" created successfully`, "success");
+    } catch (error) {
+      notify(error.response?.data?.message || "Failed to create staff role", "error");
+    }
+  };
+
+  const getModulePermissionStats = (module) => {
+    const availableActions = module.actions;
+    const enabledCount = availableActions.filter((action) =>
+      hasPermission(module.id, action)
+    ).length;
+    const totalCount = availableActions.length;
+    const percentage = totalCount > 0 ? (enabledCount / totalCount) * 100 : 0;
+    return { enabledCount, totalCount, percentage };
+  };
+
+  const getOverallPermissionStats = () => {
+    let totalEnabled = 0;
+    let totalPossible = 0;
+    MODULES.forEach((module) => {
+      totalPossible += module.actions.length;
+      totalEnabled += module.actions.filter((action) =>
+        hasPermission(module.id, action)
+      ).length;
+    });
+    return {
+      totalEnabled,
+      totalPossible,
+      percentage: totalPossible > 0 ? (totalEnabled / totalPossible) * 100 : 0,
+    };
+  };
+
+  const stats = getOverallPermissionStats();
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-slate-500">Loading hotel staff roles...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!selectedRole && roles.length === 0) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <AlertCircle className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-500 mb-6">
+              No staff roles found. Create your first hotel staff role to get started.
+            </p>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 gap-2"
+            >
+              <Plus size={18} />
+              Create Role
+            </Button>
+          </div>
+        </div>
+        <AddHotelRoles
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleCreateRole}
+        />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 h-full flex flex-col">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-              Roles &amp; Permissions
+              Hotel Roles & Permissions
             </h1>
-            <p className="text-slate-500 mt-1">
-              Configure global SaaS employee access levels
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
+              Configure role-based access control for hotel staff members
             </p>
           </div>
-          <Button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="rounded-xl bg-indigo-600 hover:bg-indigo-700 h-11 px-6 gap-2 cursor-pointer"
-          >
-            <Plus size={18} />
-            Create New Role
-          </Button>
+          {checkUserPermission("settings", "add") && (
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 cursor-pointer gap-2"
+            >
+              <Plus size={18} />
+              Create Role
+            </Button>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
-          {/* Roles List */}
-          <div className="lg:col-span-4 space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                placeholder="Search roles..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
-              />
-            </div>
-
-            <div className="space-y-3">
-              {filteredRoles.map((role) => (
-                <motion.div
-                  key={role.id}
-                  onClick={() => handleSelectRole(role)}
-                  className={`p-5 rounded-2xl cursor-pointer transition-all border-2 ${
-                    selectedRole?.id === role.id
-                      ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-500/10"
-                      : "border-white dark:border-slate-900 bg-white dark:bg-slate-900 hover:border-indigo-100 dark:hover:border-indigo-500/20 shadow-sm"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h3
-                      className={`font-bold ${selectedRole?.id === role.id ? "text-indigo-600 dark:text-indigo-400" : "text-slate-900 dark:text-white"}`}
-                    >
-                      {role.name}
-                    </h3>
-                    <ShieldCheck
-                      size={16}
-                      className={
-                        selectedRole?.id === role.id
-                          ? "text-indigo-600"
-                          : "text-slate-400"
-                      }
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 line-clamp-2 mb-3">
-                    {role.description}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded uppercase tracking-wider text-slate-500">
-                      {role.users} Users
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-100 dark:bg-indigo-500/20 rounded uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                      {role.type}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-              {filteredRoles.length === 0 && (
-                <div className="p-8 text-center text-slate-400 text-sm">
-                  No roles found
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left Side - Roles List */}
+          <div className="col-span-12 lg:col-span-3">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-6">
+              {/* Search Header */}
+              <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                <div className="relative">
+                  <Search
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+                  <Input
+                    placeholder="Search roles..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-9 bg-white dark:bg-slate-900"
+                  />
                 </div>
-              )}
+              </div>
+
+              {/* Roles List */}
+              <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[600px] overflow-y-auto">
+                {filteredRoles.map((role) => (
+                  <div
+                    key={role.id}
+                    onClick={() => setSelectedRole(role)}
+                    className={`p-4 cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
+                      selectedRole?.id === role.id
+                        ? "bg-indigo-50 dark:bg-indigo-500/10 border-l-4 border-l-indigo-600"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                          {role.name}
+                        </h3>
+                        {role.description && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                            {role.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <Users size={12} />
+                            <span>Hotel Staff Role</span>
+                          </div>
+                        </div>
+                      </div>
+                      <ShieldCheck
+                        size={16}
+                        className={
+                          selectedRole?.id === role.id
+                            ? "text-indigo-600"
+                            : "text-slate-400"
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+
+                {filteredRoles.length === 0 && (
+                  <div className="p-8 text-center text-slate-500">
+                    <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No roles found</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Permission Editor */}
-          <div className="lg:col-span-8 flex flex-col">
-            <AnimatePresence mode="wait">
-              {selectedRole ? (
-                <motion.div
-                  key={selectedRole.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="glass-card rounded-[1rem] p-8 flex-1 flex flex-col border-none shadow-2xl"
-                >
-                  <div className="flex items-center justify-between mb-8 pb-8 border-b border-slate-100 dark:border-slate-800">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                        {selectedRole.name} Settings
-                      </h2>
-                      <p className="text-sm text-slate-500">
-                        Define what users with this role can see and do.
-                      </p>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleDeleteRole(selectedRole.id)}
-                        className="rounded-xl h-11 px-5 text-rose-500 border-rose-100 dark:border-rose-500/20 hover:bg-rose-50 dark:hover:bg-rose-500/10"
-                      >
-                        <Trash2 size={16} className="mr-2" />
-                        Delete Role
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto no-scrollbar space-y-10 pr-4">
-                    {visibleGroups.map((group) => (
-                      <div key={group.title}>
-                        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">
-                          {group.title}
-                        </h4>
-                        <div className="space-y-4">
-                          {group.perms.map((perm) => {
-                            const hasPerm = rolePermissions.includes(perm.id);
-                            return (
-                              <div
-                                key={perm.id}
-                                onClick={() => togglePermission(perm.id)}
-                                className="flex items-start justify-between p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-indigo-100 dark:hover:border-indigo-500/20 cursor-pointer"
-                              >
-                                <div className="flex gap-4">
-                                  <div
-                                    className={`mt-1 p-2 rounded-xl ${hasPerm ? "bg-emerald-500/10 text-emerald-500" : "bg-slate-200 dark:bg-slate-700 text-slate-400"}`}
-                                  >
-                                    {hasPerm ? (
-                                      <CheckCircle2 size={18} />
-                                    ) : (
-                                      <XCircle size={18} />
-                                    )}
-                                  </div>
-                                  <div>
-                                    <p className="font-bold text-slate-900 dark:text-white mb-1">
-                                      {perm.label}
-                                    </p>
-                                    <p className="text-xs text-slate-500 max-w-md">
-                                      {perm.desc}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div
-                                  className="flex items-center h-full"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                      type="checkbox"
-                                      checked={hasPerm}
-                                      onChange={() => togglePermission(perm.id)}
-                                      className="sr-only peer"
-                                    />
-                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-                                  </label>
-                                </div>
-                              </div>
-                            );
-                          })}
+          {/* Right Side - Permission Matrix */}
+          {selectedRole && (
+            <div className="col-span-12 lg:col-span-9">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                {/* Header with Role Info */}
+                <div className="p-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+                  <div className="flex items-start justify-between flex-wrap gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl">
+                          <ShieldCheck
+                            size={20}
+                            className="text-indigo-600 dark:text-indigo-400"
+                          />
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                            {selectedRole.name}
+                          </h2>
+                          {selectedRole.description && (
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                              {selectedRole.description}
+                            </p>
+                          )}
                         </div>
                       </div>
-                    ))}
 
-                    <div className="p-6 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex gap-4">
-                      <AlertCircle className="text-amber-500 shrink-0" />
-                      <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed font-medium">
-                        Changes to role permissions will take effect for all
-                        assigned users upon their next session login. Existing
-                        active sessions will not be affected until they refresh
-                        their security token.
-                      </p>
+                      {/* Stats Cards */}
+                      <div className="flex gap-4 mt-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+                            <Key
+                              size={14}
+                              className="text-emerald-600 dark:text-emerald-400"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500">Permissions</p>
+                            <p className="text-sm font-semibold">
+                              {stats.totalEnabled}/{stats.totalPossible}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+
+                    {checkUserPermission("settings", "delete") && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowDeleteConfirm(true)}
+                          className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/50 cursor-pointer"
+                        >
+                          <Trash2 size={16} className="mr-2" />
+                          Delete Role
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Permission Matrix */}
+                <div className="p-6">
+                  {/* Action Filter Bar */}
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    <span className="text-xs text-slate-500 mr-2">
+                      Filter by action:
+                    </span>
+                    <button
+                      onClick={() => setFilterAction(null)}
+                      className={`px-2 py-1 text-xs rounded-md transition-all ${
+                        !filterAction
+                          ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-600"
+                      }`}
+                    >
+                      All
+                    </button>
+                    {ACTIONS.map((action) => (
+                      <button
+                        key={action.id}
+                        onClick={() =>
+                          setFilterAction(
+                            filterAction === action.id ? null : action.id
+                          )
+                        }
+                        className={`px-2 py-1 text-xs rounded-md transition-all flex items-center gap-1 ${
+                          filterAction === action.id
+                            ? `bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700`
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600"
+                        }`}
+                      >
+                        <span>{action.icon}</span>
+                        <span>{action.label}</span>
+                      </button>
+                    ))}
                   </div>
 
-                  <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-4">
+                  {/* Modules List */}
+                  <div className="space-y-3">
+                    {MODULES.map((module) => {
+                      const { enabledCount, totalCount, percentage } =
+                        getModulePermissionStats(module);
+                      const isExpanded = expandedModules[module.id] !== false;
+
+                      if (
+                        filterAction &&
+                        !module.actions.includes(filterAction)
+                      ) {
+                        return null;
+                      }
+
+                      return (
+                        <div
+                          key={module.id}
+                          className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-900"
+                        >
+                          {/* Module Header */}
+                          <div
+                            className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            onClick={() => toggleModuleExpand(module.id)}
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <button type="button" className="p-1">
+                                {isExpanded ? (
+                                  <ChevronDown size={16} />
+                                ) : (
+                                  <ChevronRight size={16} />
+                                )}
+                              </button>
+                              <span className="text-xl">{module.icon}</span>
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-slate-900 dark:text-white">
+                                  {module.label}
+                                </h4>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <div className="flex-1 max-w-[200px]">
+                                    <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                      <div
+                                        className="h-full bg-indigo-500 rounded-full transition-all duration-300"
+                                        style={{ width: `${percentage}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                  <p className="text-xs text-slate-500">
+                                    {enabledCount}/{totalCount} enabled
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="flex gap-2"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => selectAllForModule(module)}
+                                className="px-2 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded transition-colors"
+                              >
+                                Select All
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => clearAllForModule(module)}
+                                className="px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Module Permissions */}
+                          {isExpanded && (
+                            <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                                {ACTIONS.map((action) => {
+                                  const available = module.actions.includes(
+                                    action.id
+                                  );
+                                  const checked = hasPermission(
+                                    module.id,
+                                    action.id
+                                  );
+
+                                  if (!available) return null;
+
+                                  return (
+                                    <button
+                                      key={action.id}
+                                      type="button"
+                                      onClick={() =>
+                                        togglePermission(module.id, action.id)
+                                      }
+                                      className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                                        checked
+                                          ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-300 dark:border-indigo-500/50"
+                                          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-base">
+                                          {action.icon}
+                                        </span>
+                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                          {action.label}
+                                        </span>
+                                      </div>
+                                      <div
+                                        className={`w-5 h-5 rounded flex items-center justify-center transition-all ${
+                                          checked
+                                            ? "bg-indigo-600 text-white"
+                                            : "border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
+                                        }`}
+                                      >
+                                        {checked && (
+                                          <Check size={12} strokeWidth={3} />
+                                        )}
+                                      </div>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      Changes are saved locally until you click Save Permissions
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       onClick={handleReset}
-                      className="rounded-xl h-11 px-8 font-bold text-slate-500 cursor-pointer"
+                      disabled={isSaving}
+                      className="cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50"
                     >
                       Reset
                     </Button>
-                    <Button
-                      onClick={handleSave}
-                      className="rounded-xl h-11 px-10 bg-indigo-600 hover:bg-indigo-700 font-bold shadow-xl shadow-indigo-500/20 cursor-pointer"
-                    >
-                      Save Permissions
-                    </Button>
+                    {checkUserPermission("settings", "edit") && (
+                      <Button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="bg-indigo-600 hover:bg-indigo-700 cursor-pointer shadow-lg shadow-indigo-500/25 disabled:opacity-50 gap-2"
+                      >
+                        {isSaving ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          "Save Permissions"
+                        )}
+                      </Button>
+                    )}
                   </div>
-                </motion.div>
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[2.5rem]">
-                  <ShieldCheck
-                    size={48}
-                    className="text-slate-300 dark:text-slate-700 mb-4"
-                  />
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">
-                    Select a role or create one to view and edit settings
-                  </p>
                 </div>
-              )}
-            </AnimatePresence>
-          </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <AddRoles
-        key={isCreateModalOpen ? "open" : "closed"}
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSave={(newRole) => {
-          setRoles((prev) => [...prev, newRole]);
-          setSelectedRole(newRole);
-          setRolePermissions(newRole.permissions);
-        }}
-        defaultType={isSuperAdmin ? "SAAS" : "HOTEL"}
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && selectedRole && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-red-600">
+              <AlertCircle size={24} />
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                Delete Staff Role
+              </h3>
+            </div>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Are you sure you want to delete the role &quot;{selectedRole.name}&quot;?
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleDeleteRole(selectedRole.id)}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <AddHotelRoles
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleCreateRole}
       />
     </DashboardLayout>
   );

@@ -4,7 +4,7 @@ export const useTenantStore = create((set, get) => ({
     setTenant: (tenant) => set({ currentTenant: tenant }),
     isModuleEnabled: (moduleId) => {
         const tenant = get().currentTenant;
-        if (!tenant || !tenant.modules)
+        if (!tenant || !tenant.modules || !Array.isArray(tenant.modules) || tenant.modules.length === 0)
             return true;
         return tenant.modules.includes(moduleId);
     },
