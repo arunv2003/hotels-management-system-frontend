@@ -99,8 +99,8 @@ export default function Step3Location({
         <GoogleMapComponent
           onLocationChange={handleLocationChange}
           initialLocation={{
-            lat: formData.latitude || 20.5937,
-            lng: formData.longitude || 78.9629,
+            lat: parseFloat(formData.latitude) || 20.5937,
+            lng: parseFloat(formData.longitude) || 78.9629,
           }}
         />
       </div>

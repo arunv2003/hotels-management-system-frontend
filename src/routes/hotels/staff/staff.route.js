@@ -1,24 +1,9 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-
-const getHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 export const StaffRoute = {
   getAllStaff: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/staffs/all`, {
-        headers: getHeaders(),
-        params,
-      });
+      const response = await apiClient.get("/api/staffs/all", { params });
       return response.data;
     } catch (error) {
       console.error("StaffRoute.getAllStaff error:", error.response?.data || error.message);
@@ -28,9 +13,7 @@ export const StaffRoute = {
 
   getStaffById: async (id) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/staffs/${id}`, {
-        headers: getHeaders(),
-      });
+      const response = await apiClient.get(`/api/staffs/${id}`);
       return response.data;
     } catch (error) {
       console.error("StaffRoute.getStaffById error:", error.response?.data || error.message);
@@ -40,11 +23,7 @@ export const StaffRoute = {
 
   createStaff: async (staffData) => {
     try {
-      const response = await axios.post(
-        `${BACKENDURL}/api/staffs/create`,
-        staffData,
-        { headers: getHeaders() }
-      );
+      const response = await apiClient.post("/api/staffs/create", staffData);
       return response.data;
     } catch (error) {
       console.error("StaffRoute.createStaff error:", error.response?.data || error.message);
@@ -54,11 +33,7 @@ export const StaffRoute = {
 
   updateStaff: async (id, staffData) => {
     try {
-      const response = await axios.put(
-        `${BACKENDURL}/api/staffs/${id}`,
-        staffData,
-        { headers: getHeaders() }
-      );
+      const response = await apiClient.put(`/api/staffs/${id}`, staffData);
       return response.data;
     } catch (error) {
       console.error("StaffRoute.updateStaff error:", error.response?.data || error.message);
@@ -68,10 +43,7 @@ export const StaffRoute = {
 
   deleteStaff: async (id) => {
     try {
-      const response = await axios.delete(
-        `${BACKENDURL}/api/staffs/${id}`,
-        { headers: getHeaders() }
-      );
+      const response = await apiClient.delete(`/api/staffs/${id}`);
       return response.data;
     } catch (error) {
       console.error("StaffRoute.deleteStaff error:", error.response?.data || error.message);

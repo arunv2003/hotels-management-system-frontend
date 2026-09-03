@@ -1,118 +1,121 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-
-const getAuthHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
-
-const logError = (methodName, error) => {
-  console.error(`SaaSAnalyticsRoute.${methodName} error:`, {
-    message: error.message,
-    name: error.name,
-    response: error.response
-      ? { status: error.response.status, data: error.response.data }
-      : null,
-  });
-};
+import apiClient from "@/lib/apiClient";
 
 export const SaaSAnalyticsRoute = {
+  // Payment Stats & Revenue Metrics
   getPaymentStats: async () => {
     try {
-      const response = await axios.get(
-        `${BACKENDURL}/api/saas-analytics/payment-stats`,
-        { headers: getAuthHeaders() }
-      );
+      const response = await apiClient.get("/api/saas-analytics/payment-stats");
       return response.data;
     } catch (error) {
-      logError("getPaymentStats", error);
+      console.error("SaaSAnalyticsRoute.getPaymentStats error:", error.response?.data || error.message);
       throw error;
     }
   },
 
+  // Transactions list
   getTransactions: async (params = {}) => {
     try {
-      const response = await axios.get(
-        `${BACKENDURL}/api/saas-analytics/transactions`,
-        { headers: getAuthHeaders(), params }
-      );
+      const response = await apiClient.get("/api/saas-analytics/transactions", { params });
       return response.data;
     } catch (error) {
-      logError("getTransactions", error);
+      console.error("SaaSAnalyticsRoute.getTransactions error:", error.response?.data || error.message);
       throw error;
     }
   },
 
+  // Refund transaction
   refundTransaction: async (id) => {
     try {
-      const response = await axios.put(
-        `${BACKENDURL}/api/saas-analytics/transactions/${id}/refund`,
-        {},
-        { headers: getAuthHeaders() }
-      );
+      const response = await apiClient.put(`/api/saas-analytics/transactions/${id}/refund`);
       return response.data;
     } catch (error) {
-      logError("refundTransaction", error);
+      console.error("SaaSAnalyticsRoute.refundTransaction error:", error.response?.data || error.message);
       throw error;
     }
   },
 
+  // Overview Analytics (Growth, Plan Distribution, Load)
   getAnalyticsOverview: async () => {
     try {
-      const response = await axios.get(
-        `${BACKENDURL}/api/saas-analytics/overview`,
-        { headers: getAuthHeaders() }
-      );
+      const response = await apiClient.get("/api/saas-analytics/overview");
       return response.data;
     } catch (error) {
-      logError("getAnalyticsOverview", error);
+      console.error("SaaSAnalyticsRoute.getAnalyticsOverview error:", error.response?.data || error.message);
       throw error;
     }
   },
 
+  // Active Tenants Usage & Health
   getHotelUsage: async () => {
     try {
-      const response = await axios.get(
-        `${BACKENDURL}/api/saas-analytics/hotels-usage`,
-        { headers: getAuthHeaders() }
-      );
+      const response = await apiClient.get("/api/saas-analytics/hotels-usage");
       return response.data;
     } catch (error) {
-      logError("getHotelUsage", error);
+      console.error("SaaSAnalyticsRoute.getHotelUsage error:", error.response?.data || error.message);
       throw error;
     }
   },
 
+  // Platform Reports & Revenue History
   getPlatformReports: async () => {
     try {
-      const response = await axios.get(
-        `${BACKENDURL}/api/saas-analytics/reports`,
-        { headers: getAuthHeaders() }
-      );
+      const response = await apiClient.get("/api/saas-analytics/reports");
       return response.data;
     } catch (error) {
-      logError("getPlatformReports", error);
+      console.error("SaaSAnalyticsRoute.getPlatformReports error:", error.response?.data || error.message);
       throw error;
     }
   },
 
-  generateReport: async (reportData) => {
+  // Generate Report
+  generateReport: async (data) => {
     try {
-      const response = await axios.post(
-        `${BACKENDURL}/api/saas-analytics/reports/generate`,
-        reportData,
-        { headers: getAuthHeaders() }
-      );
+      const response = await apiClient.post("/api/saas-analytics/reports/generate", data);
       return response.data;
     } catch (error) {
-      logError("generateReport", error);
+      console.error("SaaSAnalyticsRoute.generateReport error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  // Aliases for backwards compatibility
+  getStats: async () => {
+    try {
+      const response = await apiClient.get("/api/saas-analytics/payment-stats");
+      return response.data;
+    } catch (error) {
+      console.error("SaaSAnalyticsRoute.getStats error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getGrowth: async () => {
+    try {
+      const response = await apiClient.get("/api/saas-analytics/overview");
+      return response.data;
+    } catch (error) {
+      console.error("SaaSAnalyticsRoute.getGrowth error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getAnalytics: async () => {
+    try {
+      const response = await apiClient.get("/api/saas-analytics/overview");
+      return response.data;
+    } catch (error) {
+      console.error("SaaSAnalyticsRoute.getAnalytics error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getReports: async () => {
+    try {
+      const response = await apiClient.get("/api/saas-analytics/reports");
+      return response.data;
+    } catch (error) {
+      console.error("SaaSAnalyticsRoute.getReports error:", error.response?.data || error.message);
       throw error;
     }
   },
 };
+
+export const saasAnalytics = SaaSAnalyticsRoute;
+export default SaaSAnalyticsRoute;

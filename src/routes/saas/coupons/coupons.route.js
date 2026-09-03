@@ -1,98 +1,61 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import apiClient from "@/lib/apiClient";
 
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-
-export const CouponRoutes = {
+export const coupons = {
+  createCoupon: async (data) => {
+    try {
+      const response = await apiClient.post("/api/coupons/create-coupon", data);
+      return response.data;
+    } catch (error) {
+      console.error("coupons.createCoupon error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  createCoupons: async (data) => {
+    try {
+      const response = await apiClient.post("/api/coupons/create-coupon", data);
+      return response.data;
+    } catch (error) {
+      console.error("coupons.createCoupons error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
   getAllCoupons: async () => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.get(`${BACKENDURL}/api/coupons/all_coupons`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get("/api/coupons/all-coupons");
       return response.data;
     } catch (error) {
-      console.error("CouponRoutes.getAllCoupons error:", error);
+      console.error("coupons.getAllCoupons error:", error.response?.data || error.message);
       throw error;
     }
   },
-
   getCouponById: async (id) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.get(`${BACKENDURL}/api/coupons/get_coupon/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get(`/api/coupons/get-coupon/${id}`);
       return response.data;
     } catch (error) {
-      console.error("CouponRoutes.getCouponById error:", error);
+      console.error("coupons.getCouponById error:", error.response?.data || error.message);
       throw error;
     }
   },
-
-  createCoupon: async (couponData) => {
+  updateCoupon: async (id, data) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.post(
-        `${BACKENDURL}/api/coupons/create`,
-        couponData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.put(`/api/coupons/update-coupon/${id}`, data);
       return response.data;
     } catch (error) {
-      console.error("CouponRoutes.createCoupon error:", error);
+      console.error("coupons.updateCoupon error:", error.response?.data || error.message);
       throw error;
     }
   },
-
-  updateCoupon: async (id, couponData) => {
-    try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.put(
-        `${BACKENDURL}/api/coupons/update_coupon/${id}`,
-        couponData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("CouponRoutes.updateCoupon error:", error);
-      throw error;
-    }
-  },
-
   deleteCoupon: async (id) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.delete(
-        `${BACKENDURL}/api/coupons/delete_coupon/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.delete(`/api/coupons/delete-coupon/${id}`);
       return response.data;
     } catch (error) {
-      console.error("CouponRoutes.deleteCoupon error:", error);
+      console.error("coupons.deleteCoupon error:", error.response?.data || error.message);
       throw error;
     }
   },
 };
+
+export const CouponRoutes = coupons;
+export default coupons;

@@ -204,6 +204,9 @@ export function OnboardingTable() {
                 <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Date Added
                 </th>
+                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+                  Plan Expiry (Date &amp; Time)
+                </th>
                 <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right">
                   Actions
                 </th>
@@ -223,6 +226,29 @@ export function OnboardingTable() {
                   ? new Date(hotel.createdAt).toLocaleDateString("en-GB")
                   : "N/A";
                 const planName = hotel.planSelected?.name || "—";
+
+                // Calculate expiry date & time
+                let expiryDateObj = null;
+                if (hotel.planExpiry || hotel.subscription?.endDate) {
+                  expiryDateObj = new Date(hotel.planExpiry || hotel.subscription.endDate);
+                } else if (hotel.createdAt) {
+                  const fallbackEnd = new Date(hotel.createdAt);
+                  fallbackEnd.setFullYear(fallbackEnd.getFullYear() + (hotel.billingCycle === "yearly" ? 1 : 0.5));
+                  expiryDateObj = fallbackEnd;
+                }
+
+                const now = new Date();
+                const expiryDateStr = expiryDateObj
+                  ? expiryDateObj.toLocaleDateString("en-GB")
+                  : "N/A";
+                const expiryTimeStr = expiryDateObj
+                  ? expiryDateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })
+                  : "";
+
+                const daysLeft = expiryDateObj
+                  ? Math.ceil((expiryDateObj.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+                  : 0;
+                const isExpired = !expiryDateObj || daysLeft <= 0 || !isActive;
 
                 return (
                   <motion.tr
@@ -285,11 +311,38 @@ export function OnboardingTable() {
                       </span>
                     </td>
 
-                    {/* Date */}
+                    {/* Date Added */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                         <Calendar className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                         <span className="font-medium text-xs">{dateStr}</span>
+                      </div>
+                    </td>
+
+                    {/* Plan Expiry Date & Time */}
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-semibold text-xs">
+                          <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>
+                            {expiryDateStr}
+                            {expiryTimeStr ? ` • ${expiryTimeStr}` : ""}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span
+                            className={cn(
+                              "text-[10px] font-black uppercase px-2 py-0.5 rounded-md border",
+                              isExpired
+                                ? "bg-rose-50 dark:bg-rose-950/50 text-rose-600 border-rose-200 dark:border-rose-900"
+                                : daysLeft <= 7
+                                ? "bg-amber-50 dark:bg-amber-950/50 text-amber-600 border-amber-200 dark:border-amber-900"
+                                : "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 border-emerald-200 dark:border-emerald-900"
+                            )}
+                          >
+                            {isExpired ? "Expired" : `${daysLeft} Days Left`}
+                          </span>
+                        </div>
                       </div>
                     </td>
 

@@ -1,31 +1,20 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
+import apiClient from "@/lib/apiClient";
 
 export const CloudinaryImage = {
-
   uploadSingleImage: async (file, folderName = "others", onProgress) => {
     try {
-      const token = Cookies.get("accessToken");
-
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folderName", folderName);
 
-      const response = await axios.post(
-        `${BACKENDURL}/api/cloudinary/upload`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          onUploadProgress: (evt) => {
-            if (onProgress && evt.total) {
-              onProgress(Math.round((evt.loaded * 100) / evt.total));
-            }
-          },
+      const response = await apiClient.post("/api/cloudinary/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (evt) => {
+          if (onProgress && evt.total) {
+            onProgress(Math.round((evt.loaded * 100) / evt.total));
+          }
         },
-      );
+      });
 
       return response.data;
     } catch (error) {
@@ -37,7 +26,6 @@ export const CloudinaryImage = {
           status: error.response.status,
           data: error.response.data,
         } : null,
-        request: error.request ? "Request was made but no response received" : null,
       });
       throw error;
     }
@@ -45,27 +33,18 @@ export const CloudinaryImage = {
 
   uploadMultipleImages: async (files, folderName = "others", onProgress) => {
     try {
-      const token = Cookies.get("accessToken");
-
       const formData = new FormData();
       files.forEach((file) => formData.append("files", file));
       formData.append("folderName", folderName);
 
-      const response = await axios.post(
-        `${BACKENDURL}/api/cloudinary/upload-multiple`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (evt) => {
-            if (onProgress && evt.total) {
-              onProgress(Math.round((evt.loaded * 100) / evt.total));
-            }
-          },
+      const response = await apiClient.post("/api/cloudinary/upload-multiple", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (evt) => {
+          if (onProgress && evt.total) {
+            onProgress(Math.round((evt.loaded * 100) / evt.total));
+          }
         },
-      );
+      });
 
       return response.data;
     } catch (error) {
@@ -77,7 +56,6 @@ export const CloudinaryImage = {
           status: error.response.status,
           data: error.response.data,
         } : null,
-        request: error.request ? "Request was made but no response received" : null,
       });
       throw error;
     }
@@ -85,13 +63,7 @@ export const CloudinaryImage = {
 
   deleteImage: async (publicId) => {
     try {
-      const token = Cookies.get("accessToken");
-
-      const response = await axios.delete(
-        `${BACKENDURL}/api/cloudinary/delete/${publicId}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
+      const response = await apiClient.delete(`/api/cloudinary/delete/${publicId}`);
       return response.data;
     } catch (error) {
       console.error("CloudinaryImage.deleteImage error detailed:", {
@@ -102,7 +74,6 @@ export const CloudinaryImage = {
           status: error.response.status,
           data: error.response.data,
         } : null,
-        request: error.request ? "Request was made but no response received" : null,
       });
       throw error;
     }

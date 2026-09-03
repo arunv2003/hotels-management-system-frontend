@@ -1,16 +1,4 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:9000";
-
-const getHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 const extractErrorMessage = (error, defaultMsg) => {
   return (
@@ -22,17 +10,15 @@ const extractErrorMessage = (error, defaultMsg) => {
 };
 
 export const PosRoute = {
-  getMenuItems: async () => {
+  // Menu Item endpoints
+  getMenuItems: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/pos/items`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/pos/items", { params });
       return response.data;
     } catch (error) {
       return {
         success: false,
-        message: extractErrorMessage(error, "Failed to fetch POS menu items."),
+        message: extractErrorMessage(error, "Failed to fetch menu items."),
         data: [],
       };
     }
@@ -40,10 +26,7 @@ export const PosRoute = {
 
   createMenuItem: async (data) => {
     try {
-      const response = await axios.post(`${BACKENDURL}/api/pos/items`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/pos/items", data);
       return response.data;
     } catch (error) {
       return {
@@ -56,10 +39,7 @@ export const PosRoute = {
 
   updateMenuItem: async (id, data) => {
     try {
-      const response = await axios.put(`${BACKENDURL}/api/pos/items/${id}`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.put(`/api/pos/items/${id}`, data);
       return response.data;
     } catch (error) {
       return {
@@ -72,10 +52,7 @@ export const PosRoute = {
 
   deleteMenuItem: async (id) => {
     try {
-      const response = await axios.delete(`${BACKENDURL}/api/pos/items/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.delete(`/api/pos/items/${id}`);
       return response.data;
     } catch (error) {
       return {
@@ -86,28 +63,10 @@ export const PosRoute = {
     }
   },
 
-  seedMenuItems: async () => {
+  // POS Order endpoints
+  createOrder: async (data) => {
     try {
-      const response = await axios.post(`${BACKENDURL}/api/pos/items/seed`, {}, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: extractErrorMessage(error, "Failed to seed menu items."),
-        data: [],
-      };
-    }
-  },
-
-  createOrder: async (orderData) => {
-    try {
-      const response = await axios.post(`${BACKENDURL}/api/pos/orders`, orderData, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/pos/orders", data);
       return response.data;
     } catch (error) {
       return {
@@ -118,12 +77,22 @@ export const PosRoute = {
     }
   },
 
-  getOrders: async () => {
+  createPosOrder: async (data) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/pos/orders`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/pos/orders", data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to create POS order."),
+        data: null,
+      };
+    }
+  },
+
+  getOrders: async (params = {}) => {
+    try {
+      const response = await apiClient.get("/api/pos/orders", { params });
       return response.data;
     } catch (error) {
       return {
@@ -134,19 +103,70 @@ export const PosRoute = {
     }
   },
 
-  updateOrderStatus: async (id, statusData) => {
+  getPosOrders: async (params = {}) => {
     try {
-      const response = await axios.patch(`${BACKENDURL}/api/pos/orders/${id}/status`, statusData, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/pos/orders", { params });
       return response.data;
     } catch (error) {
       return {
         success: false,
-        message: extractErrorMessage(error, "Failed to update order status."),
+        message: extractErrorMessage(error, "Failed to fetch POS orders."),
+        data: [],
+      };
+    }
+  },
+
+  updateOrderStatus: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`/api/pos/orders/${id}/status`, data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to update POS order status."),
+        data: null,
+      };
+    }
+  },
+
+  getPosOrderById: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/pos/orders/${id}`);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to fetch POS order details."),
+        data: null,
+      };
+    }
+  },
+
+  updatePosOrder: async (id, data) => {
+    try {
+      const response = await apiClient.put(`/api/pos/orders/${id}`, data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to update POS order."),
+        data: null,
+      };
+    }
+  },
+
+  deletePosOrder: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/pos/orders/${id}`);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to delete POS order."),
         data: null,
       };
     }
   },
 };
+
+export default PosRoute;

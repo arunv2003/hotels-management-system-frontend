@@ -1,16 +1,4 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-
-const getAuthHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 const logError = (methodName, error) => {
   console.error(`HotelRoute.${methodName} error:`, {
@@ -26,11 +14,7 @@ const logError = (methodName, error) => {
 export const HotelRoute = {
   registerHotel: async (hotelData) => {
     try {
-      const response = await axios.post(
-        `${BACKENDURL}/api/hotels/register`,
-        hotelData,
-        { headers: getAuthHeaders() },
-      );
+      const response = await apiClient.post("/api/hotels/register", hotelData);
       return response.data;
     } catch (error) {
       logError("registerHotel", error);
@@ -38,13 +22,9 @@ export const HotelRoute = {
     }
   },
 
- 
   getAllHotels: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/hotels/all`, {
-        headers: getAuthHeaders(),
-        params,
-      });
+      const response = await apiClient.get("/api/hotels/all", { params });
       return response.data;
     } catch (error) {
       logError("getAllHotels", error);
@@ -54,9 +34,7 @@ export const HotelRoute = {
 
   getHotelById: async (id) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/hotels/${id}`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await apiClient.get(`/api/hotels/${id}`);
       return response.data;
     } catch (error) {
       logError("getHotelById", error);
@@ -66,11 +44,7 @@ export const HotelRoute = {
 
   updateHotel: async (id, hotelData) => {
     try {
-      const response = await axios.put(
-        `${BACKENDURL}/api/hotels/${id}`,
-        hotelData,
-        { headers: getAuthHeaders() },
-      );
+      const response = await apiClient.put(`/api/hotels/${id}`, hotelData);
       return response.data;
     } catch (error) {
       logError("updateHotel", error);
@@ -80,9 +54,7 @@ export const HotelRoute = {
 
   deleteHotel: async (id) => {
     try {
-      const response = await axios.delete(`${BACKENDURL}/api/hotels/${id}`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await apiClient.delete(`/api/hotels/${id}`);
       return response.data;
     } catch (error) {
       logError("deleteHotel", error);
@@ -90,14 +62,9 @@ export const HotelRoute = {
     }
   },
 
-
   toggleHotelStatus: async (id) => {
     try {
-      const response = await axios.patch(
-        `${BACKENDURL}/api/hotels/${id}/toggle-status`,
-        {},
-        { headers: getAuthHeaders() },
-      );
+      const response = await apiClient.patch(`/api/hotels/${id}/toggle-status`, {});
       return response.data;
     } catch (error) {
       logError("toggleHotelStatus", error);

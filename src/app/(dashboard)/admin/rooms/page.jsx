@@ -1,12 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/shared/DashboardLayout';
-import { Bed, Search, RefreshCw, Plus, Trash2, Filter, Layers, AlertCircle, CheckCircle2, ShieldAlert, Check, X } from 'lucide-react';
+import { Bed, Search, RefreshCw, Plus, Trash2, Edit, Filter, Layers, AlertCircle, CheckCircle2, ShieldAlert, Check, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { RoomRoute } from '@/routes/business/roomRoute';
 import AddRoomDialog from '@/components/dilogs/business/AddRoomDialog';
+import EditRoomDialog from '@/components/dilogs/business/EditRoomDialog';
 import Pagination from '@/components/shared/Pagination';
 
 export default function RoomsPage() {
@@ -19,6 +20,8 @@ export default function RoomsPage() {
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedRoomToEdit, setSelectedRoomToEdit] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [actionSuccess, setActionSuccess] = useState('');
@@ -55,68 +58,72 @@ export default function RoomsPage() {
     loadData();
   }, []);
 
-  const handleDeleteRoom = async (id) => {
+  const handleDeleteRoom = async (roomId) => {
     setDeleting(true);
+    setActionSuccess('');
     try {
-      const res = await RoomRoute.deleteRoom(id);
+      const res = await RoomRoute.deleteRoom(roomId);
       if (res && res.success === false) {
         setError(res.message || 'Failed to delete room.');
-        setDeleting(false);
-        return;
+      } else {
+        setActionSuccess('Room deleted successfully.');
+        setDeleteConfirmId(null);
+        await loadData();
+        setTimeout(() => setActionSuccess(''), 3000);
       }
-      setActionSuccess('Room deleted successfully.');
-      setDeleteConfirmId(null);
-      await loadData();
-      setTimeout(() => setActionSuccess(''), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete room.');
+      setError(err.response?.data?.message || err.message || 'Failed to delete room.');
     } finally {
       setDeleting(false);
     }
   };
 
-  // Filter logic
-  const filteredRooms = rooms.filter((rm) => {
-    const matchesSearch = rm.roomNumber.toLowerCase().includes(search.toLowerCase());
-    const matchesType = filterType === 'all' || (rm.roomType?._id || rm.roomType) === filterType;
-    const matchesStatus = filterStatus === 'all' || rm.status === filterStatus;
+  // Filter and Search Logic
+  const filteredRooms = rooms.filter((r) => {
+    const matchesSearch =
+      !search ||
+      r.roomNumber.toLowerCase().includes(search.toLowerCase()) ||
+      (r.roomType?.roomType && r.roomType.roomType.toLowerCase().includes(search.toLowerCase()));
+
+    const matchesType = filterType === 'all' || (r.roomType?._id || r.roomType) === filterType;
+    const matchesStatus = filterStatus === 'all' || r.status === filterStatus;
+
     return matchesSearch && matchesType && matchesStatus;
   });
 
   const totalPages = Math.ceil(filteredRooms.length / pageSize) || 1;
-  const paginatedRooms = filteredRooms.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const paginatedRooms = filteredRooms.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const statusColors = {
     Available: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400',
     Booked: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400',
-    Maintenance: 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400',
-    Dirty: 'bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400',
+    Occupied: 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400',
+    Maintenance: 'bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400',
+    Dirty: 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400',
   };
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+        {/* Header section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-              Room Management
+            <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Rooms Management
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
-              Manage room allocation and physical rooms for {user?.hotelName || user?.name || 'your property'}
+            <p className="text-sm text-slate-500 font-medium mt-1">
+              Configure room units, physical allocation, pricing & real-time operational status
             </p>
           </div>
+
           <div className="flex items-center gap-3">
             <button
               onClick={loadData}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm"
-              title="Refresh"
+              disabled={loading}
+              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+              title="Refresh inventory"
             >
-              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-              Refresh
+              <RefreshCw size={18} className={loading ? 'animate-spin text-indigo-600' : ''} />
             </button>
             <button
               onClick={() => setIsAddModalOpen(true)}
@@ -187,8 +194,7 @@ export default function RoomsPage() {
                           {st.createdCount} / {st.numberOfRooms} Max
                         </span>
                       </div>
-                      {/* Progress Bar */}
-                      <div className="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${isFull ? 'bg-rose-500' : 'bg-indigo-600'}`}
                           style={{ width: `${percent}%` }}
@@ -215,7 +221,6 @@ export default function RoomsPage() {
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
-            {/* Filter by Room Type */}
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
@@ -229,7 +234,6 @@ export default function RoomsPage() {
               ))}
             </select>
 
-            {/* Filter by Status */}
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
@@ -238,13 +242,14 @@ export default function RoomsPage() {
               <option value="all">All Statuses</option>
               <option value="Available">Available</option>
               <option value="Booked">Booked</option>
+              <option value="Occupied">Occupied</option>
               <option value="Maintenance">Maintenance</option>
               <option value="Dirty">Dirty</option>
             </select>
           </div>
         </div>
 
-        {/* Main Content / Table */}
+        {/* Table */}
         {loading ? (
           <div className="flex flex-col items-center justify-center p-16 text-slate-400 space-y-4">
             <RefreshCw className="w-8 h-8 animate-spin text-indigo-600" />
@@ -271,6 +276,8 @@ export default function RoomsPage() {
                     <th className="py-4 px-6">Room Number</th>
                     <th className="py-4 px-6">Room Type</th>
                     <th className="py-4 px-6">Floor</th>
+                    <th className="py-4 px-6">12h Price</th>
+                    <th className="py-4 px-6">24h Price</th>
                     <th className="py-4 px-6">Status</th>
                     <th className="py-4 px-6 text-right">Actions</th>
                   </tr>
@@ -288,21 +295,23 @@ export default function RoomsPage() {
                           </div>
                           Room {room.roomNumber}
                         </td>
-
                         <td className="py-4 px-6 font-semibold text-slate-700 dark:text-slate-300">
                           {roomTypeName}
                         </td>
-
                         <td className="py-4 px-6 text-slate-500">
                           {room.floor || 'N/A'}
                         </td>
-
+                        <td className="py-4 px-6 font-bold text-emerald-600 dark:text-emerald-400">
+                          ₹{Number(room.price12h || 0).toLocaleString()}
+                        </td>
+                        <td className="py-4 px-6 font-bold text-indigo-600 dark:text-indigo-400">
+                          ₹{Number(room.price24h || 0).toLocaleString()}
+                        </td>
                         <td className="py-4 px-6">
                           <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${statusColors[room.status] || 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                             {room.status}
                           </span>
                         </td>
-
                         <td className="py-4 px-6 text-right">
                           {isDeleting ? (
                             <div className="flex items-center justify-end gap-2">
@@ -324,13 +333,25 @@ export default function RoomsPage() {
                               </button>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => setDeleteConfirmId(room._id)}
-                              className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors"
-                              title="Delete Room"
-                            >
-                              <Trash2 size={18} />
-                            </button>
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={() => {
+                                  setSelectedRoomToEdit(room);
+                                  setIsEditModalOpen(true);
+                                }}
+                                className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors"
+                                title="Edit Room"
+                              >
+                                <Edit size={17} />
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirmId(room._id)}
+                                className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors"
+                                title="Delete Room"
+                              >
+                                <Trash2 size={17} />
+                              </button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -340,7 +361,6 @@ export default function RoomsPage() {
               </table>
             </div>
 
-            {/* Table Pagination */}
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
@@ -361,6 +381,21 @@ export default function RoomsPage() {
           onClose={() => setIsAddModalOpen(false)}
           roomTypesSummary={summary}
           onRoomAdded={() => loadData()}
+        />
+
+        {/* Edit Room Modal */}
+        <EditRoomDialog
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedRoomToEdit(null);
+          }}
+          room={selectedRoomToEdit}
+          onRoomUpdated={() => {
+            loadData();
+            setActionSuccess('Room updated successfully!');
+            setTimeout(() => setActionSuccess(''), 3000);
+          }}
         />
       </div>
     </DashboardLayout>

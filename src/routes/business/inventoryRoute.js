@@ -1,16 +1,4 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:9000";
-
-const getHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 const extractErrorMessage = (error, defaultMsg) => {
   return (
@@ -22,35 +10,9 @@ const extractErrorMessage = (error, defaultMsg) => {
 };
 
 export const InventoryRoute = {
-  /**
-   * Fetch all inventory items with optional filters
-   */
-  getInventoryItems: async (params = {}) => {
-    try {
-      const response = await axios.get(`${BACKENDURL}/api/inventory`, {
-        params,
-        headers: getHeaders(),
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: extractErrorMessage(error, "Failed to fetch inventory items."),
-        data: [],
-      };
-    }
-  },
-
-  /**
-   * Fetch inventory KPI stats & summary
-   */
   getInventoryStats: async () => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/inventory/stats`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/inventory/stats");
       return response.data;
     } catch (error) {
       return {
@@ -61,34 +23,35 @@ export const InventoryRoute = {
     }
   },
 
-  /**
-   * Fetch a single inventory item by ID
-   */
-  getInventoryItemById: async (id) => {
+  getInventoryLogs: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/inventory/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/inventory/logs", { params });
       return response.data;
     } catch (error) {
       return {
         success: false,
-        message: extractErrorMessage(error, "Failed to fetch inventory item details."),
-        data: null,
+        message: extractErrorMessage(error, "Failed to fetch inventory logs."),
+        data: [],
       };
     }
   },
 
-  /**
-   * Create a new inventory item
-   */
+  getInventoryItems: async (params = {}) => {
+    try {
+      const response = await apiClient.get("/api/inventory", { params });
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to fetch inventory items."),
+        data: [],
+      };
+    }
+  },
+
   createInventoryItem: async (data) => {
     try {
-      const response = await axios.post(`${BACKENDURL}/api/inventory`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/inventory", data);
       return response.data;
     } catch (error) {
       return {
@@ -99,42 +62,35 @@ export const InventoryRoute = {
     }
   },
 
-  /**
-   * Update an existing inventory item
-   */
-  updateInventoryItem: async (id, data) => {
+  getInventoryItemById: async (id) => {
     try {
-      const response = await axios.put(
-        `${BACKENDURL}/api/inventory/${id}`,
-        data,
-        {
-          headers: getHeaders(),
-          withCredentials: true,
-        }
-      );
+      const response = await apiClient.get(`/api/inventory/${id}`);
       return response.data;
     } catch (error) {
       return {
         success: false,
-        message: extractErrorMessage(error, "Failed to update inventory item."),
+        message: extractErrorMessage(error, "Failed to fetch item details."),
         data: null,
       };
     }
   },
 
-  /**
-   * Adjust stock (Stock In, Stock Out, Consumed, Damaged)
-   */
-  adjustStock: async (id, payload) => {
+  updateInventoryItem: async (id, data) => {
     try {
-      const response = await axios.post(
-        `${BACKENDURL}/api/inventory/${id}/adjust-stock`,
-        payload,
-        {
-          headers: getHeaders(),
-          withCredentials: true,
-        }
-      );
+      const response = await apiClient.put(`/api/inventory/${id}`, data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to update item."),
+        data: null,
+      };
+    }
+  },
+
+  adjustStock: async (id, data) => {
+    try {
+      const response = await apiClient.post(`/api/inventory/${id}/adjust-stock`, data);
       return response.data;
     } catch (error) {
       return {
@@ -145,68 +101,18 @@ export const InventoryRoute = {
     }
   },
 
-  /**
-   * Delete an inventory item
-   */
   deleteInventoryItem: async (id) => {
     try {
-      const response = await axios.delete(
-        `${BACKENDURL}/api/inventory/${id}`,
-        {
-          headers: getHeaders(),
-          withCredentials: true,
-        }
-      );
+      const response = await apiClient.delete(`/api/inventory/${id}`);
       return response.data;
     } catch (error) {
       return {
         success: false,
-        message: extractErrorMessage(error, "Failed to delete inventory item."),
-        data: null,
-      };
-    }
-  },
-
-  /**
-   * Get stock movement audit logs
-   */
-  getInventoryLogs: async (params = {}) => {
-    try {
-      const response = await axios.get(`${BACKENDURL}/api/inventory/logs`, {
-        params,
-        headers: getHeaders(),
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: extractErrorMessage(error, "Failed to fetch stock logs."),
-        data: [],
-      };
-    }
-  },
-
-  /**
-   * Seed demo items for housekeeping & restaurant
-   */
-  seedDemoItems: async () => {
-    try {
-      const response = await axios.post(
-        `${BACKENDURL}/api/inventory/seed`,
-        {},
-        {
-          headers: getHeaders(),
-          withCredentials: true,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: extractErrorMessage(error, "Failed to seed demo items."),
+        message: extractErrorMessage(error, "Failed to delete item."),
         data: null,
       };
     }
   },
 };
+
+export default InventoryRoute;

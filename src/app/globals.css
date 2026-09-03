@@ -134,3 +134,22 @@
   background: radial-gradient(circle at top left, oklch(0.3 0.1 260 / 0.1), transparent),
               radial-gradient(circle at bottom right, oklch(0.6 0.2 160 / 0.1), transparent);
 }
+
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 35s linear infinite;
+}
+
+.animate-marquee-left:hover {
+  animation-play-state: paused;
+}

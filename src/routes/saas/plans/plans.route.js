@@ -1,119 +1,66 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import apiClient from "@/lib/apiClient";
 
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-console.log("BACKENDURL:", BACKENDURL);
 export const Plans = {
   getAllPlans: async () => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Fetching all plans with token:", token);
-
-      const response = await axios.get(`${BACKENDURL}/api/plans/all-plans`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await apiClient.get("/api/plans/all-plans");
       return response.data;
     } catch (error) {
-      console.error("Plans.getAllPlans error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response ? {
-          status: error.response.status,
-          data: error.response.data,
-        } : null,
-      });
+      console.error("Plans.getAllPlans error:", error.response?.data || error.message);
       throw error;
     }
   },
   getAllActivePlans: async () => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Fetching all active plans with token:", token);
-
-      const response = await axios.get(`${BACKENDURL}/api/plans/all-active-plans`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await apiClient.get("/api/plans/all-active-plans");
       return response.data;
     } catch (error) {
-      console.error("Plans.getAllActivePlans error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response ? {
-          status: error.response.status,
-          data: error.response.data,
-        } : null,
-      });
+      console.error("Plans.getAllActivePlans error:", error.response?.data || error.message);
       throw error;
     }
   },
   makePopular: async (planId) => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Making plan popular with token:", token);
-
-      const response = await axios.patch(
-        `${BACKENDURL}/api/plans/make-popular/${planId}`,
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      const response = await apiClient.patch(`/api/plans/make-popular/${planId}`, {});
       return response.data;
     } catch (error) {
-      console.error("Plans.makePopular error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response ? {
-          status: error.response.status,
-          data: error.response.data,
-        } : null,
-      });
+      console.error("Plans.makePopular error:", error.response?.data || error.message);
       throw error;
     }
   },
   createPlan: async (planData) => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Creating plan with token:", token);
-
-      const response = await axios.post(
-        `${BACKENDURL}/api/plans/create-plans`,
-        planData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      const response = await apiClient.post("/api/plans/create-plans", planData);
       return response.data;
     } catch (error) {
-      console.error("Plans.createPlan error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response ? {
-          status: error.response.status,
-          data: error.response.data,
-        } : null,
-      });
+      console.error("Plans.createPlan error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  updatePlan: async (planId, planData) => {
+    try {
+      const response = await apiClient.put(`/api/plans/plans/${planId}`, planData);
+      return response.data;
+    } catch (error) {
+      console.error("Plans.updatePlan error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  deletePlan: async (planId) => {
+    try {
+      const response = await apiClient.delete(`/api/plans/plans/${planId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Plans.deletePlan error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getPlanById: async (planId) => {
+    try {
+      const response = await apiClient.get(`/api/plans/plans/${planId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Plans.getPlanById error:", error.response?.data || error.message);
       throw error;
     }
   },

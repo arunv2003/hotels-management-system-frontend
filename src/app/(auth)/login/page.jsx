@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Hotel, Mail, Lock, ArrowRight } from "lucide-react";
+import { Hotel, Mail, Lock, ArrowRight, AlertTriangle, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/providers/ToastProvider";
 import { useAuthStore } from "@/store/authStore";
 import Cookies from "js-cookie";
+import RenewPlanModal from "@/components/dilogs/hotels/RenewPlanModal";
+
 export default function LoginPage() {
     const [data, setData] = useState({
         email: "",
@@ -19,32 +21,59 @@ export default function LoginPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [expiredInfo, setExpiredInfo] = useState(null);
+    const [showRenewModal, setShowRenewModal] = useState(false);
     const { notify } = useToast();
     const login = useAuthStore((state) => state.login);
+
     const handleChange = (e) => {
         const { id, value } = e.target;
         setData((prev) => ({ ...prev, [id]: value }));
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
+        setExpiredInfo(null);
         try {
             const res = await superAdminRouted.loginSuperadmin(data);
             console.log("Login Response:", res);
-            Cookies.set("accessToken", res?.data.accessToken, { expires: 1}); 
-            Cookies.set("refreshToken", res?.data.refreshToken, { expires: 7 });
+            const token = res?.data?.accessToken || res?.accessToken;
+            const refToken = res?.data?.refreshToken || res?.refreshToken;
+            if (token) {
+              Cookies.set("accessToken", token, { expires: 1, path: "/" });
+            }
+            if (refToken) {
+              Cookies.set("refreshToken", refToken, { expires: 7, path: "/" });
+            }
             login(res);
             notify("Signed in successfully", "success");
             const loggedUser = res?.data?.user || res?.user;
-            if (loggedUser?.userType === "hotel-owner" || loggedUser?.userType === "business" || loggedUser?.userType === "admin" || loggedUser?.userType === "staff") {
+            if (
+              loggedUser?.userType === "hotel-owner" ||
+              loggedUser?.userType === "business" ||
+              loggedUser?.userType === "admin" ||
+              loggedUser?.userType === "staff"
+            ) {
               router.push("/admin");
             } else {
               router.push("/super-admin");
             }
         }
         catch (err) {
-            const message = err?.response?.data?.message || err.message || "Login failed";
+            const resData = err?.response?.data;
+            const message = resData?.message || err.message || "Login failed";
+            
+            // Check if login failed due to expired subscription plan
+            if (resData?.data?.planExpired || message.toLowerCase().includes("expired") || message.toLowerCase().includes("renew")) {
+              setExpiredInfo(resData?.data || {
+                planExpired: true,
+                ownerEmail: data.email,
+                planName: "Hotel Plan",
+              });
+            }
+
             setError(message);
             notify(message, "error");
         }
@@ -52,6 +81,7 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
+
     return (<div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-8 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -mr-64 -mt-64"/>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] -ml-64 -mb-64"/>
@@ -69,7 +99,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="glass-card p-8 rounded-[2.5rem] shadow-2xl relative z-10">
+        <div className="glass-card p-8 rounded-[2.5rem] shadow-2xl relative z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
@@ -92,7 +122,37 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {/* Plan Expired Alert Box */}
+            {expiredInfo && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 space-y-3"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="text-xs">
+                    <p className="font-extrabold text-sm text-amber-900 dark:text-amber-100">
+                      Subscription Plan Expired
+                    </p>
+                    <p className="mt-0.5 text-amber-700 dark:text-amber-300">
+                      Your subscription for <strong>{expiredInfo.planName || "your plan"}</strong> has expired. Please renew your plan to reactivate login.
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={() => setShowRenewModal(true)}
+                  className="w-full h-11 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Renew Plan Now (Instant Reactivation)
+                </Button>
+              </motion.div>
+            )}
+
+            {error && !expiredInfo && <p className="text-sm text-red-600 font-medium">{error}</p>}
 
             <div className="block">
               <Button type="submit" className="w-full h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-lg font-bold shadow-lg shadow-indigo-500/20 group" disabled={loading}>
@@ -113,7 +173,7 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-14 rounded-2xl border-slate-200 dark:border-slate-800 flex gap-3 font-semibold">
+              <Button variant="outline" type="button" className="h-14 rounded-2xl border-slate-200 dark:border-slate-800 flex gap-3 font-semibold">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="currentColor"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="currentColor"/>
@@ -122,7 +182,7 @@ export default function LoginPage() {
                 </svg>
                 Google
               </Button>
-              <Button variant="outline" className="h-14 rounded-2xl border-slate-200 dark:border-slate-800 flex gap-3 font-semibold">
+              <Button variant="outline" type="button" className="h-14 rounded-2xl border-slate-200 dark:border-slate-800 flex gap-3 font-semibold">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                 </svg>
@@ -139,5 +199,23 @@ export default function LoginPage() {
           </Link>
         </p>
       </motion.div>
+
+      {/* Quick Renew Plan Modal */}
+      {showRenewModal && expiredInfo && (
+        <RenewPlanModal
+          isOpen={showRenewModal}
+          onClose={() => setShowRenewModal(false)}
+          hotelId={expiredInfo.hotelId}
+          hotelName={expiredInfo.hotelName || "Your Hotel"}
+          ownerEmail={expiredInfo.ownerEmail || data.email}
+          currentPlanName={expiredInfo.planName}
+          onSuccess={() => {
+            setError("");
+            setExpiredInfo(null);
+            notify("Plan renewed! You can now log in.", "success");
+          }}
+        />
+      )}
     </div>);
 }
+

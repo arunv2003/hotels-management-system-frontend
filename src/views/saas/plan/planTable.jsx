@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AddPlanDialog from "@/components/dilogs/saas/plans/addPlans";
+import EditPlanDialog from "@/components/dilogs/saas/plans/editPlans";
 import { Plans } from "@/routes/saas/plans/plans.route";
 import Pagination from "@/components/shared/Pagination";
 
@@ -28,9 +29,12 @@ export default function PlanTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddPlanOpen, setIsAddPlanOpen] = useState(false);
+  const [isEditPlanOpen, setIsEditPlanOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [disable, seDesable] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const limit = 5;
 
   const getAllPlans = async () => {
@@ -49,6 +53,27 @@ export default function PlanTable() {
   useEffect(() => {
     getAllPlans();
   }, []);
+
+  const handleEditPlan = (plan) => {
+    setSelectedPlan(plan);
+    setIsEditPlanOpen(true);
+  };
+
+  const handleDeletePlan = async (planId) => {
+    if (!window.confirm("Are you sure you want to delete this subscription plan?")) {
+      return;
+    }
+    setDeletingId(planId);
+    try {
+      await Plans.deletePlan(planId);
+      await getAllPlans();
+    } catch (error) {
+      console.error("Error deleting plan:", error);
+      alert(error.response?.data?.message || "Failed to delete plan.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   // ✅ Fix: Handle popular toggle
   const handlePopularToggle = async (planId) => {
@@ -313,13 +338,29 @@ export default function PlanTable() {
                   </td>
                   <td className="px-4 py-2.5 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => handleEditPlan(plan)}
+                        title="View Plan Details"
+                        className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
+                      >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg text-slate-300 hover:text-emerald-600 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => handleEditPlan(plan)}
+                        title="Edit Plan"
+                        className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer"
+                      >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg text-slate-300 hover:text-rose-600 transition-colors">
+                      <button
+                        type="button"
+                        disabled={deletingId === (plan._id || plan.id)}
+                        onClick={() => handleDeletePlan(plan._id || plan.id)}
+                        title="Delete Plan"
+                        className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-600 transition-colors cursor-pointer disabled:opacity-50"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -356,11 +397,20 @@ export default function PlanTable() {
         )}
       </div>
 
-
       <AddPlanDialog
         isOpen={isAddPlanOpen}
         getAllPlans={getAllPlans}
         onClose={() => setIsAddPlanOpen(false)}
+      />
+
+      <EditPlanDialog
+        isOpen={isEditPlanOpen}
+        plan={selectedPlan}
+        getAllPlans={getAllPlans}
+        onClose={() => {
+          setIsEditPlanOpen(false);
+          setSelectedPlan(null);
+        }}
       />
     </div>
   );

@@ -1,121 +1,61 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import apiClient from "@/lib/apiClient";
 
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-
-export const AnnouncementRoutes = {
+export const Announcement = {
+  createAnnouncement: async (data) => {
+    try {
+      const response = await apiClient.post("/api/announcement/create-announcement", data);
+      return response.data;
+    } catch (error) {
+      console.error("Announcement.createAnnouncement error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
   getAllAnnouncements: async () => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.get(`${BACKENDURL}/api/announcement/get`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get("/api/announcement/all-announcements");
       return response.data;
     } catch (error) {
-      console.error("AnnouncementRoutes.getAllAnnouncements error:", error);
+      console.error("Announcement.getAllAnnouncements error:", error.response?.data || error.message);
       throw error;
     }
   },
-
   getAnnouncementById: async (id) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.get(
-        `${BACKENDURL}/api/announcement/get/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get(`/api/announcement/get-announcement/${id}`);
       return response.data;
     } catch (error) {
-      console.error("AnnouncementRoutes.getAnnouncementById error:", error);
+      console.error("Announcement.getAnnouncementById error:", error.response?.data || error.message);
       throw error;
     }
   },
-
-  createAnnouncement: async (announcementData) => {
+  updateAnnouncement: async (id, data) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.post(
-        `${BACKENDURL}/api/announcement/create`,
-        announcementData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.put(`/api/announcement/update-announcement/${id}`, data);
       return response.data;
     } catch (error) {
-      console.error("AnnouncementRoutes.createAnnouncement error:", error);
+      console.error("Announcement.updateAnnouncement error:", error.response?.data || error.message);
       throw error;
     }
   },
-
-  updateAnnouncement: async (id, announcementData) => {
-    try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.put(
-        `${BACKENDURL}/api/announcement/update/${id}`,
-        announcementData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("AnnouncementRoutes.updateAnnouncement error:", error);
-      throw error;
-    }
-  },
-
   deleteAnnouncement: async (id) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.delete(
-        `${BACKENDURL}/api/announcement/delete/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.delete(`/api/announcement/delete-announcement/${id}`);
       return response.data;
     } catch (error) {
-      console.error("AnnouncementRoutes.deleteAnnouncement error:", error);
+      console.error("Announcement.deleteAnnouncement error:", error.response?.data || error.message);
       throw error;
     }
   },
-
   addClicks: async (id) => {
     try {
-      const token = Cookies.get("accessToken");
-      const response = await axios.put(
-        `${BACKENDURL}/api/announcement/addClicks/${id}`,
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.put(`/api/announcement/add-clicks/${id}`);
       return response.data;
     } catch (error) {
-      console.error("AnnouncementRoutes.addClicks error:", error);
+      console.error("Announcement.addClicks error:", error.response?.data || error.message);
       throw error;
     }
   },
 };
+
+export const AnnouncementRoutes = Announcement;
+export default Announcement;

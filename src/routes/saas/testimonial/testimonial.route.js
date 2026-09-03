@@ -1,131 +1,61 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import apiClient from "@/lib/apiClient";
 
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKENDURL || "http://localhost:9000";
-console.log("BACKENDURL:", BACKENDURL);
-export const TestimonialRoutes = {
+export const testimonials = {
+  createTestimonials: async (data) => {
+    try {
+      const response = await apiClient.post("/api/testimonials/create-testimonials", data);
+      return response.data;
+    } catch (error) {
+      console.error("testimonials.createTestimonials error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
   getAllTestimonials: async () => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Fetching all room types with token:", token);
-
-      const response = await axios.get(`${BACKENDURL}/api/testimonials/all-testimonials`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await apiClient.get("/api/testimonials/all-testimonials");
       return response.data;
     } catch (error) {
-      console.error("RoomTypeRoute.getAllRoomstype error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response
-          ? {
-              status: error.response.status,
-              data: error.response.data,
-            }
-          : null,
-      });
+      console.error("testimonials.getAllTestimonials error:", error.response?.data || error.message);
       throw error;
     }
   },
-  createTestimonials: async (roomTypeData) => {
+  getAllActiveTestimonials: async () => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Creating room type with token:", token);
-
-      const response = await axios.post(
-        `${BACKENDURL}/api/testimonials/create-testimonials`,
-        roomTypeData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
+      const response = await apiClient.get("/api/testimonials/all-active-testimonials");
       return response.data;
     } catch (error) {
-      console.error("RoomTypeRoute.createRoomsType error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response
-          ? {
-              status: error.response.status,
-              data: error.response.data,
-            }
-          : null,
-      });
+      console.error("testimonials.getAllActiveTestimonials error:", error.response?.data || error.message);
       throw error;
     }
   },
-  updateTestimonials: async (_id, roomTypeData) => {
+  updateTestimonials: async (id, data) => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Updating room type with token:", token);
-
-      const response = await axios.put(
-        `${BACKENDURL}/api/testimonials/testimonial/${_id}`,
-        roomTypeData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
+      const response = await apiClient.put(`/api/testimonials/testimonial/${id}`, data);
       return response.data;
     } catch (error) {
-      console.error("RoomTypeRoute.updateRoomsType error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response
-          ? {
-              status: error.response.status,
-              data: error.response.data,
-            }
-          : null,
-      });
+      console.error("testimonials.updateTestimonials error:", error.response?.data || error.message);
       throw error;
     }
   },
-  deletetestimonials: async (_id) => {
+  deletetestimonials: async (id) => {
     try {
-      const token = Cookies.get("accessToken");
-      console.log("Deleting room type with token:", token);
-
-      const response = await axios.delete(
-        `${BACKENDURL}/api/testimonials/testimonial/${_id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
+      const response = await apiClient.delete(`/api/testimonials/testimonial/${id}`);
       return response.data;
     } catch (error) {
-      console.error("RoomTypeRoute.deleteRoomsType error detailed:", {
-        message: error.message,
-        name: error.name,
-        code: error.code,
-        response: error.response
-          ? {
-              status: error.response.status,
-              data: error.response.data,
-            }
-          : null,
-      });
+      console.error("testimonials.deletetestimonials error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getTestimonialById: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/testimonials/testimonial/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("testimonials.getTestimonialById error:", error.response?.data || error.message);
       throw error;
     }
   },
 };
+
+export const TestimonialRoutes = testimonials;
+export default testimonials;

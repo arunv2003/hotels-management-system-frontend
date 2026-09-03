@@ -32,6 +32,9 @@ import {
   ZoomIn,
   Copy,
   Check,
+  Banknote,
+  Sparkles,
+  Lock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/store/authStore";
@@ -39,6 +42,7 @@ import { BookingRoute } from "@/routes/business/bookingRoute";
 import { RoomRoute } from "@/routes/business/roomRoute";
 import { CloudinaryImage } from "@/routes/saas/cloudinary/cloudinary.route";
 import Pagination from "@/components/shared/Pagination";
+import { loadRazorpayScript } from "@/lib/razorpay";
 
 export default function BookingsPage() {
   const { user } = useAuthStore();
@@ -82,6 +86,7 @@ export default function BookingsPage() {
     state: "",
     // Stay info
     room: "",
+    stayType: "24h", // "12h" or "24h"
     checkInDate: new Date().toISOString().split("T")[0],
     checkOutDate: new Date(Date.now() + 86400000).toISOString().split("T")[0],
     adultsCount: 1,
@@ -90,9 +95,37 @@ export default function BookingsPage() {
     // Financial & status
     totalAmount: "",
     paidAmount: 0,
+    paymentMethod: "Cash", // "Cash" or "Razorpay"
     paymentStatus: "Unpaid",
     bookingStatus: "Confirmed",
   });
+
+  const resetForm = () => {
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      idProofType: "Aadhar Card",
+      idProofNumber: "",
+      idProofImage: "",
+      address: "",
+      city: "",
+      state: "",
+      room: "",
+      stayType: "24h",
+      checkInDate: new Date().toISOString().split("T")[0],
+      checkOutDate: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+      adultsCount: 1,
+      childrenCount: 0,
+      specialRequests: "",
+      totalAmount: "",
+      paidAmount: 0,
+      paymentMethod: "Cash",
+      paymentStatus: "Unpaid",
+      bookingStatus: "Confirmed",
+    });
+  };
 
   // Fetch initial data
   const fetchData = async () => {
@@ -171,16 +204,22 @@ export default function BookingsPage() {
     0
   );
 
-  // Handle Form Input Changes
+  // Handle Form Input Changes with 12h & 24h Pricing Engine
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       let updated = { ...prev, [name]: value };
 
-      if (name === "room" || name === "checkInDate" || name === "checkOutDate") {
+      if (
+        name === "room" ||
+        name === "stayType" ||
+        name === "checkInDate" ||
+        name === "checkOutDate"
+      ) {
         const selectedRoom = rooms.find(
           (r) => r._id === (name === "room" ? value : prev.room)
         );
+        const currentStayType = name === "stayType" ? value : prev.stayType;
         const inDate = new Date(
           name === "checkInDate" ? value : prev.checkInDate
         );
@@ -188,20 +227,29 @@ export default function BookingsPage() {
           name === "checkOutDate" ? value : prev.checkOutDate
         );
 
-        if (
-          selectedRoom &&
-          selectedRoom.roomType &&
-          !isNaN(inDate) &&
-          !isNaN(outDate) &&
-          outDate > inDate
-        ) {
-          const nights = Math.max(
-            1,
-            Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24))
-          );
-          const pricePerNight = Number(selectedRoom.roomType.pricePerNight) || 0;
-          if (pricePerNight > 0) {
-            updated.totalAmount = nights * pricePerNight;
+        if (selectedRoom) {
+          const p12h = Number(selectedRoom.price12h) || 0;
+          const p24h = Number(selectedRoom.price24h) || 0;
+
+          if (currentStayType === "12h") {
+            // 12-hour booking rate
+            const rate = p12h > 0 ? p12h : (p24h > 0 ? Math.round(p24h / 2) : 0);
+            if (rate > 0) {
+              updated.totalAmount = rate;
+            }
+          } else {
+            // 24-hour (Daily) booking rate
+            let nights = 1;
+            if (!isNaN(inDate) && !isNaN(outDate) && outDate > inDate) {
+              nights = Math.max(
+                1,
+                Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24))
+              );
+            }
+            const rate = p24h > 0 ? p24h : (p12h > 0 ? p12h * 2 : 0);
+            if (rate > 0) {
+              updated.totalAmount = nights * rate;
+            }
           }
         }
       }
@@ -263,7 +311,7 @@ export default function BookingsPage() {
     }
   };
 
-  // Create Booking Submit
+  // Create Booking Submit (Supports Cash and Razorpay Gateway)
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     if (!formData.firstName || !formData.phone || !formData.room) {
@@ -271,69 +319,146 @@ export default function BookingsPage() {
       return;
     }
 
-    if (
-      Number(formData.totalAmount) > 0 &&
-      Number(formData.paidAmount) > Number(formData.totalAmount)
-    ) {
+    const totalAmt = Number(formData.totalAmount) || 0;
+    const paidAmt = Number(formData.paidAmount) || 0;
+
+    if (totalAmt > 0 && paidAmt > totalAmt) {
       setErrorMsg("Paid amount cannot be greater than Total bill amount.");
+      return;
+    }
+
+    if (formData.paymentMethod === "Razorpay" && paidAmt <= 0 && totalAmt > 0) {
+      setErrorMsg("Please enter the amount to be paid via Razorpay.");
       return;
     }
 
     setSubmitting(true);
     setErrorMsg("");
 
-    try {
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        idProofType: formData.idProofType,
-        idProofNumber: formData.idProofNumber,
-        idProofImage: formData.idProofImage,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        room: formData.room,
-        checkInDate: formData.checkInDate,
-        checkOutDate: formData.checkOutDate,
-        adultsCount: formData.adultsCount,
-        childrenCount: formData.childrenCount,
-        specialRequests: formData.specialRequests,
-        totalAmount: Number(formData.totalAmount) || 0,
-        paidAmount: Number(formData.paidAmount) || 0,
-        paymentStatus: formData.paymentStatus,
-        bookingStatus: formData.bookingStatus,
-      };
+    const basePayload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      idProofType: formData.idProofType,
+      idProofNumber: formData.idProofNumber,
+      idProofImage: formData.idProofImage,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      room: formData.room,
+      stayType: formData.stayType || "24h",
+      durationHours: formData.stayType === "12h" ? 12 : 24,
+      checkInDate: formData.checkInDate,
+      checkOutDate: formData.checkOutDate,
+      adultsCount: formData.adultsCount,
+      childrenCount: formData.childrenCount,
+      specialRequests: formData.specialRequests,
+      totalAmount: totalAmt,
+      paidAmount: paidAmt,
+      paymentMethod: formData.paymentMethod || "Cash",
+      paymentStatus: formData.paymentStatus,
+      bookingStatus: formData.bookingStatus,
+    };
 
-      const res = await BookingRoute.createBooking(payload);
+    // Razorpay Online Payment Flow
+    if (formData.paymentMethod === "Razorpay" && paidAmt > 0) {
+      try {
+        const scriptOk = await loadRazorpayScript();
+        if (!scriptOk) {
+          throw new Error("Unable to load Razorpay checkout gateway. Please check your network connection.");
+        }
+
+        const selectedRoom = rooms.find((r) => r._id === formData.room);
+
+        // 1. Create Razorpay order on backend
+        const orderRes = await BookingRoute.createBookingRazorpayOrder({
+          amount: paidAmt,
+          roomId: formData.room,
+          guestName: `${formData.firstName} ${formData.lastName}`.trim(),
+          guestPhone: formData.phone,
+          guestEmail: formData.email,
+        });
+
+        if (!orderRes.success && !orderRes.data?.orderId) {
+          throw new Error(orderRes.message || "Failed to initialize Razorpay order.");
+        }
+
+        const orderData = orderRes.data;
+
+        // 2. Open Razorpay Checkout Modal
+        const razorpayOptions = {
+          key: orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_RqJtOyGfDiW0vw",
+          amount: orderData.amount,
+          currency: orderData.currency || "INR",
+          name: user?.hotelName || "Hotel Booking Payment",
+          description: `Room ${selectedRoom?.roomNumber || ""} Stay Booking (${formData.stayType === "12h" ? "12 Hours" : "24 Hours"})`,
+          order_id: orderData.orderId,
+          prefill: {
+            name: `${formData.firstName} ${formData.lastName}`.trim(),
+            contact: formData.phone,
+            email: formData.email || "",
+          },
+          theme: {
+            color: "#4f46e5",
+          },
+          handler: async function (razorpayResponse) {
+            try {
+              const fullPayload = {
+                ...basePayload,
+                paymentMethod: "Razorpay",
+                razorpayOrderId: razorpayResponse.razorpay_order_id,
+                razorpayPaymentId: razorpayResponse.razorpay_payment_id,
+                razorpaySignature: razorpayResponse.razorpay_signature,
+                paidAmount: paidAmt,
+                paymentStatus: paidAmt >= totalAmt && totalAmt > 0 ? "Paid" : "PartiallyPaid",
+              };
+
+              const createRes = await BookingRoute.createBooking(fullPayload);
+              if (createRes.success || createRes.status === 201) {
+                setSuccessMsg("Booking created and Razorpay payment received successfully!");
+                setIsCreateModalOpen(false);
+                resetForm();
+                fetchData();
+              } else {
+                setErrorMsg(createRes.message || "Payment captured but failed to save booking.");
+              }
+            } catch (saveErr) {
+              console.error("Save booking post-Razorpay error:", saveErr);
+              setErrorMsg(saveErr.message || "Failed to save booking record.");
+            } finally {
+              setSubmitting(false);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setSubmitting(false);
+              setErrorMsg("Razorpay payment was cancelled. You can retry or choose Cash payment.");
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(razorpayOptions);
+        rzp.on("payment.failed", function (failResp) {
+          setSubmitting(false);
+          setErrorMsg(failResp?.error?.description || "Razorpay payment failed. Please try again.");
+        });
+        rzp.open();
+      } catch (rzpErr) {
+        console.error("Razorpay Flow Error:", rzpErr);
+        setErrorMsg(rzpErr.message || "Failed to launch Razorpay payment.");
+        setSubmitting(false);
+      }
+      return;
+    }
+
+    // Cash Payment Flow (or Unpaid Booking)
+    try {
+      const res = await BookingRoute.createBooking(basePayload);
       if (res.success || res.status === 201) {
         setSuccessMsg("Booking created successfully!");
         setIsCreateModalOpen(false);
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          idProofType: "Aadhar Card",
-          idProofNumber: "",
-          idProofImage: "",
-          address: "",
-          city: "",
-          state: "",
-          room: "",
-          checkInDate: new Date().toISOString().split("T")[0],
-          checkOutDate: new Date(Date.now() + 86400000)
-            .toISOString()
-            .split("T")[0],
-          adultsCount: 1,
-          childrenCount: 0,
-          specialRequests: "",
-          totalAmount: "",
-          paidAmount: 0,
-          paymentStatus: "Unpaid",
-          bookingStatus: "Confirmed",
-        });
+        resetForm();
         fetchData();
       } else {
         setErrorMsg(res.message || "Failed to create booking.");
@@ -656,23 +781,41 @@ export default function BookingsPage() {
                             <div className="text-xs text-slate-400 font-medium">
                               {room.roomType?.roomType || "Standard"}
                             </div>
+                            {(room.price12h > 0 || room.price24h > 0) && (
+                              <div className="text-[10px] font-bold text-slate-500 mt-0.5">
+                                ₹{room.price12h || 0}/12h • ₹{room.price24h || 0}/24h
+                              </div>
+                            )}
                           </div>
                         </td>
 
-                        {/* Stay Dates */}
+                        {/* Stay Dates & Stay Plan */}
                         <td className="py-4 px-6">
-                          <div className="text-xs space-y-0.5">
-                            <div>
-                              <span className="text-slate-400">In:</span>{" "}
-                              <span className="font-semibold text-slate-700 dark:text-slate-300">
-                                {checkIn}
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-slate-400">Out:</span>{" "}
-                              <span className="font-semibold text-slate-700 dark:text-slate-300">
-                                {checkOut}
-                              </span>
+                          <div className="text-xs space-y-1">
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                b.stayType === "12h" || b.durationHours === 12
+                                  ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                                  : "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30"
+                              }`}
+                            >
+                              {b.stayType === "12h" || b.durationHours === 12
+                                ? "☀️ 12 Hours Stay"
+                                : "🌙 24 Hours Stay"}
+                            </span>
+                            <div className="text-[11px] space-y-0.5">
+                              <div>
+                                <span className="text-slate-400">In:</span>{" "}
+                                <span className="font-semibold text-slate-700 dark:text-slate-300">
+                                  {checkIn}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-slate-400">Out:</span>{" "}
+                                <span className="font-semibold text-slate-700 dark:text-slate-300">
+                                  {checkOut}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </td>
@@ -686,17 +829,28 @@ export default function BookingsPage() {
                                 (Paid: ₹{(b.paidAmount || 0).toLocaleString()})
                               </span>
                             </div>
-                            <span
-                              className={`inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${
-                                b.paymentStatus === "Paid"
-                                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400"
-                                  : b.paymentStatus === "PartiallyPaid"
-                                  ? "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400"
-                                  : "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400"
-                              }`}
-                            >
-                              {b.paymentStatus || "Unpaid"}
-                            </span>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${
+                                  b.paymentStatus === "Paid"
+                                    ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400"
+                                    : b.paymentStatus === "PartiallyPaid"
+                                    ? "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400"
+                                    : "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400"
+                                }`}
+                              >
+                                {b.paymentStatus || "Unpaid"}
+                              </span>
+                              <span
+                                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border ${
+                                  b.paymentMethod === "Razorpay"
+                                    ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400"
+                                    : "bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-slate-400"
+                                }`}
+                              >
+                                {b.paymentMethod === "Razorpay" ? "💳 Razorpay" : "💵 Cash"}
+                              </span>
+                            </div>
                           </div>
                         </td>
 
@@ -992,10 +1146,57 @@ export default function BookingsPage() {
                   <div>
                     <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-3 flex items-center gap-2">
                       <Bed size={16} />
-                      Room & Dates
+                      Room & Stay Package
                     </h3>
+
+                    {/* Stay Package Selector (12h vs 24h) */}
+                    <div className="mb-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block uppercase tracking-wider">
+                        Select Stay Duration Plan <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleInputChange({ target: { name: "stayType", value: "12h" } });
+                          }}
+                          className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                            formData.stayType === "12h"
+                              ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20"
+                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400"
+                          }`}
+                        >
+                          <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                            ☀️ 12 Hours Stay
+                          </span>
+                          <span className={`text-[11px] font-medium ${formData.stayType === "12h" ? "text-indigo-100" : "text-slate-400"}`}>
+                            Half-day slot rate (12h)
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleInputChange({ target: { name: "stayType", value: "24h" } });
+                          }}
+                          className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                            formData.stayType === "24h"
+                              ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20"
+                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400"
+                          }`}
+                        >
+                          <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                            🌙 24 Hours Stay
+                          </span>
+                          <span className={`text-[11px] font-medium ${formData.stayType === "24h" ? "text-indigo-100" : "text-slate-400"}`}>
+                            Full day / Per night (24h)
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
+                      <div className="sm:col-span-1">
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                           Select Room <span className="text-rose-500">*</span>
                         </label>
@@ -1004,15 +1205,18 @@ export default function BookingsPage() {
                           required
                           value={formData.room}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-3 font-medium focus:outline-none"
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-3 font-medium focus:outline-none text-xs"
                         >
                           <option value="">-- Select Room --</option>
-                          {rooms.map((r) => (
-                            <option key={r._id} value={r._id}>
-                              Room {r.roomNumber} ({r.roomType?.roomType || "Standard"} - ₹
-                              {r.roomType?.pricePerNight || 0}/night)
-                            </option>
-                          ))}
+                          {rooms.map((r) => {
+                            const p12 = r.price12h || 0;
+                            const p24 = r.price24h || 0;
+                            return (
+                              <option key={r._id} value={r._id}>
+                                Room {r.roomNumber} ({r.roomType?.roomType || "Standard"} — ₹{p12}/12h, ₹{p24}/24h)
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
 
@@ -1026,7 +1230,7 @@ export default function BookingsPage() {
                           required
                           value={formData.checkInDate}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-3 font-medium focus:outline-none"
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-3 font-medium focus:outline-none text-xs"
                         />
                       </div>
 
@@ -1040,10 +1244,35 @@ export default function BookingsPage() {
                           required
                           value={formData.checkOutDate}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-3 font-medium focus:outline-none"
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-3 font-medium focus:outline-none text-xs"
                         />
                       </div>
                     </div>
+
+                    {/* Room Rates Information Pill */}
+                    {(() => {
+                      const selectedRoom = rooms.find((r) => r._id === formData.room);
+                      if (selectedRoom) {
+                        const p12 = Number(selectedRoom.price12h) || 0;
+                        const p24 = Number(selectedRoom.price24h) || 0;
+                        return (
+                          <div className="mt-3 p-2.5 px-3.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/50 flex items-center justify-between text-xs">
+                            <span className="text-slate-600 dark:text-slate-300 font-semibold">
+                              Room {selectedRoom.roomNumber} ({selectedRoom.roomType?.roomType || "Standard"}) Rates:
+                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className={`px-2 py-0.5 rounded-md font-bold text-[11px] ${formData.stayType === "12h" ? "bg-indigo-600 text-white" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
+                                12h: ₹{p12.toLocaleString()}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-md font-bold text-[11px] ${formData.stayType === "24h" ? "bg-indigo-600 text-white" : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"}`}>
+                                24h: ₹{p24.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
 
                   {/* Financial & Initial Status */}
@@ -1052,6 +1281,73 @@ export default function BookingsPage() {
                       <DollarSign size={16} />
                       Billing & Initial Status
                     </h3>
+
+                    {/* Payment Mode Selector (Cash vs Razorpay) */}
+                    <div className="mb-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block uppercase tracking-wider">
+                        Select Payment Mode <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleInputChange({ target: { name: "paymentMethod", value: "Cash" } });
+                          }}
+                          className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                            formData.paymentMethod === "Cash"
+                              ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
+                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
+                          }`}
+                        >
+                          <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                            <Banknote size={15} /> 💵 Cash Payment
+                          </span>
+                          <span className={`text-[11px] font-medium ${formData.paymentMethod === "Cash" ? "text-emerald-100" : "text-slate-400"}`}>
+                            Direct cash collection at front desk
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const tot = Number(formData.totalAmount) || 0;
+                            setFormData((prev) => ({
+                              ...prev,
+                              paymentMethod: "Razorpay",
+                              paidAmount: prev.paidAmount > 0 ? prev.paidAmount : tot,
+                              paymentStatus: tot > 0 ? "Paid" : prev.paymentStatus,
+                            }));
+                          }}
+                          className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 relative overflow-hidden ${
+                            formData.paymentMethod === "Razorpay"
+                              ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white border-indigo-600 shadow-md shadow-indigo-600/20"
+                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                              <CreditCard size={15} /> 💳 Razorpay (Online)
+                            </span>
+                            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${formData.paymentMethod === "Razorpay" ? "bg-white text-indigo-700" : "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"}`}>
+                              UPI / Cards
+                            </span>
+                          </div>
+                          <span className={`text-[11px] font-medium ${formData.paymentMethod === "Razorpay" ? "text-indigo-100" : "text-slate-400"}`}>
+                            Instant UPI, GPay, PhonePe, Cards & NetBanking
+                          </span>
+                        </button>
+                      </div>
+
+                      {formData.paymentMethod === "Razorpay" && (
+                        <div className="mt-2.5 p-2.5 px-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800/60 flex items-center gap-2.5 text-xs text-indigo-900 dark:text-indigo-200 font-medium">
+                          <ShieldCheck size={16} className="text-indigo-600 dark:text-indigo-400 shrink-0" />
+                          <span>
+                            <strong>Razorpay Payment Gateway:</strong> Secure payment checkout popup will open to accept online payment directly into your account.
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
@@ -1069,7 +1365,7 @@ export default function BookingsPage() {
 
                       <div>
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                          Paid Amount (₹)
+                          Paid Amount (₹) {formData.paymentMethod === "Razorpay" && <span className="text-indigo-500 font-normal">(Online)</span>}
                         </label>
                         <input
                           type="number"
@@ -1110,14 +1406,34 @@ export default function BookingsPage() {
                     >
                       Cancel
                     </button>
-                    <button
-                      type="submit"
-                      disabled={submitting || uploadingImage}
-                      className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/25 transition-all"
-                    >
-                      {submitting && <Loader2 size={16} className="animate-spin" />}
-                      Save Booking
-                    </button>
+                    {formData.paymentMethod === "Razorpay" ? (
+                      <button
+                        type="submit"
+                        disabled={submitting || uploadingImage}
+                        className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.01]"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" />
+                            Processing with Razorpay...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard size={16} />
+                            Pay ₹{formData.paidAmount || formData.totalAmount || 0} via Razorpay & Save
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={submitting || uploadingImage}
+                        className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/25 transition-all"
+                      >
+                        {submitting && <Loader2 size={16} className="animate-spin" />}
+                        Save Booking (Cash)
+                      </button>
+                    )}
                   </div>
                 </form>
               </motion.div>
@@ -1274,22 +1590,26 @@ export default function BookingsPage() {
                     <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
                       <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                         <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
-                          <Calendar size={15} /> Dates & Stay Duration
+                          <Calendar size={15} /> Dates & Stay Plan
                         </span>
-                        {selectedBooking.checkInDate &&
-                          selectedBooking.checkOutDate && (
-                            <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-extrabold text-[11px]">
-                              {Math.max(
+                        <span className={`px-2.5 py-0.5 rounded-md font-extrabold text-[11px] ${
+                          selectedBooking.stayType === "12h" || selectedBooking.durationHours === 12
+                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                            : "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30"
+                        }`}>
+                          {selectedBooking.stayType === "12h" || selectedBooking.durationHours === 12
+                            ? "☀️ 12 Hours Stay"
+                            : selectedBooking.checkInDate && selectedBooking.checkOutDate
+                            ? `🌙 24h (${Math.max(
                                 1,
                                 Math.ceil(
                                   (new Date(selectedBooking.checkOutDate) -
                                     new Date(selectedBooking.checkInDate)) /
                                     (1000 * 60 * 60 * 24)
                                 )
-                              )}{" "}
-                              Night(s)
-                            </span>
-                          )}
+                              )} Night)`
+                            : "🌙 24 Hours Stay"}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between pt-1 text-slate-900 dark:text-white">
                         <div>
@@ -1334,8 +1654,13 @@ export default function BookingsPage() {
                     <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
                       <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                         <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
-                          <Bed size={15} /> Room & Occupants
+                          <Bed size={15} /> Room & Rates
                         </span>
+                        {(selectedBooking.room?.price12h > 0 || selectedBooking.room?.price24h > 0) && (
+                          <span className="text-[10px] font-bold text-slate-500">
+                            ₹{selectedBooking.room?.price12h || 0}/12h • ₹{selectedBooking.room?.price24h || 0}/24h
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center justify-between pt-1">
                         <div>
@@ -1372,6 +1697,13 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                       <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
                         <CreditCard size={15} /> Financial Summary
+                      </span>
+                      <span className={`px-2.5 py-0.5 rounded-md font-bold text-[11px] border ${
+                        selectedBooking.paymentMethod === "Razorpay"
+                          ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:text-indigo-400"
+                          : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400"
+                      }`}>
+                        {selectedBooking.paymentMethod === "Razorpay" ? "💳 Razorpay Online" : "💵 Cash Payment"}
                       </span>
                     </div>
                     <div className="grid grid-cols-3 gap-3 pt-1">
@@ -1413,6 +1745,15 @@ export default function BookingsPage() {
                         </p>
                       </div>
                     </div>
+
+                    {selectedBooking.razorpayPaymentId && (
+                      <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs">
+                        <span className="text-slate-400 font-medium">Razorpay Payment Reference:</span>
+                        <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800/60">
+                          {selectedBooking.razorpayPaymentId}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* ID Proof Box - ENHANCED DOCUMENT DISPLAY */}

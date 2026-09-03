@@ -178,7 +178,7 @@ export default function CMSPageView() {
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="rounded-xl bg-indigo-655 hover:bg-indigo-700 text-white h-11 px-6 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10"
+          className="rounded-xl bg-indigo-700 text-white h-11 px-6 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10"
         >
           <Plus size={18} />
           Create Page

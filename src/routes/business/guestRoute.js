@@ -1,16 +1,4 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:9000";
-
-const getHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 const extractErrorMessage = (error, defaultMsg) => {
   return (
@@ -22,13 +10,22 @@ const extractErrorMessage = (error, defaultMsg) => {
 };
 
 export const GuestRoute = {
+  createGuest: async (data) => {
+    try {
+      const response = await apiClient.post("/api/guests", data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to create guest."),
+        data: null,
+      };
+    }
+  },
+
   getGuests: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/guests`, {
-        headers: getHeaders(),
-        params,
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/guests", { params });
       return response.data;
     } catch (error) {
       return {
@@ -41,10 +38,7 @@ export const GuestRoute = {
 
   getGuestById: async (id) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/guests/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get(`/api/guests/${id}`);
       return response.data;
     } catch (error) {
       return {
@@ -55,28 +49,9 @@ export const GuestRoute = {
     }
   },
 
-  createGuest: async (data) => {
-    try {
-      const response = await axios.post(`${BACKENDURL}/api/guests`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: extractErrorMessage(error, "Failed to create guest."),
-        data: null,
-      };
-    }
-  },
-
   updateGuest: async (id, data) => {
     try {
-      const response = await axios.put(`${BACKENDURL}/api/guests/${id}`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.put(`/api/guests/${id}`, data);
       return response.data;
     } catch (error) {
       return {
@@ -89,10 +64,7 @@ export const GuestRoute = {
 
   deleteGuest: async (id) => {
     try {
-      const response = await axios.delete(`${BACKENDURL}/api/guests/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.delete(`/api/guests/${id}`);
       return response.data;
     } catch (error) {
       return {

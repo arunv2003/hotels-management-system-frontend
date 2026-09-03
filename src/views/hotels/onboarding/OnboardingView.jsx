@@ -4,6 +4,8 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { HotelRoute } from "@/routes/saas/hotels/hotels.route";
+import { PaymentRoute } from "@/routes/saas/payment/payment.route";
+import { loadRazorpayScript } from "@/lib/razorpay";
 import {
   Hotel,
   User,
@@ -43,11 +45,11 @@ const STEPS = [
   { id: 2, title: "Owner Details", icon: User },
   { id: 3, title: "Location", icon: MapPin },
   { id: 4, title: "Business Settings", icon: Settings },
-  { id: 5, title: "Choose Plan", icon: CreditCard },
-  { id: 6, title: "Hotel Details", icon: Building2 },
-  { id: 7, title: "Amenities", icon: CheckCircle2 },
-  { id: 8, title: "Documents", icon: FileText },
-  { id: 9, title: "Review & Confirm", icon: ShieldCheck },
+  { id: 5, title: "Hotel Details", icon: Building2 },
+  { id: 6, title: "Amenities", icon: CheckCircle2 },
+  { id: 7, title: "Documents", icon: FileText },
+  { id: 8, title: "Review & Confirm", icon: ShieldCheck },
+  { id: 9, title: "Choose Plan", icon: CreditCard },
 ];
 
 const ProgressHeader = ({ step }) => (
@@ -114,6 +116,11 @@ function OnboardingContent() {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  // Razorpay payment state for final step
+  const [paymentVerified, setPaymentVerified] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   useEffect(() => {
     // Auto-reset form data and move to step 1 on page refresh or initial visit
@@ -236,29 +243,108 @@ function OnboardingContent() {
         }
         break;
       case 5:
-        if (!formData.planSelected || !formData.billingCycle) {
-          return "Please select a plan and billing cycle.";
-        }
-        break;
-      case 6:
         if (!formData.totalRooms || !formData.totalFloors || !formData.roomTypes?.length) {
           return "Please enter total rooms, floors, and add at least one room type.";
         }
         break;
-      case 7:
+      case 6:
         if (!formData.amenities?.length) {
           return "Please select at least one amenity.";
         }
         break;
-      case 8:
+      case 7:
         if (!formData.documents?.gstCertificate || !formData.documents?.panCard || !formData.documents?.hotelLicense || !formData.documents?.ownerId) {
           return "Please upload all required documents.";
+        }
+        break;
+      case 8:
+        // Review step: no validation required
+        break;
+      case 9:
+        if (!formData.planSelected || !formData.billingCycle) {
+          return "Please select a plan and billing cycle.";
         }
         break;
       default:
         return null;
     }
     return null;
+  };
+
+  // Initiate Razorpay payment modal
+  const handleInitiatePayment = async () => {
+    if (!formData.planSelected || !formData.billingCycle) {
+      notify("Please select a plan and billing cycle first.", "error");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setSubmitError("");
+    try {
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Unable to load Razorpay payment gateway. Please check your internet connection.");
+      }
+
+      const orderRes = await PaymentRoute.createPlanOrder({
+        planId: formData.planSelected,
+        billingCycle: formData.billingCycle || "yearly",
+        hotelName: formData.hotelName,
+        ownerEmail: formData.ownerEmail,
+      });
+
+      const orderData = orderRes?.data;
+      if (!orderData?.orderId) {
+        throw new Error("Failed to initialize payment order.");
+      }
+
+      const razorpayOptions = {
+        key: orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_RqJtOyGfDiW0vw",
+        amount: orderData.amount,
+        currency: orderData.currency || "INR",
+        name: "VEDANTA TECH SaaS",
+        description: `${orderData.planName || "Plan"} - ${orderData.billingCycle || "Yearly"} Subscription`,
+        order_id: orderData.orderId,
+        prefill: {
+          name: formData.ownerFullName,
+          email: formData.ownerEmail,
+          contact: formData.mobileNumber,
+        },
+        theme: {
+          color: "#4f46e5",
+        },
+        handler: function (razorpayResponse) {
+          setPaymentVerified(true);
+          setPaymentDetails({
+            razorpay_order_id: razorpayResponse.razorpay_order_id,
+            razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+            razorpay_signature: razorpayResponse.razorpay_signature,
+            amount: orderData.amount / 100,
+          });
+          setIsProcessingPayment(false);
+          notify(`Payment of ₹${orderData.amount / 100} successful! You can now click Complete Setup.`, "success");
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessingPayment(false);
+            notify("Payment window closed. Please complete payment to enable Complete Setup.", "info");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(razorpayOptions);
+      rzp.on("payment.failed", function (failResponse) {
+        setIsProcessingPayment(false);
+        setSubmitError(failResponse?.error?.description || "Payment failed.");
+        notify("Payment failed: " + (failResponse?.error?.description || "Transaction declined"), "error");
+      });
+      rzp.open();
+    } catch (err) {
+      const message = err?.response?.data?.message || err.message || "Payment initiation failed.";
+      setSubmitError(message);
+      notify(message, "error");
+      setIsProcessingPayment(false);
+    }
   };
 
   const nextStep = async () => {
@@ -269,6 +355,11 @@ function OnboardingContent() {
     }
 
     if (step === 9) {
+      if (!editId && !paymentVerified) {
+        notify("Payment required: Please click 'Pay with Razorpay' to complete payment first.", "error");
+        return;
+      }
+
       setIsSubmitting(true);
       setSubmitError("");
       try {
@@ -311,10 +402,9 @@ function OnboardingContent() {
           totalRooms: formData.totalRooms ? Number(formData.totalRooms) : undefined,
           totalFloors: formData.totalFloors ? Number(formData.totalFloors) : undefined,
           maxGuests: formData.maxGuests ? Number(formData.maxGuests) : undefined,
-          roomTypes: formData.roomTypes, // array of ObjectId strings
+          roomTypes: formData.roomTypes,
           amenities: formData.amenities,
           staff: formData.staff,
-          // Documents — send only cloudUrl + publicId
           documents: {
             gstCertificate: formData.documents?.gstCertificate
               ? { cloudUrl: formData.documents.gstCertificate.cloudUrl, publicId: formData.documents.gstCertificate.publicId }
@@ -337,21 +427,42 @@ function OnboardingContent() {
             : null,
         };
 
-        console.log("Submitting hotel payload:", payload);
         if (editId) {
-          if (!payload.password) { delete payload.password; } // don't send empty password if not changing
-          const result = await HotelRoute.updateHotel(editId, payload);
-          console.log("Hotel updated successfully:", result);
-        } else {
-          const result = await HotelRoute.registerHotel(payload);
-          console.log("Hotel registered successfully:", result);
+          if (!payload.password) { delete payload.password; }
+          await HotelRoute.updateHotel(editId, payload);
+          notify("Hotel details updated successfully!", "success");
+          resetFormData();
+          router.push("/super-admin/hotels");
+          setIsSubmitting(false);
+          return;
         }
+
+        // Register new hotel
+        const registerResult = await HotelRoute.registerHotel(payload);
+        const createdHotelId = registerResult?.data?._id || registerResult?.data?.id;
+
+        // Verify payment and record subscription
+        if (paymentDetails) {
+          try {
+            await PaymentRoute.verifyPlanPayment({
+              ...paymentDetails,
+              hotelId: createdHotelId,
+              planId: formData.planSelected,
+              billingCycle: formData.billingCycle,
+            });
+          } catch (verErr) {
+            console.warn("Payment verification API warning:", verErr);
+          }
+        }
+
+        notify("Hotel onboarded & subscription activated successfully!", "success");
         resetFormData();
         router.push("/super-admin/hotels");
       } catch (err) {
         const message =
           err?.response?.data?.message || err.message || "Registration failed. Please try again.";
         setSubmitError(message);
+        notify(message, "error");
         console.error("Hotel registration error:", err);
       } finally {
         setIsSubmitting(false);
@@ -361,6 +472,7 @@ function OnboardingContent() {
 
     setStep(step + 1);
   };
+
   const prevStep = () => {
     setStep(Math.max(step - 1, 1));
   };
@@ -368,54 +480,69 @@ function OnboardingContent() {
   // Handle location change from map
   const handleLocationChange = (locationData) => {
     updateFormData({
-      latitude: locationData.latitude,
-      longitude: locationData.longitude,
-      fullAddress: locationData.address,
-      city: locationData.city,
-      state: locationData.state,
-      country: locationData.country,
-      pincode: locationData.pincode,
-      mapLocation: locationData.address,
+      latitude: locationData.latitude?.toString() || "",
+      longitude: locationData.longitude?.toString() || "",
+      fullAddress: locationData.address || formData.fullAddress,
+      city: locationData.city || formData.city,
+      state: locationData.state || formData.state,
+      country: locationData.country || formData.country,
+      pincode: locationData.pincode || formData.pincode,
     });
   };
 
-  // Search for location by address
-  const handleAddressSearch = (query) => {
-    updateFormData({ fullAddress: query });
-
-    if (query.length < 3) {
+  // Handle address search using Google Places
+  const handleAddressSearch = async (query) => {
+    if (!query || query.length < 3) {
       setSearchResults([]);
       setShowSearchResults(false);
       return;
     }
 
-    // Check if Google Maps is available
-    if (typeof window !== "undefined" && window.google?.maps?.Geocoder) {
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address: `${query}, India` }, (results, status) => {
-        if (status === "OK" && results) {
-          const filtered = results.filter((result) => {
-            return result.address_components?.some(
-              (c) => c.types.includes("country") && c.long_name === "India",
-            );
-          });
+    try {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        const service = new window.google.maps.places.AutocompleteService();
+        service.getPlacePredictions(
+          {
+            input: query,
+            types: ["geocode", "establishment"],
+          },
+          (predictions, status) => {
+            if (
+              status === window.google.maps.places.PlacesServiceStatus.OK &&
+              predictions
+            ) {
+              const geocoder = new window.google.maps.Geocoder();
+              const results = [];
 
-          setSearchResults(filtered);
-          setShowSearchResults(true);
-
-          // Update map to show first search result
-          if (filtered.length > 0) {
-            const firstResult = filtered[0];
-            const lat = firstResult.geometry.location.lat();
-            const lng = firstResult.geometry.location.lng();
-
-            updateFormData({
-              latitude: lat,
-              longitude: lng,
-            });
-          }
-        }
-      });
+              predictions.slice(0, 5).forEach((pred) => {
+                geocoder.geocode(
+                  { placeId: pred.place_id },
+                  (geoResults, geoStatus) => {
+                    if (
+                      geoStatus === window.google.maps.GeocoderStatus.OK &&
+                      geoResults &&
+                      geoResults[0]
+                    ) {
+                      results.push(geoResults[0]);
+                      if (
+                        results.length === Math.min(5, predictions.length)
+                      ) {
+                        setSearchResults(results);
+                        setShowSearchResults(true);
+                      }
+                    }
+                  },
+                );
+              });
+            } else {
+              setSearchResults([]);
+              setShowSearchResults(false);
+            }
+          },
+        );
+      }
+    } catch (error) {
+      console.error("Error searching address:", error);
     }
   };
 
@@ -478,45 +605,46 @@ function OnboardingContent() {
                 className={cn(
                   "w-full flex items-center gap-4 p-3 rounded-xl transition-all group",
                   isActive
-                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600"
+                    ? "bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/20"
                     : isCompleted
-                      ? "text-slate-900 dark:text-slate-300"
-                      : "text-slate-400",
+                      ? "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                      : "text-slate-300 dark:text-slate-600 cursor-not-allowed",
                 )}
               >
                 <div
                   className={cn(
-                    "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border-2",
+                    "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors",
                     isActive
-                      ? "bg-indigo-600 border-indigo-600 text-white"
+                      ? "bg-white/20 text-white"
                       : isCompleted
-                        ? "bg-emerald-500 border-emerald-500 text-white"
-                        : "border-slate-100 dark:border-slate-800",
+                        ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-400",
                   )}
                 >
-                  {isCompleted ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <s.icon className="w-4 h-4" />
-                  )}
+                  {isCompleted ? <Check className="w-4 h-4" /> : s.id}
                 </div>
-                <span className="text-sm font-bold truncate">{s.title}</span>
+                <span className="text-sm font-semibold truncate">
+                  {s.title}
+                </span>
               </button>
             );
           })}
         </nav>
 
-        <div className="mt-auto p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
-          <p className="text-xs font-bold text-slate-500 uppercase mb-2">
-            Need Help?
-          </p>
-          <p className="text-xs text-slate-400 mb-4">
-            Our support team is here to help you on every step.
-          </p>
+        <div className="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
+          <div className="p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 mb-4">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+              Need Help?
+            </p>
+            <p className="text-xs text-slate-400">
+              Contact our setup team 24/7
+            </p>
+          </div>
           <Button
             type="button"
             variant="outline"
-            className="w-full h-10 text-xs font-bold rounded-xl"
+            className="w-full text-xs font-bold rounded-xl"
+            onClick={() => window.open("/customer-support", "_blank")}
           >
             Contact Support
           </Button>
@@ -559,14 +687,14 @@ function OnboardingContent() {
             <div className="flex items-center gap-3 pl-6 border-l border-slate-100 dark:border-slate-800">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-slate-900 dark:text-white leading-none">
-                  John Smith
+                  {formData.ownerFullName || "Admin"}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
                   Owner
                 </p>
               </div>
               <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold shadow-lg shadow-indigo-500/20">
-                JS
+                {(formData.ownerFullName || "HM").slice(0, 2).toUpperCase()}
               </div>
             </div>
           </div>
@@ -617,30 +745,42 @@ function OnboardingContent() {
                     />
                   )}
                   {step === 5 && (
-                    <Step5Plan
-                      formData={formData}
-                      updateFormData={updateFormData}
-                    />
-                  )}
-                  {step === 6 && (
                     <Step6HotelDetails
                       formData={formData}
                       updateFormData={updateFormData}
                     />
                   )}
-                  {step === 7 && (
+                  {step === 6 && (
                     <Step7Amenities
                       formData={formData}
                       updateFormData={updateFormData}
                     />
                   )}
-                  {step === 8 && (
+                  {step === 7 && (
                     <Step8Documents
                       formData={formData}
                       updateFormData={updateFormData}
                     />
                   )}
-                  {step === 9 && <Step9Review formData={formData} />}
+                  {step === 8 && (
+                    <Step9Review
+                      formData={formData}
+                      nextStep={nextStep}
+                      setStep={setStep}
+                      isSubmitting={isSubmitting}
+                    />
+                  )}
+                  {step === 9 && (
+                    <Step5Plan
+                      formData={formData}
+                      updateFormData={updateFormData}
+                      isFinalStep={true}
+                      onInitiatePayment={handleInitiatePayment}
+                      isProcessingPayment={isProcessingPayment}
+                      paymentVerified={paymentVerified}
+                      paymentDetails={paymentDetails}
+                    />
+                  )}
 
                   {/* Error Banner */}
                   {submitError && (
@@ -665,24 +805,31 @@ function OnboardingContent() {
                     </Button>
 
                     {step === 9 ? (
-                      <Button
-                        type="button"
-                        onClick={nextStep}
-                        disabled={isSubmitting}
-                        className="h-14 px-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xl shadow-indigo-500/30 flex gap-2 disabled:opacity-70"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <svg className="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                            </svg>
-                            Submitting...
-                          </>
-                        ) : (
-                          <>Complete Setup <Check className="w-5 h-5" /></>
-                        )}
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <Button
+                          type="button"
+                          onClick={nextStep}
+                          disabled={(!editId && !paymentVerified) || isSubmitting}
+                          className={cn(
+                            "h-14 px-12 rounded-xl font-bold shadow-xl flex items-center gap-2 transition-all",
+                            !editId && !paymentVerified
+                              ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none"
+                              : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/30"
+                          )}
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <svg className="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                              </svg>
+                              Submitting...
+                            </>
+                          ) : (
+                            <>Complete Setup <Check className="w-5 h-5" /></>
+                          )}
+                        </Button>
+                      </div>
                     ) : (
                       <Button
                         type="button"
@@ -702,51 +849,91 @@ function OnboardingContent() {
               <>
                 {step === 1 && (
                   <WhySection
-                    title="Why we need this information?"
+                    title="Why add basic information?"
                     items={[
-                      "To personalize your hotel property better",
-                      "To help you manage your property better",
-                      "To keep your data secure and compliant",
+                      "Guest Trust & Recognition: A complete profile with real property photos builds immediate confidence.",
+                      "Custom Invoices & Branding: Your hotel logo and identity are automatically featured across guest bills.",
+                      "Listing Accuracy: Categorizing your property ensures relevant booking options and workflows.",
                     ]}
                   />
                 )}
                 {step === 2 && (
                   <WhySection
-                    title="Why we need this information?"
+                    title="Why owner details?"
                     items={[
-                      "For account security and login",
-                      "To send important updates",
-                      "To manage your hotel account",
+                      "Account Security: Direct verification protects property ownership.",
+                      "Important Alerts: Critical notifications regarding bookings and billing.",
+                      "Tax Invoicing: Legal compliance requires verified owner details.",
                     ]}
                   />
                 )}
                 {step === 3 && (
                   <WhySection
-                    title="Why we need this information?"
+                    title="Why precise location?"
                     items={[
-                      "To locate your property better",
-                      "For invoices and tax calculation",
-                      "To help guests find your hotel",
+                      "Guest Directions: Google Maps integration helps guests reach easily.",
+                      "Local Tax Rules: Automatic tax calculation based on jurisdiction.",
+                      "Timezone Sync: Accurate check-in and check-out scheduling.",
+                    ]}
+                  />
+                )}
+                {step === 4 && (
+                  <WhySection
+                    title="Why business settings?"
+                    items={[
+                      "Automated Billing: Customized invoice prefixes and serials.",
+                      "Financial Reports: Align reports with your country's financial year.",
+                      "Multi-Currency: Display rates in your local operating currency.",
+                    ]}
+                  />
+                )}
+                {step === 5 && (
+                  <WhySection
+                    title="Why room setup?"
+                    items={[
+                      "Real-time Availability: Prevent double bookings across channels.",
+                      "Rate Management: Set different base prices for each room category.",
+                      "Housekeeping Flow: Automatic room cleaning assignments.",
                     ]}
                   />
                 )}
                 {step === 6 && (
                   <WhySection
-                    title="Why we need this information?"
+                    title="Why list amenities?"
                     items={[
-                      "To manage your daily operations",
-                      "For accurate billing and reporting",
-                      "To match your business workflow",
+                      "Guest Expectation: Clear feature list avoids check-in surprises.",
+                      "Feature Matching: Helps corporate and leisure travelers choose your hotel.",
+                      "In-room Ordering: Match amenities with POS and room service catalogs.",
+                    ]}
+                  />
+                )}
+                {step === 7 && (
+                  <WhySection
+                    title="Why documents upload?"
+                    items={[
+                      "Legal Compliance: Mandatory government KYC and business verification.",
+                      "Fast Approval: Accelerated onboarding with verified paperwork.",
+                      "Security: Encrypted cloud vault exclusively accessible to administrators.",
+                    ]}
+                  />
+                )}
+                {step === 8 && (
+                  <WhySection
+                    title="Why review details?"
+                    items={[
+                      "Zero Errors: Confirm everything is accurate before activating the hotel.",
+                      "Instant Setup: Verify room counts, documents, and contact numbers.",
+                      "Smooth Launch: Ready to choose subscription plan in the next step.",
                     ]}
                   />
                 )}
                 {step === 9 && (
                   <WhySection
-                    title="Why review now?"
+                    title="Why choose plan & payment?"
                     items={[
-                      "Double-check all information",
-                      "Ensure compliance with regulations",
-                      "Complete your hotel profile",
+                      "Instant Workspace Activation: Razorpay instant payment verification initializes your multi-tenant portal.",
+                      "Transparent Pricing: No hidden setup fees or surprise charges.",
+                      "Secure Processing: Protected with 256-bit SSL encryption.",
                     ]}
                   />
                 )}
@@ -759,11 +946,16 @@ function OnboardingContent() {
   );
 }
 
-/* ---------------- WRAPPER ---------------- */
 export function OnboardingView() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    }>
       <OnboardingContent />
     </Suspense>
   );
 }
+
+export default OnboardingView;

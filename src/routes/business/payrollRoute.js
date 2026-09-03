@@ -1,15 +1,4 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL = process.env.NEXT_PUBLIC_BACKENDURL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:9000";
-
-const getHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 const extractErrorMessage = (error, defaultMsg) => {
   return (
@@ -20,37 +9,36 @@ const extractErrorMessage = (error, defaultMsg) => {
   );
 };
 
-export const payrollRoute = {
-  /**
-   * Get salary slips with filters & search
-   */
+export const PayrollRoute = {
   getSalarySlips: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/payroll`, {
-        params,
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/payroll", { params });
       return response.data;
     } catch (error) {
       return {
         success: false,
         message: extractErrorMessage(error, "Failed to fetch salary slips."),
-        data: { salarySlips: [], total: 0 },
+        data: [],
       };
     }
   },
 
-  /**
-   * Get payroll summary statistics
-   */
+  getPayrolls: async (params = {}) => {
+    try {
+      const response = await apiClient.get("/api/payroll", { params });
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to fetch payroll records."),
+        data: [],
+      };
+    }
+  },
+
   getPayrollSummary: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/payroll/summary`, {
-        params,
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/payroll/summary", { params });
       return response.data;
     } catch (error) {
       return {
@@ -61,15 +49,9 @@ export const payrollRoute = {
     }
   },
 
-  /**
-   * Get a single salary slip by ID
-   */
   getSalarySlipById: async (id) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/payroll/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get(`/api/payroll/${id}`);
       return response.data;
     } catch (error) {
       return {
@@ -80,15 +62,22 @@ export const payrollRoute = {
     }
   },
 
-  /**
-   * Create a new salary slip
-   */
+  getPayrollById: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/payroll/${id}`);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to fetch payroll details."),
+        data: null,
+      };
+    }
+  },
+
   createSalarySlip: async (data) => {
     try {
-      const response = await axios.post(`${BACKENDURL}/api/payroll`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/payroll", data);
       return response.data;
     } catch (error) {
       return {
@@ -99,15 +88,22 @@ export const payrollRoute = {
     }
   },
 
-  /**
-   * Auto-generate salary slips for all staff for a given month & year
-   */
+  createPayroll: async (data) => {
+    try {
+      const response = await apiClient.post("/api/payroll", data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to create payroll record."),
+        data: null,
+      };
+    }
+  },
+
   bulkGenerateSalarySlips: async (data) => {
     try {
-      const response = await axios.post(`${BACKENDURL}/api/payroll/bulk-generate`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/payroll/bulk-generate", data);
       return response.data;
     } catch (error) {
       return {
@@ -118,15 +114,9 @@ export const payrollRoute = {
     }
   },
 
-  /**
-   * Update an existing salary slip
-   */
   updateSalarySlip: async (id, data) => {
     try {
-      const response = await axios.put(`${BACKENDURL}/api/payroll/${id}`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.put(`/api/payroll/${id}`, data);
       return response.data;
     } catch (error) {
       return {
@@ -137,19 +127,23 @@ export const payrollRoute = {
     }
   },
 
-  /**
-   * Update payment status of salary slip (Paid/Unpaid)
-   */
-  updatePaymentStatus: async (id, paymentStatus) => {
+  updatePayroll: async (id, data) => {
     try {
-      const response = await axios.patch(
-        `${BACKENDURL}/api/payroll/${id}/status`,
-        { paymentStatus },
-        {
-          headers: getHeaders(),
-          withCredentials: true,
-        }
-      );
+      const response = await apiClient.put(`/api/payroll/${id}`, data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to update payroll record."),
+        data: null,
+      };
+    }
+  },
+
+  updatePaymentStatus: async (id, statusOrData) => {
+    try {
+      const payload = typeof statusOrData === "string" ? { paymentStatus: statusOrData } : statusOrData;
+      const response = await apiClient.patch(`/api/payroll/${id}/status`, payload);
       return response.data;
     } catch (error) {
       return {
@@ -160,15 +154,9 @@ export const payrollRoute = {
     }
   },
 
-  /**
-   * Delete a salary slip
-   */
   deleteSalarySlip: async (id) => {
     try {
-      const response = await axios.delete(`${BACKENDURL}/api/payroll/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.delete(`/api/payroll/${id}`);
       return response.data;
     } catch (error) {
       return {
@@ -178,4 +166,20 @@ export const payrollRoute = {
       };
     }
   },
+
+  deletePayroll: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/payroll/${id}`);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to delete payroll record."),
+        data: null,
+      };
+    }
+  },
 };
+
+export const payrollRoute = PayrollRoute;
+export default PayrollRoute;

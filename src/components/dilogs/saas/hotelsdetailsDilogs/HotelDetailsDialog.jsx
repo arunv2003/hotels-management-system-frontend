@@ -325,6 +325,26 @@ export default function HotelDetailsDialog({ isOpen, onClose, hotel }) {
                           {hotel.billingCycle || "Monthly"}
                         </span>
                       </div>
+
+                      {/* Expiry Details Box */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100/60 dark:border-slate-800/60 flex items-center justify-between">
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Plan Expiry Date &amp; Time</span>
+                          <span className="text-xs font-black text-slate-900 dark:text-white mt-0.5 block">
+                            {hotel.planExpiry || hotel.subscription?.endDate
+                              ? `${new Date(hotel.planExpiry || hotel.subscription.endDate).toLocaleDateString("en-GB")} • ${new Date(hotel.planExpiry || hotel.subscription.endDate).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })}`
+                              : hotel.createdAt
+                              ? `${new Date(new Date(hotel.createdAt).setFullYear(new Date(hotel.createdAt).getFullYear() + 1)).toLocaleDateString("en-GB")}`
+                              : "Active"}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50">
+                          {hotel.planExpiry || hotel.subscription?.endDate
+                            ? `${Math.max(0, Math.ceil((new Date(hotel.planExpiry || hotel.subscription.endDate) - new Date()) / (1000 * 60 * 60 * 24)))} Days Left`
+                            : "365 Days Left"}
+                        </span>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Tax Structure</span>

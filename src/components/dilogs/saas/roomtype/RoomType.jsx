@@ -16,6 +16,20 @@ export default function RoomTypeDialog({
     numberOfRooms: roomTypeToEdit?.numberOfRooms || "",
   });
 
+  React.useEffect(() => {
+    if (roomTypeToEdit) {
+      setRoomData({
+        roomType: roomTypeToEdit.roomType || "",
+        numberOfRooms: roomTypeToEdit.numberOfRooms || "",
+      });
+    } else {
+      setRoomData({
+        roomType: "",
+        numberOfRooms: "",
+      });
+    }
+  }, [roomTypeToEdit, isOpen]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRoomData((prev) => ({ ...prev, [name]: value }));
@@ -33,16 +47,15 @@ export default function RoomTypeDialog({
     if (!roomData.roomType || !roomData.numberOfRooms) return;
 
     try {
+      const payload = {
+        roomType: roomData.roomType,
+        numberOfRooms: Number(roomData.numberOfRooms),
+      };
+
       if (roomTypeToEdit && roomTypeToEdit._id) {
-        await RoomTypeRoute.updateRoomsType(roomTypeToEdit._id, {
-          roomType: roomData.roomType,
-          numberOfRooms: Number(roomData.numberOfRooms),
-        });
+        await RoomTypeRoute.updateRoomsType(roomTypeToEdit._id, payload);
       } else {
-        await RoomTypeRoute.createRoomsType({
-          roomType: roomData.roomType,
-          numberOfRooms: Number(roomData.numberOfRooms),
-        });
+        await RoomTypeRoute.createRoomsType(payload);
       }
       refreshList && refreshList();
     } catch (error) {
@@ -63,7 +76,7 @@ export default function RoomTypeDialog({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-          className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[0.5rem] shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800 my-8 flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800 my-8 flex flex-col max-h-[90vh]"
         >
           {/* Header */}
           <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
@@ -87,11 +100,11 @@ export default function RoomTypeDialog({
             <form
               id="add-room-type-form"
               onSubmit={handleSubmit}
-              className="p-6 space-y-5"
+              className="p-6 space-y-4"
             >
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  Room Type Name
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Room Type Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -100,12 +113,13 @@ export default function RoomTypeDialog({
                   onChange={handleChange}
                   required
                   placeholder="e.g. Deluxe Room"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white text-sm font-medium"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  Number of Rooms
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Number of Rooms <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -115,7 +129,7 @@ export default function RoomTypeDialog({
                   onChange={handleNumberChange}
                   required
                   placeholder="e.g. 10"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all dark:text-white text-sm font-medium"
                 />
               </div>
             </form>
@@ -136,7 +150,7 @@ export default function RoomTypeDialog({
               form="add-room-type-form"
               className="h-10 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-500/20"
             >
-              {roomTypeToEdit ? "Save Changes" : "Add Room"}
+              {roomTypeToEdit ? "Save Changes" : "Add Room Type"}
             </Button>
           </div>
         </motion.div>

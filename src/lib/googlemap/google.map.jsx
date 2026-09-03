@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { GoogleMap, Marker } from "@react-google-maps/api";
+import { GoogleMapsProvider } from "@/providers/GoogleMapsProvider";
 
 const containerStyle = {
   width: "100%",
@@ -13,7 +14,14 @@ const indiaCenter = {
   lng: 78.9629,
 };
 
+function parseSafeCoordinate(val, fallback) {
+  if (typeof val === "number" && Number.isFinite(val)) return val;
+  const parsed = parseFloat(val);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function reverseGeocode(lat, lng, callback) {
+  if (!window.google || !window.google.maps) return;
   const geocoder = new window.google.maps.Geocoder();
   geocoder.geocode({ location: { lat, lng } }, (results, status) => {
     if (status === "OK" && results[0]) {
@@ -42,13 +50,18 @@ function reverseGeocode(lat, lng, callback) {
   });
 }
 
-import { GoogleMapsProvider } from "@/providers/GoogleMapsProvider";
-
 export default function GoogleMapComponent({
   onLocationChange,
-  initialLocation = indiaCenter,
+  initialLocation,
 }) {
-  const [markerPosition, setMarkerPosition] = useState(initialLocation);
+  const safeInitial = useMemo(() => {
+    return {
+      lat: parseSafeCoordinate(initialLocation?.lat, indiaCenter.lat),
+      lng: parseSafeCoordinate(initialLocation?.lng, indiaCenter.lng),
+    };
+  }, [initialLocation?.lat, initialLocation?.lng]);
+
+  const [markerPosition, setMarkerPosition] = useState(safeInitial);
   const [map, setMap] = useState(null);
   const [zoom, setZoom] = useState(12);
 
@@ -58,40 +71,39 @@ export default function GoogleMapComponent({
     }
   }, [map]);
 
-  const [prevInitialLocation, setPrevInitialLocation] = useState(initialLocation);
+  const [prevInitialLocation, setPrevInitialLocation] = useState(safeInitial);
 
-  // Derive state during render instead of using useEffect to prevent cascading renders
+  // Sync state if initialLocation changes
   if (
-    initialLocation.lat &&
-    initialLocation.lng &&
-    (Math.abs(prevInitialLocation.lat - initialLocation.lat) > 0.00001 ||
-      Math.abs(prevInitialLocation.lng - initialLocation.lng) > 0.00001)
+    Math.abs(prevInitialLocation.lat - safeInitial.lat) > 0.00001 ||
+    Math.abs(prevInitialLocation.lng - safeInitial.lng) > 0.00001
   ) {
-    setPrevInitialLocation(initialLocation);
-    setMarkerPosition({ lat: initialLocation.lat, lng: initialLocation.lng });
+    setPrevInitialLocation(safeInitial);
+    setMarkerPosition(safeInitial);
   }
 
   React.useEffect(() => {
-    if (map && initialLocation.lat && initialLocation.lng) {
-      map.panTo({ lat: initialLocation.lat, lng: initialLocation.lng });
+    if (map && safeInitial.lat && safeInitial.lng) {
+      map.panTo(safeInitial);
     }
-  }, [initialLocation.lat, initialLocation.lng, map]);
+  }, [safeInitial, map]);
 
   const onMapLoad = useCallback(
     (mapInstance) => {
       setMap(mapInstance);
       // Auto detect current location if map is at default indiaCenter
       if (
-        initialLocation.lat === indiaCenter.lat &&
-        initialLocation.lng === indiaCenter.lng
+        safeInitial.lat === indiaCenter.lat &&
+        safeInitial.lng === indiaCenter.lng
       ) {
-        if (navigator.geolocation) {
+        if (typeof window !== "undefined" && navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
               const newLat = position.coords.latitude;
               const newLng = position.coords.longitude;
-              setMarkerPosition({ lat: newLat, lng: newLng });
-              mapInstance.panTo({ lat: newLat, lng: newLng });
+              const pos = { lat: newLat, lng: newLng };
+              setMarkerPosition(pos);
+              mapInstance.panTo(pos);
               mapInstance.setZoom(15);
               if (onLocationChange) {
                 reverseGeocode(newLat, newLng, onLocationChange);
@@ -104,7 +116,7 @@ export default function GoogleMapComponent({
         }
       }
     },
-    [initialLocation.lat, initialLocation.lng, onLocationChange],
+    [safeInitial, onLocationChange],
   );
 
   const handleMarkerDragEnd = useCallback(
@@ -117,7 +129,6 @@ export default function GoogleMapComponent({
         lng: newLng,
       });
 
-      // Call reverse geocoding to get address
       if (onLocationChange) {
         reverseGeocode(newLat, newLng, onLocationChange);
       }
@@ -142,13 +153,16 @@ export default function GoogleMapComponent({
     [onLocationChange],
   );
 
-
+  const validPosition = useMemo(() => ({
+    lat: parseSafeCoordinate(markerPosition?.lat, indiaCenter.lat),
+    lng: parseSafeCoordinate(markerPosition?.lng, indiaCenter.lng),
+  }), [markerPosition?.lat, markerPosition?.lng]);
 
   return (
     <GoogleMapsProvider>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={markerPosition}
+        center={validPosition}
         zoom={zoom}
         onZoomChanged={handleZoomChanged}
         onLoad={onMapLoad}
@@ -163,7 +177,7 @@ export default function GoogleMapComponent({
         }}
       >
         <Marker
-          position={markerPosition}
+          position={validPosition}
           draggable={true}
           onDragEnd={handleMarkerDragEnd}
           title="Drag to change location or click on map"

@@ -1,16 +1,4 @@
-import axios from "axios";
-import Cookies from "js-cookie";
-
-const BACKENDURL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:9000";
-
-const getHeaders = () => {
-  const token = Cookies.get("accessToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import apiClient from "@/lib/apiClient";
 
 const extractErrorMessage = (error, defaultMsg) => {
   return (
@@ -22,12 +10,22 @@ const extractErrorMessage = (error, defaultMsg) => {
 };
 
 export const BookingRoute = {
+  createBookingRazorpayOrder: async (data) => {
+    try {
+      const response = await apiClient.post("/api/bookings/create-razorpay-order", data);
+      return response.data;
+    } catch (error) {
+      return {
+        success: false,
+        message: extractErrorMessage(error, "Failed to create Razorpay order."),
+        data: null,
+      };
+    }
+  },
+
   createBooking: async (data) => {
     try {
-      const response = await axios.post(`${BACKENDURL}/api/bookings`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.post("/api/bookings", data);
       return response.data;
     } catch (error) {
       return {
@@ -40,11 +38,7 @@ export const BookingRoute = {
 
   getBookings: async (params = {}) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/bookings`, {
-        headers: getHeaders(),
-        params,
-        withCredentials: true,
-      });
+      const response = await apiClient.get("/api/bookings", { params });
       return response.data;
     } catch (error) {
       return {
@@ -57,10 +51,7 @@ export const BookingRoute = {
 
   getBookingById: async (id) => {
     try {
-      const response = await axios.get(`${BACKENDURL}/api/bookings/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.get(`/api/bookings/${id}`);
       return response.data;
     } catch (error) {
       return {
@@ -73,10 +64,7 @@ export const BookingRoute = {
 
   updateBooking: async (id, data) => {
     try {
-      const response = await axios.put(`${BACKENDURL}/api/bookings/${id}`, data, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.put(`/api/bookings/${id}`, data);
       return response.data;
     } catch (error) {
       return {
@@ -89,10 +77,7 @@ export const BookingRoute = {
 
   deleteBooking: async (id) => {
     try {
-      const response = await axios.delete(`${BACKENDURL}/api/bookings/${id}`, {
-        headers: getHeaders(),
-        withCredentials: true,
-      });
+      const response = await apiClient.delete(`/api/bookings/${id}`);
       return response.data;
     } catch (error) {
       return {

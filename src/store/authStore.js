@@ -9,23 +9,48 @@ export const useAuthStore = create()(persist((set, get) => ({
     refreshToken: null,
     isAuthenticated: false,
     login: (payload) => {
+        let user = null;
+        let accessToken = null;
+        let refreshToken = null;
+
         if (payload?.data?.user) {
-            set({ 
-                user: payload.data.user, 
-                accessToken: payload.data.accessToken,
-                refreshToken: payload.data.refreshToken,
-                isAuthenticated: true 
-            });
+            user = payload.data.user;
+            accessToken = payload.data.accessToken;
+            refreshToken = payload.data.refreshToken;
         } else if (payload?.user) {
-            set({ 
-                user: payload.user, 
-                accessToken: payload.accessToken,
-                refreshToken: payload.refreshToken,
-                isAuthenticated: true 
-            });
+            user = payload.user;
+            accessToken = payload.accessToken;
+            refreshToken = payload.refreshToken;
         } else {
-            set({ user: payload, isAuthenticated: true });
+            user = payload;
         }
+
+        if (accessToken && accessToken !== "undefined" && accessToken !== "null") {
+            Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
+        }
+        if (refreshToken && refreshToken !== "undefined" && refreshToken !== "null") {
+            Cookies.set("refreshToken", refreshToken, { expires: 10, path: "/" });
+        }
+
+        set({
+            user,
+            accessToken,
+            refreshToken,
+            isAuthenticated: true,
+        });
+    },
+    setTokens: ({ accessToken, refreshToken }) => {
+        if (accessToken && accessToken !== "undefined" && accessToken !== "null") {
+            Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
+        }
+        if (refreshToken && refreshToken !== "undefined" && refreshToken !== "null") {
+            Cookies.set("refreshToken", refreshToken, { expires: 10, path: "/" });
+        }
+        set((state) => ({
+            ...state,
+            accessToken: accessToken || state.accessToken,
+            refreshToken: refreshToken || state.refreshToken,
+        }));
     },
     logout: async () => {
         try {
@@ -33,8 +58,13 @@ export const useAuthStore = create()(persist((set, get) => ({
         } catch (error) {
             console.error("Logout API call error:", error);
         }
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
+        Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("refreshToken", { path: "/" });
+        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+    },
+    clearAuth: () => {
+        Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("refreshToken", { path: "/" });
         set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
     },
     hasPermission: (moduleOrPermission, action = "view") => {

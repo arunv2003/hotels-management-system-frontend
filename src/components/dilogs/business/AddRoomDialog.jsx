@@ -7,6 +7,8 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
   const [roomType, setRoomType] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [floor, setFloor] = useState('');
+  const [price12h, setPrice12h] = useState('');
+  const [price24h, setPrice24h] = useState('');
   const [status, setStatus] = useState('Available');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -18,6 +20,8 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
       setSuccessMsg('');
       setRoomNumber('');
       setFloor('');
+      setPrice12h('');
+      setPrice24h('');
       setStatus('Available');
       // Pre-select first available room type that has remaining slots
       const availableType = roomTypesSummary.find((rt) => rt.remainingSlots > 0) || roomTypesSummary[0];
@@ -58,6 +62,8 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
         roomType,
         roomNumber: roomNumber.trim(),
         floor: floor.trim(),
+        price12h: Number(price12h) || 0,
+        price24h: Number(price24h) || 0,
         status,
       });
 
@@ -105,7 +111,7 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Error alert */}
           {errorMsg && (
             <div className="flex items-start gap-3 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-sm">
@@ -124,7 +130,7 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
 
           {/* Room Type Selector */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
               Room Type <span className="text-rose-500">*</span>
             </label>
             <select
@@ -160,7 +166,7 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
           {/* Room Number & Floor */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                 Room Number <span className="text-rose-500">*</span>
               </label>
               <input
@@ -174,7 +180,7 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                 Floor (Optional)
               </label>
               <input
@@ -187,9 +193,52 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
             </div>
           </div>
 
+          {/* Pricing for 12 Hours & 24 Hours */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                Price for 12h (₹) <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  placeholder="e.g. 1000"
+                  min="0"
+                  value={price12h}
+                  onChange={(e) => setPrice12h(e.target.value)}
+                  className="w-full h-11 pl-8 pr-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all text-sm font-medium"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                Price for 24h (₹) <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  placeholder="e.g. 1800"
+                  min="0"
+                  value={price24h}
+                  onChange={(e) => setPrice24h(e.target.value)}
+                  className="w-full h-11 pl-8 pr-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all text-sm font-medium"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Initial Status */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
               Initial Status
             </label>
             <select
@@ -199,6 +248,7 @@ export default function AddRoomDialog({ isOpen, onClose, roomTypesSummary = [], 
             >
               <option value="Available">Available</option>
               <option value="Booked">Booked</option>
+              <option value="Occupied">Occupied</option>
               <option value="Maintenance">Maintenance</option>
               <option value="Dirty">Dirty</option>
             </select>
