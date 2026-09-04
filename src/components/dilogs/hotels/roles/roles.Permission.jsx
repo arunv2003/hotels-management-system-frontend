@@ -112,37 +112,37 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", bounce: 0, duration: 0.35 }}
-          className="relative w-full max-w-5xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-5xl bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]"
         >
           {/* Header */}
-          <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 shrink-0">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl">
+              <div className="p-2 sm:p-2.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl shrink-0">
                 <ShieldCheck
-                  size={22}
+                  size={20}
                   className="text-indigo-600 dark:text-indigo-400"
                 />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                   Create New Hotel Staff Role
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                   Configure role details and granular permissions for hotel operations
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
 
@@ -153,14 +153,14 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
             className="flex-1 overflow-y-auto"
           >
             {/* Role details */}
-            <div className="px-6 py-6 space-y-5 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+            <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
               <div>
-                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
+                <h3 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 sm:mb-4">
                   Basic Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
                       Role Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -169,11 +169,11 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g., Receptionist, Housekeeping Supervisor"
-                      className="w-full px-4 py-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
+                      className="w-full px-3.5 py-2 sm:py-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">
                       Description
                     </label>
                     <input
@@ -181,7 +181,7 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Brief description of this role's duties"
-                      className="w-full px-4 py-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
+                      className="w-full px-3.5 py-2 sm:py-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
                     />
                   </div>
                 </div>
@@ -189,23 +189,23 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
             </div>
 
             {/* Permission Matrix */}
-            <div className="px-6 py-6">
-              <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+            <div className="px-4 sm:px-6 py-4 sm:py-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  <h3 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Module Permissions
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     Configure access levels for each hotel operational module
                   </p>
                 </div>
-                <div className="relative">
+                <div className="relative w-full sm:w-auto">
                   <input
                     type="text"
                     placeholder="Search modules..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-4 py-2 pl-9 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
+                    className="w-full sm:w-64 px-4 py-2 pl-9 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
                   />
                   <svg
                     className="absolute left-3 top-2.5 w-4 h-4 text-slate-400"
@@ -234,7 +234,7 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                       className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-900"
                     >
                       {/* Module Header */}
-                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors gap-2">
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
@@ -248,7 +248,7 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                             )}
                           </button>
                           <div>
-                            <h4 className="font-semibold text-slate-900 dark:text-white">
+                            <h4 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
                               {module.label}
                             </h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -256,18 +256,18 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                             </p>
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 self-end sm:self-auto">
                           <button
                             type="button"
                             onClick={() => selectAllForModule(module)}
-                            className="px-2 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded transition-colors"
+                            className="px-2.5 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded transition-colors"
                           >
                             Select All
                           </button>
                           <button
                             type="button"
                             onClick={() => clearAllForModule(module)}
-                            className="px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
+                            className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
                           >
                             Clear
                           </button>
@@ -276,8 +276,8 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
 
                       {/* Module Permissions */}
                       {isExpanded && (
-                        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                        <div className="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
                             {ACTIONS.map((action) => {
                               const available = module.actions.includes(
                                 action.id
@@ -302,7 +302,7 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                                     <span className="text-base">
                                       {action.icon}
                                     </span>
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
                                       {action.label}
                                     </span>
                                   </div>
@@ -330,7 +330,7 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
                 })}
 
                 {filteredModules.length === 0 && (
-                  <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+                  <div className="text-center py-12 text-slate-500 dark:text-slate-400 text-sm">
                     No modules found matching &quot;{searchTerm}&quot;
                   </div>
                 )}
@@ -339,26 +339,26 @@ export default function AddHotelRoles({ isOpen, onClose, onSave }) {
           </form>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between gap-3 shrink-0">
+          <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0" />
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 Only checked permissions will be granted to staff
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="h-10 px-5 rounded-lg font-medium cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+                className="flex-1 sm:flex-initial h-9 sm:h-10 px-4 sm:px-5 rounded-lg font-medium cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs sm:text-sm"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 form="add-hotel-role-form"
-                className="h-10 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-lg shadow-indigo-500/25 cursor-pointer transition-all"
+                className="flex-1 sm:flex-initial h-9 sm:h-10 px-5 sm:px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-lg shadow-indigo-500/25 cursor-pointer transition-all text-xs sm:text-sm"
               >
                 Create Role
               </Button>

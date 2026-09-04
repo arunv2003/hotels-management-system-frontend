@@ -164,21 +164,21 @@ export default function CMSPageView() {
   const draftPages = pages.filter((p) => p.status === "Draft").length;
 
   return (
-    <div className="space-y-8 h-full flex flex-col">
+    <div className="space-y-6 sm:space-y-8 h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <Globe className="text-indigo-650 dark:text-indigo-400" size={32} />
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <Globe className="text-indigo-600 dark:text-indigo-400 shrink-0" size={28} />
             CMS Pages
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm">
             Build and publish legal notices, platform terms, and dynamic CMS pages.
           </p>
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="rounded-xl bg-indigo-700 text-white h-11 px-6 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10"
+          className="w-full sm:w-auto rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white h-10 sm:h-11 px-5 sm:px-6 gap-2 cursor-pointer transition-all shadow-md text-xs sm:text-sm font-semibold justify-center"
         >
           <Plus size={18} />
           Create Page
@@ -186,18 +186,18 @@ export default function CMSPageView() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
         {[
           { label: "Total Platform Pages", val: totalPagesCount, icon: <Layers className="text-indigo-600" /> },
           { label: "Published & Active", val: publishedPages, icon: <CheckCircle className="text-emerald-600" /> },
           { label: "Draft pages", val: draftPages, icon: <FileEdit className="text-amber-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-105 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
-              <p className="text-2xl font-bold text-slate-950 dark:text-white mt-1">{stat.val}</p>
+              <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-lg shrink-0">
               {stat.icon}
             </div>
           </div>
@@ -205,27 +205,27 @@ export default function CMSPageView() {
       </div>
 
       {/* Grid List & Filters */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search by slug, title or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-sm"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto table-scrollbar pb-1 sm:pb-0">
             {["all", "Published", "Draft"].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`text-xs px-4 py-2 rounded-xl font-bold border transition-all ${
+                className={`text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-bold border transition-all shrink-0 ${
                   filterStatus === status
-                    ? "bg-slate-900 border-slate-900 text-white dark:bg-indigo-650 dark:border-indigo-650"
-                    : "bg-white border-slate-205 text-slate-600 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
+                    ? "bg-slate-900 border-slate-900 text-white dark:bg-indigo-600 dark:border-indigo-600"
+                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
                 }`}
               >
                 {status === "all" ? "All Pages" : status}
@@ -235,23 +235,23 @@ export default function CMSPageView() {
         </div>
 
         {/* CMS Audit Table */}
-        <div className="flex-1 overflow-auto max-h-[480px] relative">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
-            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Page &amp; Route URL</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">SEO Meta Title</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Modified</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-6">Actions</th>
+        <div className="flex-1 overflow-x-auto table-scrollbar relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap min-w-[700px]">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-xs">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs">
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider pl-4 sm:pl-6">Page &amp; Route URL</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">SEO Meta Title</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Modified</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-4 sm:pr-6">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
               {paginatedPages.map((p) => (
                 <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
-                  <td className="p-4.5 pl-6 max-w-xs">
+                  <td className="p-4 pl-4 sm:pl-6 max-w-xs">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl text-indigo-600">
+                      <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl text-indigo-600 shrink-0">
                         <FileText size={18} />
                       </div>
                       <div>
@@ -263,14 +263,14 @@ export default function CMSPageView() {
                       </div>
                     </div>
                   </td>
-                  <td className="p-4.5 max-w-sm">
+                  <td className="p-4 max-w-sm">
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{p.metaTitle}</p>
                     <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">{p.metaDesc}</p>
                   </td>
-                  <td className="p-4.5 text-sm text-slate-500 dark:text-slate-450 font-medium">
+                  <td className="p-4 text-sm text-slate-500 dark:text-slate-400 font-medium">
                     {p.lastUpdated}
                   </td>
-                  <td className="p-4.5">
+                  <td className="p-4">
                     <span
                       className={`px-2.5 py-1 rounded-full text-xs font-bold ${
                         p.status === "Published"
@@ -281,21 +281,21 @@ export default function CMSPageView() {
                       {p.status}
                     </span>
                   </td>
-                  <td className="p-4.5 text-right pr-6">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="p-4 text-right pr-4 sm:pr-6">
+                    <div className="flex items-center justify-end gap-1 sm:gap-2">
                       <Button
                         variant="ghost"
                         onClick={() => handleOpenEdit(p)}
-                        className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-indigo-650 hover:bg-slate-105 dark:hover:bg-slate-800"
+                        className="h-8 w-8 p-0 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
-                        <Edit2 size={15} />
+                        <Edit2 size={14} />
                       </Button>
                       <Button
                         variant="ghost"
                         onClick={() => handleDelete(p.id)}
-                        className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-105 dark:hover:bg-slate-800"
+                        className="h-8 w-8 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
-                        <Trash2 size={15} />
+                        <Trash2 size={14} />
                       </Button>
                     </div>
                   </td>
@@ -303,7 +303,7 @@ export default function CMSPageView() {
               ))}
               {filteredPages.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="p-10 text-center text-slate-400 text-sm font-medium">
+                  <td colSpan="5" className="p-8 sm:p-10 text-center text-slate-400 text-sm font-medium">
                     No CMS pages found.
                   </td>
                 </tr>

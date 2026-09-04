@@ -1,18 +1,21 @@
 "use client";
 
 import React, { useState, useCallback, useMemo } from "react";
-import { GoogleMap, Marker } from "@react-google-maps/api";
-import { GoogleMapsProvider } from "@/providers/GoogleMapsProvider";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
-  height: "350px",
+  height: "100%",
+  minHeight: "220px",
+  borderRadius: "0.75rem",
 };
 
 const indiaCenter = {
   lat: 20.5937,
   lng: 78.9629,
 };
+
+const LIBRARIES = ["places"];
 
 function parseSafeCoordinate(val, fallback) {
   if (typeof val === "number" && Number.isFinite(val)) return val;
@@ -21,7 +24,7 @@ function parseSafeCoordinate(val, fallback) {
 }
 
 function reverseGeocode(lat, lng, callback) {
-  if (!window.google || !window.google.maps) return;
+  if (typeof window === "undefined" || !window.google || !window.google.maps) return;
   const geocoder = new window.google.maps.Geocoder();
   geocoder.geocode({ location: { lat, lng } }, (results, status) => {
     if (status === "OK" && results[0]) {
@@ -54,6 +57,12 @@ export default function GoogleMapComponent({
   onLocationChange,
   initialLocation,
 }) {
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: LIBRARIES,
+  });
+
   const safeInitial = useMemo(() => {
     return {
       lat: parseSafeCoordinate(initialLocation?.lat, indiaCenter.lat),
@@ -158,8 +167,26 @@ export default function GoogleMapComponent({
     lng: parseSafeCoordinate(markerPosition?.lng, indiaCenter.lng),
   }), [markerPosition?.lat, markerPosition?.lng]);
 
+  if (loadError) {
+    return (
+      <div className="w-full h-[220px] bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center justify-center p-4 text-center">
+        <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">
+          Error loading Google Maps. Please check your API key or network connection.
+        </p>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-[220px] bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center animate-pulse text-xs text-slate-400 font-bold">
+        Loading Map...
+      </div>
+    );
+  }
+
   return (
-    <GoogleMapsProvider>
+    <div className="w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={validPosition}
@@ -183,6 +210,7 @@ export default function GoogleMapComponent({
           title="Drag to change location or click on map"
         />
       </GoogleMap>
-    </GoogleMapsProvider>
+    </div>
   );
 }
+

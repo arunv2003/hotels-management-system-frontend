@@ -305,105 +305,105 @@ export default function RestaurantPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               Restaurant & Kitchen Management
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm font-medium">
               Manage restaurant dishes, kitchen stock, and live POS menu items for{" "}
               {user?.hotelName || user?.name || "your property"}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={loadData}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm font-semibold shadow-sm"
               title="Refresh"
             >
-              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+              <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
               Refresh
             </button>
 
             <button
               onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
             >
-              <Plus size={18} />
-              Add Menu Dish
+              <Plus size={16} />
+              Add Dish
             </button>
 
             <Link
               href="/admin/pos"
-              className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-amber-500/25 transition-all"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-amber-500/25 transition-all"
             >
-              <Store size={18} />
-              Open POS Billing
+              <Store size={16} />
+              POS Billing
             </Link>
           </div>
         </div>
 
         {/* Action / Error Banners */}
         {actionSuccess && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
+          <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold">
             <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
             {actionSuccess}
           </div>
         )}
         {error && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-sm font-semibold">
+          <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs sm:text-sm font-semibold">
             <AlertCircle size={18} className="text-rose-600 shrink-0" />
             {error}
           </div>
         )}
 
         {/* Key Metrics Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {/* Active Dishes */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-              <UtensilsCrossed size={24} />
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold shrink-0">
+              <UtensilsCrossed size={22} />
             </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">POS Menu Items</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate">POS Menu Items</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {totalDishes} Dishes
               </h3>
             </div>
           </div>
 
           {/* In-Stock Quantity */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-              <Package size={24} />
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
+              <Package size={22} />
             </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total In-Stock</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Total In-Stock</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {totalStockQuantity} Servings
               </h3>
             </div>
           </div>
 
           {/* Low Stock Dishes */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
-              <AlertTriangle size={24} />
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold shrink-0">
+              <AlertTriangle size={22} />
             </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Low Stock Dishes</p>
-              <h3 className="text-2xl font-black text-rose-600 dark:text-rose-400 mt-0.5">
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Low Stock Dishes</p>
+              <h3 className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400 mt-0.5">
                 {lowStockDishes.length} Alerts
               </h3>
             </div>
           </div>
 
           {/* Recorded POS Orders */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
-              <ShoppingBag size={24} />
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shrink-0">
+              <ShoppingBag size={22} />
             </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Recorded Orders</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate">Recorded Orders</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {totalOrdersCount} Orders
               </h3>
             </div>
@@ -412,52 +412,52 @@ export default function RestaurantPage() {
 
         {/* Tabs Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto table-scrollbar w-full sm:w-auto pb-1">
             <button
               onClick={() => setActiveTab("dishes")}
-              className={`h-10 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
                 activeTab === "dishes"
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
                   : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
-              <UtensilsCrossed size={16} className="inline mr-1.5" />
-              Menu Dishes & Items ({menuItems.length})
+              <UtensilsCrossed size={15} className="inline mr-1.5" />
+              Menu Dishes ({menuItems.length})
             </button>
 
             <button
               onClick={() => setActiveTab("orders")}
-              className={`h-10 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
                 activeTab === "orders"
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
                   : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
-              <ShoppingBag size={16} className="inline mr-1.5" />
-              POS Orders History ({orders.length})
+              <ShoppingBag size={15} className="inline mr-1.5" />
+              POS Orders ({orders.length})
             </button>
           </div>
         </div>
 
         {/* Filters and Search Bar for Menu Items */}
         {activeTab === "dishes" && (
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between pt-1">
-            <div className="relative w-full md:w-96">
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch md:items-center justify-between pt-1">
+            <div className="relative w-full md:w-80 lg:w-96">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
                 placeholder="Search dish by name or category..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-sm font-medium"
+                className="pl-10 h-10 sm:h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium"
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full md:w-auto">
               {/* Category Filter */}
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="h-10 sm:h-11 px-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -470,7 +470,7 @@ export default function RestaurantPage() {
               <select
                 value={filterVeg}
                 onChange={(e) => setFilterVeg(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="h-10 sm:h-11 px-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">All Diet Types</option>
                 <option value="veg">Veg Only 🟢</option>
@@ -481,7 +481,7 @@ export default function RestaurantPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="h-10 sm:h-11 px-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">All Stock Statuses</option>
                 <option value="in_stock">In Stock (Good)</option>
@@ -495,33 +495,33 @@ export default function RestaurantPage() {
         {/* Table Content */}
         {activeTab === "dishes" ? (
           loading ? (
-            <div className="flex flex-col items-center justify-center p-16 text-slate-400 space-y-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+            <div className="flex flex-col items-center justify-center p-12 sm:p-16 text-slate-400 space-y-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
               <RefreshCw className="w-8 h-8 animate-spin text-indigo-600" />
               <p className="text-sm font-semibold">Loading menu items...</p>
             </div>
           ) : filteredDishes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-16 bg-white dark:bg-slate-900 rounded-3xl border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500">
+            <div className="flex flex-col items-center justify-center p-12 sm:p-16 bg-white dark:bg-slate-900 rounded-3xl border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500 text-center">
               <UtensilsCrossed className="w-12 h-12 text-slate-300 mb-3" />
-              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No Dishes Found</h3>
-              <p className="text-sm mt-1">
+              <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">No Dishes Found</h3>
+              <p className="text-xs sm:text-sm mt-1 max-w-sm">
                 {menuItems.length === 0
-                  ? 'No dishes added yet. Click "Add Menu Dish" or create items in POS.'
+                  ? 'No dishes added yet. Click "Add Dish" or create items in POS.'
                   : "No dishes match your filter criteria."}
               </p>
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-              <div className="overflow-auto max-h-[480px] relative">
-                <table className="w-full text-left border-collapse whitespace-nowrap">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto table-scrollbar relative">
+                <table className="w-full text-left border-collapse whitespace-nowrap min-w-[700px]">
                   <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
                     <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
-                      <th className="py-4 px-6">Dish & Name</th>
-                      <th className="py-4 px-6">Category</th>
-                      <th className="py-4 px-6">Diet Type</th>
-                      <th className="py-4 px-6">Price</th>
-                      <th className="py-4 px-6">Available Stock</th>
-                      <th className="py-4 px-6">Status</th>
-                      <th className="py-4 px-6 text-right">Actions</th>
+                      <th className="py-3.5 px-4 sm:px-6">Dish & Name</th>
+                      <th className="py-3.5 px-4 sm:px-6">Category</th>
+                      <th className="py-3.5 px-4 sm:px-6">Diet Type</th>
+                      <th className="py-3.5 px-4 sm:px-6">Price</th>
+                      <th className="py-3.5 px-4 sm:px-6">Available Stock</th>
+                      <th className="py-3.5 px-4 sm:px-6">Status</th>
+                      <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">
@@ -706,17 +706,17 @@ export default function RestaurantPage() {
           )
         ) : (
           /* Orders Tab */
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-            <div className="overflow-auto max-h-[480px] relative">
-              <table className="w-full text-left border-collapse whitespace-nowrap">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto table-scrollbar relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[700px]">
                 <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
                   <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
-                    <th className="py-4 px-6">Order ID & Date</th>
-                    <th className="py-4 px-6">Type & Destination</th>
-                    <th className="py-4 px-6">Items Count</th>
-                    <th className="py-4 px-6">Grand Total</th>
-                    <th className="py-4 px-6">Payment</th>
-                    <th className="py-4 px-6">Order Status</th>
+                    <th className="py-3.5 px-4 sm:px-6">Order ID & Date</th>
+                    <th className="py-3.5 px-4 sm:px-6">Type & Destination</th>
+                    <th className="py-3.5 px-4 sm:px-6">Items Count</th>
+                    <th className="py-3.5 px-4 sm:px-6">Grand Total</th>
+                    <th className="py-3.5 px-4 sm:px-6">Payment</th>
+                    <th className="py-3.5 px-4 sm:px-6">Order Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">

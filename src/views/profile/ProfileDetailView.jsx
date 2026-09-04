@@ -168,49 +168,49 @@ export default function ProfileDetailView() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
       {/* Top Banner Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 md:p-8 shadow-2xl border border-slate-800"
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-5 sm:p-6 md:p-8 shadow-2xl border border-slate-800"
       >
         <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="relative">
-              <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 p-1 shadow-xl">
-                <div className="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center font-extrabold text-4xl text-white tracking-wider">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+            <div className="relative shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 p-1 shadow-xl">
+                <div className="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center font-extrabold text-3xl sm:text-4xl text-white tracking-wider">
                   {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
                 </div>
               </div>
-              <span className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 border-4 border-slate-900 rounded-full" title="Online" />
+              <span className="absolute bottom-1 right-1 w-4 h-4 sm:w-5 sm:h-5 bg-emerald-500 border-4 border-slate-900 rounded-full" title="Online" />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+            <div className="space-y-1.5 sm:space-y-2 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white truncate">
                   {currentUser?.name || "Logged In User"}
                 </h1>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getRoleBadgeColor(currentUser?.userType || currentUser?.role)}`}>
+                <span className={`px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border ${getRoleBadgeColor(currentUser?.userType || currentUser?.role)}`}>
                   {String(currentUser?.userType || currentUser?.role?.name || currentUser?.role || "User").replace("_", " ")}
                 </span>
               </div>
-              <p className="text-slate-400 text-sm flex items-center gap-2">
+              <p className="text-slate-400 text-xs sm:text-sm flex items-center gap-2 truncate">
                 <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
-                {currentUser?.email || "No email provided"}
+                <span className="truncate">{currentUser?.email || "No email provided"}</span>
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400 pt-1">
                 <span className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+                  <Calendar className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                   Joined: {formattedDate(currentUser?.createdAt)}
                 </span>
                 {currentUser?.hotelName && (
-                  <span className="flex items-center gap-1.5 text-emerald-400">
-                    <Building2 className="w-3.5 h-3.5" />
-                    {currentUser.hotelName}
+                  <span className="flex items-center gap-1.5 text-emerald-400 truncate">
+                    <Building2 className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{currentUser.hotelName}</span>
                   </span>
                 )}
               </div>
@@ -218,27 +218,27 @@ export default function ProfileDetailView() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-800">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-slate-800">
             <button
               onClick={fetchLatestProfile}
               disabled={loading}
-              className="flex-1 md:flex-initial px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 text-white text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-sm"
+              className="flex-1 md:flex-initial px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-sm"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </button>
             <button
               onClick={handleCopyId}
-              className="flex-1 md:flex-initial px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+              className="flex-1 md:flex-initial px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
             >
-              <Copy className="w-4 h-4" />
+              <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Copy ID
             </button>
             <button
               onClick={handleLogout}
-              className="flex-1 md:flex-initial px-4 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 text-sm font-medium flex items-center justify-center gap-2 transition-all"
+              className="flex-1 md:flex-initial px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-all"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Logout
             </button>
           </div>
@@ -246,10 +246,10 @@ export default function ProfileDetailView() {
       </motion.div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto table-scrollbar border-b border-slate-200 dark:border-slate-800 pb-2">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-5 py-2.5 font-medium text-sm rounded-xl transition-all flex items-center gap-2 ${
+          className={`px-4 sm:px-5 py-2 sm:py-2.5 font-medium text-xs sm:text-sm rounded-xl transition-all whitespace-nowrap shrink-0 flex items-center gap-2 ${
             activeTab === "overview"
               ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -260,7 +260,7 @@ export default function ProfileDetailView() {
         </button>
         <button
           onClick={() => setActiveTab("permissions")}
-          className={`px-5 py-2.5 font-medium text-sm rounded-xl transition-all flex items-center gap-2 ${
+          className={`px-4 sm:px-5 py-2 sm:py-2.5 font-medium text-xs sm:text-sm rounded-xl transition-all whitespace-nowrap shrink-0 flex items-center gap-2 ${
             activeTab === "permissions"
               ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -272,7 +272,7 @@ export default function ProfileDetailView() {
         {currentUser?.hotelId && (
           <button
             onClick={() => setActiveTab("hotel")}
-            className={`px-5 py-2.5 font-medium text-sm rounded-xl transition-all flex items-center gap-2 ${
+            className={`px-4 sm:px-5 py-2 sm:py-2.5 font-medium text-xs sm:text-sm rounded-xl transition-all whitespace-nowrap shrink-0 flex items-center gap-2 ${
               activeTab === "hotel"
                 ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"

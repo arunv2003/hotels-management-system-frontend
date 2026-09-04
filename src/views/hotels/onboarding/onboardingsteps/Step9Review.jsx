@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   ArrowRight,
   ShieldCheck,
+  Edit2,
 } from "lucide-react";
 
 export default function Step9Review({ formData, nextStep, setStep, isSubmitting }) {
@@ -53,22 +54,22 @@ export default function Step9Review({ formData, nextStep, setStep, isSubmitting 
   ];
 
   return (
-    <div className="space-y-8 pb-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {reviewItems.map((item, i) => (
           <div
             key={i}
-            className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between shadow-sm hover:border-indigo-300 transition-colors"
+            className="p-3.5 rounded-2xl border border-slate-800/80 bg-slate-950/40 flex items-center justify-between hover:border-slate-700/80 transition-colors"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0">
-                <item.icon className="w-5 h-5" />
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
+                <item.icon className="w-4 h-4" />
               </div>
-              <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                   {item.title}
                 </p>
-                <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5 line-clamp-1">
+                <p className="text-xs font-semibold text-white mt-0.5 truncate">
                   {item.value}
                 </p>
               </div>
@@ -78,8 +79,9 @@ export default function Step9Review({ formData, nextStep, setStep, isSubmitting 
                 type="button"
                 variant="ghost"
                 onClick={() => setStep(item.stepNumber)}
-                className="text-xs font-bold text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg px-3 h-8"
+                className="text-xs font-semibold text-indigo-400 hover:text-white hover:bg-indigo-500/10 rounded-xl px-2.5 h-7 shrink-0 ml-2 gap-1 cursor-pointer"
               >
+                <Edit2 className="w-3 h-3" />
                 Edit
               </Button>
             )}
@@ -88,17 +90,17 @@ export default function Step9Review({ formData, nextStep, setStep, isSubmitting 
       </div>
 
       {/* Review Summary Banner */}
-      <div className="p-8 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-indigo-500/20">
-            <ShieldCheck className="w-6 h-6" />
+      <div className="p-4 bg-gradient-to-r from-indigo-950/50 via-slate-900/60 to-purple-950/50 border border-indigo-500/30 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3.5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/20 ring-1 ring-white/20">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm font-bold text-white">
               All Details Verified!
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Proceed to the final step to select your subscription plan and activate your hotel property.
+            <p className="text-xs text-slate-400">
+              Proceed to select your subscription plan and activate your hotel.
             </p>
           </div>
         </div>
@@ -106,10 +108,10 @@ export default function Step9Review({ formData, nextStep, setStep, isSubmitting 
         <Button
           type="button"
           onClick={nextStep}
-          className="w-full md:w-auto h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/20 gap-2 flex-shrink-0"
+          className="w-full md:w-auto h-9 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-500/25 gap-1.5 shrink-0 cursor-pointer"
         >
           <span>Continue to Choose Plan</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </Button>
       </div>
     </div>

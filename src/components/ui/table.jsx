@@ -1,9 +1,9 @@
 "use client";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-function Table({ className, ...props }) {
-    return (<div data-slot="table-container" className="relative w-full overflow-x-auto">
-      <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props}/>
+function Table({ className, containerClassName, ...props }) {
+    return (<div data-slot="table-container" className={cn("relative w-full overflow-x-auto table-scrollbar rounded-xl", containerClassName)}>
+      <table data-slot="table" className={cn("w-full caption-bottom text-sm min-w-full", className)} {...props}/>
     </div>);
 }
 function TableHeader({ className, ...props }) {

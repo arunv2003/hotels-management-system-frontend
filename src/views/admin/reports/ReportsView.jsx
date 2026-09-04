@@ -391,16 +391,16 @@ export default function HotelReportsView() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-              <FileBarChart2 className="text-indigo-600 dark:text-indigo-400" size={32} />
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+              <FileBarChart2 className="text-indigo-600 dark:text-indigo-400 shrink-0" size={28} />
               Hotel Reports & Analytics
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm font-medium">
               Real-time operational records, profit & loss, room yields, and downloadable audit sheets for{" "}
               <strong className="text-slate-800 dark:text-slate-200">{user?.hotelName || "your property"}</strong>
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
               onClick={() => {
@@ -408,7 +408,7 @@ export default function HotelReportsView() {
                 fetchAllHotelData();
               }}
               disabled={loading || refreshing}
-              className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold gap-2 shadow-sm cursor-pointer"
+              className="flex-1 sm:flex-none h-10 sm:h-11 rounded-xl border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold gap-2 shadow-xs cursor-pointer text-xs sm:text-sm"
             >
               <RefreshCw size={16} className={refreshing || loading ? "animate-spin text-indigo-600" : ""} />
               Refresh Data
@@ -416,13 +416,13 @@ export default function HotelReportsView() {
             <Button
               variant="outline"
               onClick={handleExportAll}
-              className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold gap-2 shadow-sm cursor-pointer"
+              className="flex-1 sm:flex-none h-10 sm:h-11 rounded-xl border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-semibold gap-2 shadow-xs cursor-pointer text-xs sm:text-sm"
             >
               <Download size={16} /> Export Master CSV
             </Button>
             <Button
               onClick={() => setIsModalOpen(true)}
-              className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 gap-2 shadow-lg shadow-indigo-500/20 cursor-pointer"
+              className="w-full sm:w-auto h-10 sm:h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 sm:px-5 gap-2 shadow-lg shadow-indigo-500/20 cursor-pointer text-xs sm:text-sm"
             >
               <Plus size={18} /> Generate Custom Report
             </Button>
@@ -430,51 +430,51 @@ export default function HotelReportsView() {
         </div>
 
         {/* Live Hotel KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {[
             {
               label: "Gross Hotel Turnover",
               val: `₹${metrics.totalGrossRevenue.toLocaleString()}`,
               sub: `₹${metrics.roomRevenue.toLocaleString()} Rooms + ₹${metrics.posRevenue.toLocaleString()} POS`,
-              icon: <DollarSign className="text-indigo-600" size={22} />,
+              icon: <DollarSign className="text-indigo-600" size={20} />,
               bg: "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-100 dark:border-indigo-900/30",
             },
             {
               label: "Live Room Occupancy",
               val: `${metrics.occupancyRate}%`,
               sub: `${metrics.bookedRoomsCount} of ${metrics.totalRoomsCount} Physical Rooms Occupied`,
-              icon: <Bed className="text-emerald-600" size={22} />,
+              icon: <Bed className="text-emerald-600" size={20} />,
               bg: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-100 dark:border-emerald-900/30",
             },
             {
               label: "RevPAR (Rev / Avail Room)",
               val: `₹${metrics.revPAR.toLocaleString()}`,
               sub: `From ${bookings.length} confirmed bookings`,
-              icon: <TrendingUp className="text-sky-600" size={22} />,
+              icon: <TrendingUp className="text-sky-600" size={20} />,
               bg: "bg-sky-50 dark:bg-sky-950/40 border-sky-100 dark:border-sky-900/30",
             },
             {
               label: "Estimated Net Profit",
               val: `₹${metrics.netProfit.toLocaleString()}`,
               sub: `After ₹${metrics.totalOperatingCost.toLocaleString()} overheads`,
-              icon: <Sparkles className="text-amber-600" size={22} />,
+              icon: <Sparkles className="text-amber-600" size={20} />,
               bg: "bg-amber-50 dark:bg-amber-950/40 border-amber-100 dark:border-amber-900/30",
             },
           ].map((stat, i) => (
             <div
               key={i}
-              className={`p-5 rounded-2xl border ${stat.bg} bg-white dark:bg-slate-900 shadow-sm flex items-start justify-between`}
+              className={`p-4 sm:p-5 rounded-2xl border ${stat.bg} bg-white dark:bg-slate-900 shadow-xs flex items-start justify-between`}
             >
               <div>
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                <span className="text-[11px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                   {stat.label}
                 </span>
-                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1.5">{stat.val}</p>
-                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+                <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1">{stat.val}</p>
+                <p className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
                   {stat.sub}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 shadow-inner">
+              <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-800 shadow-inner shrink-0">
                 {stat.icon}
               </div>
             </div>
@@ -482,18 +482,18 @@ export default function HotelReportsView() {
         </div>
 
         {/* Charts & Analytics Visuals */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Revenue vs Expenses Comparison Chart */}
-          <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col h-[400px]">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col h-[340px] sm:h-[400px]">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base flex items-center gap-2">
                   <BarChart3 className="text-indigo-600" size={18} />
                   Revenue Inflows vs Operating Costs
                 </h3>
                 <p className="text-xs text-slate-400">Monthly breakdown across Room Bookings, POS Dining, and Expenses.</p>
               </div>
-              <span className="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
+              <span className="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg">
                 Year 2026
               </span>
             </div>
@@ -528,16 +528,16 @@ export default function HotelReportsView() {
           </div>
 
           {/* Department Share Donut */}
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between h-[400px]">
+          <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col justify-between h-[340px] sm:h-[400px]">
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base flex items-center gap-2">
                 <PieIcon className="text-indigo-600" size={18} />
                 Revenue Streams Breakdown
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">Contribution percentage by active income stream.</p>
             </div>
 
-            <div className="h-[200px] w-full flex items-center justify-center relative">
+            <div className="h-[180px] sm:h-[200px] w-full flex items-center justify-center relative">
               {isMounted && departmentRevenueShare.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                   <PieChart>
@@ -584,11 +584,11 @@ export default function HotelReportsView() {
         </div>
 
         {/* Dynamic Audited Reports Table from Database */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col overflow-hidden">
           {/* Filters Bar */}
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
                 placeholder="Search generated reports..."
                 value={searchQuery}
@@ -597,12 +597,12 @@ export default function HotelReportsView() {
               />
             </div>
 
-            <div className="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto">
+            <div className="flex gap-2 overflow-x-auto table-scrollbar pb-1 sm:pb-0 w-full sm:w-auto">
               {["all", "Financial", "Occupancy", "F&B / POS", "Payroll", "Inventory"].map((t) => (
                 <button
                   key={t}
                   onClick={() => setFilterType(t)}
-                  className={`text-xs px-3.5 py-2 rounded-xl font-bold border transition-all cursor-pointer whitespace-nowrap ${
+                  className={`text-xs px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                     filterType === t
                       ? "bg-indigo-600 border-indigo-600 text-white"
                       : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
@@ -615,22 +615,22 @@ export default function HotelReportsView() {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto table-scrollbar relative">
             {loading ? (
               <div className="py-16 flex flex-col items-center justify-center text-slate-400 gap-3">
                 <RefreshCw size={24} className="animate-spin text-indigo-600" />
                 <span className="text-sm font-semibold">Loading hotel reports from database...</span>
               </div>
             ) : (
-              <table className="w-full text-left border-collapse whitespace-nowrap">
+              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 text-xs font-bold uppercase tracking-wider text-slate-400">
-                    <th className="py-4 px-6">Report Title</th>
-                    <th className="py-4 px-6">Category</th>
-                    <th className="py-4 px-6">Reporting Period</th>
-                    <th className="py-4 px-6">Author</th>
-                    <th className="py-4 px-6">Created Date</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                    <th className="py-4 px-4 sm:px-6">Report Title</th>
+                    <th className="py-4 px-4 sm:px-6">Category</th>
+                    <th className="py-4 px-4 sm:px-6">Reporting Period</th>
+                    <th className="py-4 px-4 sm:px-6">Author</th>
+                    <th className="py-4 px-4 sm:px-6">Created Date</th>
+                    <th className="py-4 px-4 sm:px-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">

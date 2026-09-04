@@ -140,29 +140,29 @@ export default function SaaSPaymentView() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
             Revenue &amp; Payments
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 mt-1 text-xs sm:text-sm">
             Manage global subscriptions, transactions, and invoices
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             variant="outline"
             onClick={fetchPaymentData}
             disabled={loading}
-            className="h-11 rounded-xl border-slate-200 dark:border-slate-800 gap-2 cursor-pointer"
+            className="flex-1 sm:flex-none h-10 sm:h-11 rounded-xl border-slate-200 dark:border-slate-800 gap-2 cursor-pointer text-xs sm:text-sm"
           >
             <RefreshCcw size={16} className={loading ? "animate-spin" : ""} /> Sync Gateway
           </Button>
           <Button
             onClick={handleExportCSV}
-            className="rounded-xl bg-indigo-600 hover:bg-indigo-700 h-11 px-5 gap-2 cursor-pointer text-white font-bold"
+            className="flex-1 sm:flex-none rounded-xl bg-indigo-600 hover:bg-indigo-700 h-10 sm:h-11 px-4 sm:px-5 gap-2 cursor-pointer text-white font-bold text-xs sm:text-sm"
           >
             <Download size={18} /> Export CSV
           </Button>
@@ -170,97 +170,97 @@ export default function SaaSPaymentView() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="glass-card p-4 sm:p-5 rounded-xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-md">
-              <DollarSign size={22} />
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-lg">
+              <DollarSign size={20} />
             </div>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
               <TrendingUp size={12} /> +12.5%
             </span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500">Gross Volume</p>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
+            <p className="text-xs sm:text-sm font-semibold text-slate-500">Gross Volume</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
               ₹{stats.grossVolume.toLocaleString()}
             </h3>
           </div>
         </div>
 
-        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="glass-card p-4 sm:p-5 rounded-xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-md">
-              <CreditCard size={22} />
+            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-lg">
+              <CreditCard size={20} />
             </div>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
               <TrendingUp size={12} /> +8.2%
             </span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500">
+            <p className="text-xs sm:text-sm font-semibold text-slate-500">
               Monthly Recurring Revenue
             </p>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
               ₹{stats.mrr.toLocaleString()}
             </h3>
           </div>
         </div>
 
-        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="glass-card p-4 sm:p-5 rounded-xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-md">
-              <ArrowUpRight size={22} />
+            <div className="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-lg">
+              <ArrowUpRight size={20} />
             </div>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
               <TrendingUp size={12} /> +15.1%
             </span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500">
+            <p className="text-xs sm:text-sm font-semibold text-slate-500">
               Average Subscription Plan
             </p>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
               ₹{stats.avgPlanPrice.toFixed(2)}
             </h3>
           </div>
         </div>
 
-        <div className="glass-card p-5 rounded-lg flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="glass-card p-4 sm:p-5 rounded-xl flex flex-col justify-between border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-md">
-              <AlertCircle size={22} />
+            <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-lg">
+              <AlertCircle size={20} />
             </div>
-            <span className="flex items-center gap-1 text-xs font-bold text-rose-600 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full">
               <TrendingDown size={12} /> Live
             </span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500">
+            <p className="text-xs sm:text-sm font-semibold text-slate-500">
               Failed / Disputed Payments
             </p>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
               {stats.failedPaymentsCount}
             </h3>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Main transaction list */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-card p-6 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="glass-card p-4 sm:p-6 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Transaction Logs
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-xs sm:text-sm text-slate-500">
                   Real-time payment history and invoices
                 </p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto table-scrollbar pb-1 sm:pb-0">
                 {["ALL", "SUCCESSFUL", "PENDING", "FAILED"].map((st) => (
                   <button
                     key={st}
@@ -268,7 +268,7 @@ export default function SaaSPaymentView() {
                       setStatusFilter(st);
                       setCurrentPage(1);
                     }}
-                    className={`text-xs font-bold px-3 py-1.5 rounded-md transition-colors capitalize ${
+                    className={`text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md transition-colors capitalize shrink-0 ${
                       statusFilter === st
                         ? "bg-indigo-600 text-white"
                         : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"
@@ -280,7 +280,7 @@ export default function SaaSPaymentView() {
               </div>
             </div>
 
-            <div className="relative mb-6">
+            <div className="relative mb-5 sm:mb-6">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
                 placeholder="Search transactions by hotel owner or invoice number..."
@@ -289,20 +289,20 @@ export default function SaaSPaymentView() {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm"
               />
             </div>
 
-            <div className="overflow-auto max-h-[480px] relative">
+            <div className="overflow-x-auto table-scrollbar max-h-[480px] relative">
               {loading ? (
                 <div className="py-12 flex items-center justify-center text-slate-400 gap-2">
                   <Loader2 className="animate-spin" size={20} />
                   <span>Loading live transactions...</span>
                 </div>
               ) : (
-                <table className="w-full text-left border-collapse whitespace-nowrap">
-                  <thead className="sticky top-0 z-10 bg-white dark:bg-slate-900 shadow-sm">
-                    <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
+                <table className="w-full text-left border-collapse whitespace-nowrap min-w-[650px]">
+                  <thead className="sticky top-0 z-10 bg-white dark:bg-slate-900 shadow-xs">
+                    <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs">
                       <th className="py-4">Tenant / Hotel</th>
                       <th className="py-4">Plan / Cycle</th>
                       <th className="py-4">Amount</th>

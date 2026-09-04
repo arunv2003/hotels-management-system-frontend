@@ -10,12 +10,11 @@ const DOCS = [
   { id: "ownerId",        label: "Owner ID Proof",   accept: "image/*,.pdf", folder: "hotelsStaffDocumentImage" },
 ];
 
-/* ─── Circular progress ring ──────────────────────────────────────── */
 function ProgressRing({ progress }) {
   const r = 20;
   const circ = 2 * Math.PI * r;
   return (
-    <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+    <svg className="w-10 h-10 -rotate-90" viewBox="0 0 48 48">
       <circle cx="24" cy="24" r={r} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="4" />
       <circle
         cx="24" cy="24" r={r} fill="none"
@@ -28,7 +27,6 @@ function ProgressRing({ progress }) {
     </svg>
   );
 }
-
 
 function DocUploadCard({ label, accept, folder, file, onChange }) {
   const inputRef = useRef(null);
@@ -62,21 +60,24 @@ function DocUploadCard({ label, accept, folder, file, onChange }) {
   const handleRemove = () => { onChange(null); setProgress(null); setError(false); };
 
   return (
-    <div className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col gap-4">
+    <div className="p-3.5 rounded-2xl border border-slate-800/80 bg-slate-950/40 flex flex-col gap-2.5">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 shrink-0">
-          <FileText className="w-5 h-5" />
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+          <FileText className="w-4 h-4" />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+          <h4 className="text-xs font-semibold text-white truncate">
             {label} <span className="text-rose-500">*</span>
           </h4>
-          <p className="text-[10px] text-slate-400 mt-0.5">PDF, JPG, PNG accepted</p>
+          <p className="text-[10px] text-slate-400">PDF, JPG, PNG up to 10MB</p>
         </div>
         {file && progress === null && !error && (
-          <button type="button" onClick={handleRemove}
-            className="p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-300 hover:text-rose-500 transition-colors">
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="p-1 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+          >
             <X className="w-4 h-4" />
           </button>
         )}
@@ -84,53 +85,69 @@ function DocUploadCard({ label, accept, folder, file, onChange }) {
 
       {/* Preview / upload area */}
       {file ? (
-        <div className="rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+        <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-900">
           {isImage ? (
             <div className="relative group">
-              <img src={file.previewUrl} alt={label} className="w-full h-40 object-cover" />
+              <img src={file.previewUrl} alt={label} className="w-full h-24 object-cover" />
 
               {/* Upload progress overlay */}
               {(progress !== null || error) && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xs">
                   {error ? (
                     <>
-                      <AlertCircle className="w-8 h-8 text-rose-400" />
-                      <span className="text-xs text-rose-300 font-semibold mt-1">Upload failed</span>
+                      <AlertCircle className="w-5 h-5 text-rose-400" />
+                      <span className="text-[10px] text-rose-300 font-semibold mt-0.5">Upload failed</span>
                     </>
                   ) : progress === 100 ? (
-                    <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+                    <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                   ) : (
                     <>
                       <ProgressRing progress={progress} />
-                      <span className="text-white font-bold text-sm mt-1">{progress}%</span>
+                      <span className="text-white font-bold text-xs mt-0.5">{progress}%</span>
                     </>
                   )}
                 </div>
               )}
 
-              {/* Hover preview link — only when idle */}
+              {/* Hover preview link */}
               {progress === null && !error && (
-                <a href={file.cloudUrl || file.previewUrl} target="_blank" rel="noopener noreferrer"
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="flex items-center gap-1.5 bg-white/90 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-xl">
-                    <Eye className="w-3.5 h-3.5" />
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                  <a
+                    href={file.cloudUrl || file.previewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 bg-white text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+                  >
+                    <Eye className="w-3 h-3" />
                     Preview
-                  </div>
-                </a>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                    className="px-2.5 py-1 bg-indigo-600 text-white text-[10px] font-bold rounded-lg hover:bg-indigo-500 transition-colors cursor-pointer"
+                  >
+                    Change
+                  </button>
+                </div>
               )}
             </div>
           ) : isPdf ? (
-            <div className="relative flex items-center gap-3 p-4">
-              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 text-rose-500" />
+            <div className="relative flex items-center gap-2.5 p-3">
+              <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0 text-rose-400">
+                <FileText className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{file.name}</p>
+                <p className="text-xs font-semibold text-white truncate">{file.name}</p>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <p className="text-[10px] text-slate-400">PDF Document</p>
+                  <span className="text-[10px] font-bold uppercase text-rose-400">PDF Document</span>
                   {(file.cloudUrl || file.previewUrl) && (
-                    <a href={file.cloudUrl || file.previewUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-indigo-500 hover:underline">
-                      View File
+                    <a
+                      href={file.cloudUrl || file.previewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] font-semibold text-indigo-400 hover:underline"
+                    >
+                      View
                     </a>
                   )}
                 </div>
@@ -138,50 +155,38 @@ function DocUploadCard({ label, accept, folder, file, onChange }) {
 
               {/* PDF progress badge */}
               {(progress !== null || error) && (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                   {error ? (
-                    <AlertCircle className="w-5 h-5 text-rose-400" />
+                    <AlertCircle className="w-4 h-4 text-rose-400" />
                   ) : progress === 100 ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   ) : (
-                    <div className="flex items-center gap-1">
-                      <div className="relative w-8 h-8">
-                        <svg className="w-8 h-8 -rotate-90" viewBox="0 0 32 32">
-                          <circle cx="16" cy="16" r="12" fill="none" stroke="#e2e8f0" strokeWidth="3" />
-                          <circle cx="16" cy="16" r="12" fill="none" stroke="#6366f1" strokeWidth="3"
-                            strokeDasharray={`${2 * Math.PI * 12}`}
-                            strokeDashoffset={`${2 * Math.PI * 12 * (1 - progress / 100)}`}
-                            strokeLinecap="round"
-                            style={{ transition: "stroke-dashoffset 0.3s ease" }} />
-                        </svg>
-                        <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-indigo-600">
-                          {progress}
-                        </span>
-                      </div>
-                    </div>
+                    <span className="text-[10px] font-bold text-indigo-400">{progress}%</span>
                   )}
                 </div>
               )}
+              {progress === null && !error && (
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors shrink-0 cursor-pointer"
+                >
+                  Change
+                </button>
+              )}
             </div>
           ) : (
-            <div className="p-4 text-xs text-slate-400">{file.name}</div>
-          )}
-
-          {/* Replace button */}
-          {progress === null && !error && (
-            <div className="px-3 pb-3">
-              <button type="button" onClick={() => inputRef.current?.click()}
-                className="w-full py-2 text-xs font-bold text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl transition-colors">
-                Replace File
-              </button>
-            </div>
+            <div className="p-3 text-xs text-slate-400">{file.name}</div>
           )}
         </div>
       ) : (
-        <button type="button" onClick={() => inputRef.current?.click()}
-          className="w-full py-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 transition-colors bg-slate-50 dark:bg-slate-800/50">
-          <UploadCloud className="w-7 h-7" />
-          <span className="text-xs font-semibold">Click to upload</span>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="w-full py-4 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:text-indigo-400 transition-all bg-slate-950/40 hover:bg-indigo-500/5 group cursor-pointer"
+        >
+          <UploadCloud className="w-5 h-5 transition-transform group-hover:scale-110" />
+          <span className="text-[11px] font-semibold">Click to upload document</span>
         </button>
       )}
 
@@ -190,7 +195,6 @@ function DocUploadCard({ label, accept, folder, file, onChange }) {
   );
 }
 
-/* ─── Main Step ──────────────────────────────────────────────────── */
 export default function Step8Documents({ formData, updateFormData }) {
   const docs = formData.documents || {};
 
@@ -199,11 +203,8 @@ export default function Step8Documents({ formData, updateFormData }) {
   };
 
   return (
-    <div className="space-y-6">
-      <p className="text-sm text-slate-500">
-        Upload required documents to verify your business. Supported formats: PDF, JPG, PNG.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {DOCS.map((doc) => (
           <DocUploadCard
             key={doc.id}

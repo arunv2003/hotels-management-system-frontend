@@ -145,26 +145,26 @@ export default function HotelStaffDirectory() {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
             Hotel Staff Management
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             Manage your hotel employee directory, shifts, roles, and access controls.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button
             variant="outline"
             onClick={loadData}
-            className="h-10 rounded-xl gap-2 font-bold text-sm cursor-pointer border-slate-200 dark:border-slate-800"
+            className="h-10 rounded-xl gap-2 font-bold text-xs sm:text-sm cursor-pointer border-slate-200 dark:border-slate-800 flex-1 sm:flex-none"
           >
             <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} /> Refresh
           </Button>
           {hasPermission("staff", "add") && (
             <Button
-              className="h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-md shadow-indigo-500/20 cursor-pointer"
+              className="h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/20 cursor-pointer flex-1 sm:flex-none"
               onClick={() => {
                 setEditingStaff(null);
                 setIsModalOpen(true);
@@ -177,7 +177,7 @@ export default function HotelStaffDirectory() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             label: "Total Staff",
@@ -210,7 +210,7 @@ export default function HotelStaffDirectory() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
+            className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
           >
             <div
               className={cn(
@@ -235,8 +235,8 @@ export default function HotelStaffDirectory() {
       {/* Table Section */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Table Toolbar */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="relative w-full md:w-96">
+        <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+          <div className="relative w-full sm:w-80 md:w-96">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search by name, email, code or title..."
@@ -245,11 +245,11 @@ export default function HotelStaffDirectory() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-11 h-11 rounded-xl border-slate-200 dark:border-slate-800 focus-visible:ring-indigo-500/20"
+              className="pl-11 h-10 sm:h-11 rounded-xl border-slate-200 dark:border-slate-800 focus-visible:ring-indigo-500/20 text-xs sm:text-sm"
             />
           </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {/* Filter by Role */}
             <select
               value={roleFilter}
@@ -257,7 +257,7 @@ export default function HotelStaffDirectory() {
                 setRoleFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="h-11 px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none"
+              className="h-10 sm:h-11 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none flex-1 sm:flex-none"
             >
               <option value="all">All Roles</option>
               {roles.map((r) => (
@@ -274,7 +274,7 @@ export default function HotelStaffDirectory() {
                 setStatusFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="h-11 px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none"
+              className="h-10 sm:h-11 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none flex-1 sm:flex-none"
             >
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
@@ -304,8 +304,8 @@ export default function HotelStaffDirectory() {
             </p>
           </div>
         ) : (
-          <div className="overflow-auto max-h-[480px] relative">
-            <table className="w-full text-sm text-left border-collapse whitespace-nowrap">
+          <div className="overflow-x-auto table-scrollbar relative">
+            <table className="w-full text-sm text-left border-collapse whitespace-nowrap min-w-[750px]">
               <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
                 <tr>
                   <th className="px-6 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">

@@ -78,95 +78,111 @@ export default function Step6HotelDetails({ formData, updateFormData }) {
   };
 
   return (
-    <div className="space-y-10">
-      <div className="grid grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Total Floors <span className="text-red-500">*</span>
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div className="space-y-1.5">
+          <Label className="text-xs font-semibold text-slate-300">
+            Total Floors <span className="text-rose-500">*</span>
           </Label>
           <Input
-            placeholder="Enter total floors"
-            className="h-12 rounded-xl"
+            placeholder="e.g. 4"
+            className="h-10 rounded-xl text-sm bg-slate-950/60 border-slate-800 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
             value={formData.totalFloors}
             onChange={(e) => updateFormData({ totalFloors: e.target.value })}
           />
         </div>
-        <div className="space-y-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Total Rooms <span className="text-red-500">*</span>
+        <div className="space-y-1.5">
+          <Label className="text-xs font-semibold text-slate-300">
+            Total Rooms <span className="text-rose-500">*</span>
           </Label>
           <Input
-            placeholder="Enter total rooms"
-            className="h-12 rounded-xl"
+            placeholder="e.g. 36"
+            className="h-10 rounded-xl text-sm bg-slate-950/60 border-slate-800 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
             value={formData.totalRooms}
             onChange={(e) => updateFormData({ totalRooms: e.target.value })}
           />
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <h4 className="font-bold text-slate-400">Room Types <span className="text-red-500">*</span></h4>
+          <div>
+            <h4 className="font-semibold text-white text-xs sm:text-sm">
+              Room Types <span className="text-rose-500">*</span>
+            </h4>
+            <p className="text-[11px] text-slate-400">Select applicable room configurations</p>
+          </div>
           <Button
             type="button"
-            variant="ghost"
-            className="text-indigo-600 font-bold h-8 flex gap-1"
+            variant="outline"
+            className="text-indigo-400 border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 font-bold h-8 rounded-xl flex gap-1.5 text-xs transition-colors cursor-pointer"
             onClick={openAddDialog}
           >
-            <Plus className="w-4 h-4" /> Add Room Type
+            <Plus className="w-3.5 h-3.5" /> Add Room Type
           </Button>
         </div>
-        <div className="border border-slate-100 dark:border-slate-800 rounded-[1rem] overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-100 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
-              <tr>
-                <th className="w-12 p-4 text-center"></th>
-                <th className="text-left p-4 font-bold text-slate-400">Type</th>
-                <th className="text-left p-4 font-bold text-slate-400">
-                  Count
-                </th>
-                <th className="text-right p-4 font-bold text-slate-400">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              {roomTypes.map((rt, i) => (
-                <tr key={rt._id || i}>
-                  <td className="p-4 text-center">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                      checked={Array.isArray(formData.roomTypes) && formData.roomTypes.includes(rt._id)}
-                      onChange={(e) => handleCheckboxChange(rt._id, e.target.checked)}
-                    />
-                  </td>
-                  <td className="p-4 font-bold dark:text-white">{rt.roomType}</td>
-                  <td className="p-4 text-slate-500 dark:text-slate-400">
-                    {rt.numberOfRooms} Rooms
-                  </td>
-                  <td className="p-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        className="p-2 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg text-slate-400 hover:text-indigo-600"
-                        onClick={() => openEditDialog(rt)}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        className="p-2 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-600"
-                        onClick={() => handleRemoveRoomType(i, rt._id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
+
+        <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/40">
+          <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] max-h-52 overflow-y-auto">
+            <table className="w-full text-xs sm:text-sm min-w-[360px]">
+              <thead className="bg-slate-900/90 border-b border-slate-800 sticky top-0 backdrop-blur-xs">
+                <tr>
+                  <th className="w-10 p-2.5 text-center"></th>
+                  <th className="text-left p-2.5 font-semibold text-slate-400 text-xs uppercase tracking-wider">Type</th>
+                  <th className="text-left p-2.5 font-semibold text-slate-400 text-xs uppercase tracking-wider">
+                    Count
+                  </th>
+                  <th className="text-right p-2.5 font-semibold text-slate-400 text-xs uppercase tracking-wider pr-4">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {roomTypes.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="p-6 text-center text-xs text-slate-500">
+                      No room types found. Click "+ Add Room Type" to create one.
+                    </td>
+                  </tr>
+                ) : (
+                  roomTypes.map((rt, i) => (
+                    <tr key={rt._id || i} className="hover:bg-slate-900/40 transition-colors">
+                      <td className="p-2.5 text-center">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                          checked={Array.isArray(formData.roomTypes) && formData.roomTypes.includes(rt._id)}
+                          onChange={(e) => handleCheckboxChange(rt._id, e.target.checked)}
+                        />
+                      </td>
+                      <td className="p-2.5 font-semibold text-white">{rt.roomType}</td>
+                      <td className="p-2.5 text-slate-400">
+                        {rt.numberOfRooms} Rooms
+                      </td>
+                      <td className="p-2.5 text-right pr-4">
+                        <div className="flex justify-end gap-1.5">
+                          <button
+                            type="button"
+                            className="p-1.5 hover:bg-indigo-500/10 rounded-lg text-slate-400 hover:text-indigo-400 transition-colors cursor-pointer"
+                            onClick={() => openEditDialog(rt)}
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                            onClick={() => handleRemoveRoomType(i, rt._id)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

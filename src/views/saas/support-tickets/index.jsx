@@ -191,19 +191,19 @@ export default function SupportTicketsView() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {[
           { label: "Active Open Tickets", val: openCount, icon: <AlertCircle className="text-rose-500" /> },
           { label: "Under Review", val: progressCount, icon: <Clock className="text-indigo-600" /> },
           { label: "Resolved Speed", val: resolvedCount, icon: <CheckCircle className="text-emerald-600" /> },
           { label: "Avg SLA Response", val: "18.5 min", icon: <ArrowUpRight className="text-sky-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
+              <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-800 rounded-lg shrink-0">
               {stat.icon}
             </div>
           </div>
@@ -211,27 +211,27 @@ export default function SupportTicketsView() {
       </div>
 
       {/* Filter and Table Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-80">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col lg:flex-row gap-3 sm:gap-4 items-stretch lg:items-center justify-between">
+          <div className="relative w-full lg:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
             <Input
               placeholder="Search by hotel or ticket details..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 text-sm"
             />
           </div>
     
-          <div className="flex gap-3 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              <span className="text-xs text-slate-400 px-2.5 font-bold">Status:</span>
+          <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 overflow-x-auto table-scrollbar pb-1 sm:pb-0">
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shrink-0">
+              <span className="text-[11px] sm:text-xs text-slate-400 px-2 font-bold">Status:</span>
               {["all", "Open", "In Progress", "Resolved"].map((s) => (
                 <button
                   key={s}
                   onClick={() => setFilterStatus(s)}
-                  className={`text-xs px-3 py-1.5 rounded-lg capitalize font-bold transition-all ${
+                  className={`text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md capitalize font-bold transition-all ${
                     filterStatus === s
                       ? "bg-white dark:bg-slate-900 shadow-xs text-indigo-600 dark:text-indigo-400"
                       : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
@@ -242,13 +242,13 @@ export default function SupportTicketsView() {
               ))}
             </div>
 
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              <span className="text-xs text-slate-400 px-2.5 font-bold">Priority:</span>
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shrink-0">
+              <span className="text-[11px] sm:text-xs text-slate-400 px-2 font-bold">Priority:</span>
               {["all", "High", "Medium"].map((p) => (
                 <button
                   key={p}
                   onClick={() => setFilterPriority(p)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  className={`text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md font-bold transition-all ${
                     filterPriority === p
                       ? "bg-white dark:bg-slate-900 shadow-xs text-indigo-600 dark:text-indigo-400"
                       : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
@@ -262,53 +262,53 @@ export default function SupportTicketsView() {
         </div>
 
         {/* Tickets Table */}
-        <div className="flex-1 overflow-auto max-h-[480px] relative">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
-            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">ID &amp; Tenant Hotel</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Subject Issue</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Priority</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Activity</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-6">Actions</th>
+        <div className="flex-1 overflow-x-auto table-scrollbar relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-xs">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs">
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider pl-4 sm:pl-6">ID &amp; Tenant Hotel</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Subject Issue</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Priority</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Last Activity</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-4 sm:pr-6">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
               {paginatedTickets.map((tc) => (
                 <tr key={tc.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
-                  <td className="p-4.5 pl-6">
+                  <td className="p-4 pl-4 sm:pl-6">
                     <div>
                       <p className="font-mono text-xs font-extrabold text-indigo-600 dark:text-indigo-400 leading-none">{tc.id}</p>
                       <p className="font-bold text-slate-900 dark:text-white mt-1">{tc.hotel}</p>
                     </div>
                   </td>
-                  <td className="p-4.5 max-w-xs">
+                  <td className="p-4 max-w-xs">
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{tc.subject}</p>
                   </td>
-                  <td className="p-4.5 text-xs font-bold text-slate-500">
+                  <td className="p-4 text-xs font-bold text-slate-500">
                     {tc.category}
                   </td>
-                  <td className="p-4.5">
-                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${getPriorityBadge(tc.priority)}`}>
+                  <td className="p-4">
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${getPriorityBadge(tc.priority)}`}>
                       {tc.priority}
                     </span>
                   </td>
-                  <td className="p-4.5 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                  <td className="p-4 text-sm text-slate-500 dark:text-slate-400 font-medium">
                     {tc.lastActivity}
                   </td>
-                  <td className="p-4.5">
+                  <td className="p-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getStatusBadge(tc.status)}`}>
                       {tc.status}
                     </span>
                   </td>
-                  <td className="p-4.5 text-right pr-6">
+                  <td className="p-4 text-right pr-4 sm:pr-6">
                     <div className="flex items-center justify-end gap-2">
                       <Button
                         variant="ghost"
                         onClick={() => handleOpenTicket(tc)}
-                        className="h-8.5 px-3 rounded-lg text-indigo-600 hover:text-indigo-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs"
+                        className="h-8 px-2.5 sm:px-3 rounded-lg text-indigo-600 hover:text-indigo-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs"
                       >
                         <MessageSquare size={13} />
                         Assist
@@ -316,7 +316,7 @@ export default function SupportTicketsView() {
                       <Button
                         variant="ghost"
                         onClick={() => handleDelete(tc.id)}
-                        className="h-8.5 w-8.5 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        className="h-8 w-8 p-0 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
                         <Trash2 size={14} />
                       </Button>
@@ -326,7 +326,7 @@ export default function SupportTicketsView() {
               ))}
               {filteredTickets.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="p-10 text-center text-slate-400 text-sm font-medium">
+                  <td colSpan="7" className="p-8 sm:p-10 text-center text-slate-400 text-sm font-medium">
                     No support tickets found in search indices.
                   </td>
                 </tr>

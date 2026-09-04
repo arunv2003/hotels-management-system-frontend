@@ -248,19 +248,19 @@ export default function CouponsView() {
   return (
     <div className="space-y-8 h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <Tag className="text-indigo-600 dark:text-indigo-400" size={32} />
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <Tag className="text-indigo-600 dark:text-indigo-400 w-7 h-7 sm:w-8 sm:h-8" />
             Promo Coupons
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">
             Configure discount promo codes to incentivize platform registration and annual subscription upgrades.
           </p>
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-lg shadow-indigo-500/20 cursor-pointer"
+          className="h-10 sm:h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-xs sm:text-sm shadow-lg shadow-indigo-500/20 cursor-pointer self-start sm:self-auto"
         >
           <Plus size={18} />
           Create Coupon
@@ -268,19 +268,19 @@ export default function CouponsView() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: "Total Coupons", val: coupons.length, icon: <Tag className="text-indigo-600" /> },
           { label: "Active Campaign", val: activeCount, icon: <Sparkles className="text-emerald-600" /> },
           { label: "Total Claims", val: totalClaims, icon: <Layers className="text-sky-600" /> },
           { label: "Conversion Rate", val: `${Math.round((totalClaims / (coupons.reduce((s, c) => s + c.usageLimit, 0) || 1)) * 100)}%`, icon: <Percent className="text-amber-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
               {stat.icon}
             </div>
           </div>
@@ -288,24 +288,24 @@ export default function CouponsView() {
       </div>
 
       {/* Grid and Table layout */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
-         <div className="relative w-full md:w-80">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+         <div className="relative w-full sm:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
             <Input
               placeholder="Search coupon codes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 text-xs sm:text-sm"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {["all", "Active", "Paused", "Expired"].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`text-xs px-4 py-2 rounded-xl font-bold border transition-all ${
+                className={`text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold border transition-all ${
                   filterStatus === status
                     ? "bg-indigo-600 border-indigo-600 text-white dark:bg-indigo-600"
                     : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
@@ -318,8 +318,8 @@ export default function CouponsView() {
         </div>
 
         {/* Table representation */}
-        <div className="flex-1 overflow-auto max-h-[480px] relative">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
+        <div className="flex-1 overflow-x-auto table-scrollbar relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
               <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Coupon Code &amp; Type</th>

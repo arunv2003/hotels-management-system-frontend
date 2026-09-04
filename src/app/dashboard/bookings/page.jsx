@@ -519,22 +519,22 @@ export default function BookingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-6 sm:space-y-8 pb-12">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               Booking Management
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm font-medium">
               Manage guest check-ins, reservations, and identity proofs for{" "}
               {user?.hotelName || user?.name || "your property"}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={fetchData}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm font-semibold shadow-sm"
               title="Refresh Data"
             >
               <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
@@ -542,7 +542,7 @@ export default function BookingsPage() {
             </button>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
             >
               <Plus size={18} />
               New Booking
@@ -552,83 +552,83 @@ export default function BookingsPage() {
 
         {/* Global Action Messages */}
         {errorMsg && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-sm font-semibold">
+          <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs sm:text-sm font-semibold">
             <AlertCircle size={18} className="text-rose-600 shrink-0" />
             {errorMsg}
           </div>
         )}
         {successMsg && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
+          <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold">
             <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
             {successMsg}
           </div>
         )}
 
         {/* Key Metrics Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                 Total Bookings
               </p>
-              <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
                 {totalBookingsCount}
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium">All recorded stays</p>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">All recorded stays</p>
             </div>
-            <div className="p-3.5 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-              <CalendarCheck size={24} />
+            <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0">
+              <CalendarCheck size={22} className="sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                 Active Check-Ins
               </p>
-              <h3 className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
+              <h3 className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
                 {activeCheckIns}
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium">Currently in-house</p>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Currently in-house</p>
             </div>
-            <div className="p-3.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <UserCheck size={24} />
+            <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+              <UserCheck size={22} className="sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                 Confirmed / Pending
               </p>
-              <h3 className="text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
+              <h3 className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
                 {pendingConfirmed}
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium">Upcoming stays</p>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Upcoming stays</p>
             </div>
-            <div className="p-3.5 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Clock size={24} />
+            <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+              <Clock size={22} className="sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                 Collected Revenue
               </p>
-              <h3 className="text-3xl font-black text-indigo-600 dark:text-indigo-400 mt-1">
+              <h3 className="text-2xl sm:text-3xl font-black text-indigo-600 dark:text-indigo-400 mt-1">
                 ₹{totalRevenue.toLocaleString()}
               </h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium">Paid payments</p>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Paid payments</p>
             </div>
-            <div className="p-3.5 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-              <DollarSign size={24} />
+            <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0">
+              <DollarSign size={22} className="sm:w-6 sm:h-6" />
             </div>
           </div>
         </div>
 
         {/* Filter Controls & Search */}
-        <div className="flex flex-col md:flex-row gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -636,19 +636,19 @@ export default function BookingsPage() {
               placeholder="Search by Guest Name, Phone, Room Number, or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider shrink-0">
                 Status:
               </span>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-3 text-sm font-medium text-slate-900 dark:text-white focus:outline-none"
+                className="w-full sm:w-auto bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-3 text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="Confirmed">Confirmed</option>
@@ -660,13 +660,13 @@ export default function BookingsPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider shrink-0">
                 Payment:
               </span>
               <select
                 value={paymentFilter}
                 onChange={(e) => setPaymentFilter(e.target.value)}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-3 text-sm font-medium text-slate-900 dark:text-white focus:outline-none"
+                className="w-full sm:w-auto bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-3 text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="ALL">All Payments</option>
                 <option value="Paid">Paid</option>
@@ -678,7 +678,7 @@ export default function BookingsPage() {
         </div>
 
         {/* Bookings Table */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
           {loading ? (
             <div className="py-20 text-center flex flex-col items-center justify-center gap-3 text-slate-400">
               <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
@@ -695,17 +695,17 @@ export default function BookingsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-auto max-h-[480px] relative">
-              <table className="w-full text-left border-collapse whitespace-nowrap">
+            <div className="overflow-x-auto table-scrollbar relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
                 <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
                   <tr className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800">
-                    <th className="py-4 px-6">Guest Info</th>
-                    <th className="py-4 px-6">Guest ID Proof</th>
-                    <th className="py-4 px-6">Room</th>
-                    <th className="py-4 px-6">Dates</th>
-                    <th className="py-4 px-6">Amount</th>
-                    <th className="py-4 px-6">Status</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Guest Info</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Guest ID Proof</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Room</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Dates</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Amount</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Status</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
@@ -948,20 +948,20 @@ export default function BookingsPage() {
         {/* ---------------- NEW BOOKING MODAL ---------------- */}
         <AnimatePresence>
           {isCreateModalOpen && (
-            <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+            <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
+                className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
               >
                 {/* Header */}
-                <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
                       New Booking & Guest Entry
                     </h2>
-                    <p className="text-xs text-slate-400 font-medium mt-0.5">
+                    <p className="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">
                       Register stay details and upload guest identity photo.
                     </p>
                   </div>
@@ -976,7 +976,7 @@ export default function BookingsPage() {
                 {/* Form Body */}
                 <form
                   onSubmit={handleCreateSubmit}
-                  className="p-6 overflow-y-auto space-y-6 flex-1 text-sm"
+                  className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 flex-1 text-sm"
                 >
                   {/* Guest Information */}
                   <div>
@@ -984,7 +984,7 @@ export default function BookingsPage() {
                       <User size={16} />
                       Guest Details
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                           First Name <span className="text-rose-500">*</span>
@@ -1043,13 +1043,13 @@ export default function BookingsPage() {
                   </div>
 
                   {/* ID Proof Section */}
-                  <div className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 space-y-4">
+                  <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 space-y-3 sm:space-y-4">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
                       <ShieldCheck size={16} />
                       Identity Document & ID Photo
                     </h3>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                           ID Document Type
@@ -1150,11 +1150,11 @@ export default function BookingsPage() {
                     </h3>
 
                     {/* Stay Package Selector (12h vs 24h) */}
-                    <div className="mb-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
+                    <div className="mb-4 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
                       <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block uppercase tracking-wider">
                         Select Stay Duration Plan <span className="text-rose-500">*</span>
                       </label>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                         <button
                           type="button"
                           onClick={() => {
@@ -1195,7 +1195,7 @@ export default function BookingsPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       <div className="sm:col-span-1">
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                           Select Room <span className="text-rose-500">*</span>
@@ -1256,11 +1256,11 @@ export default function BookingsPage() {
                         const p12 = Number(selectedRoom.price12h) || 0;
                         const p24 = Number(selectedRoom.price24h) || 0;
                         return (
-                          <div className="mt-3 p-2.5 px-3.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/50 flex items-center justify-between text-xs">
+                          <div className="mt-3 p-2.5 px-3.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
                             <span className="text-slate-600 dark:text-slate-300 font-semibold">
                               Room {selectedRoom.roomNumber} ({selectedRoom.roomType?.roomType || "Standard"}) Rates:
                             </span>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 sm:gap-3">
                               <span className={`px-2 py-0.5 rounded-md font-bold text-[11px] ${formData.stayType === "12h" ? "bg-indigo-600 text-white" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
                                 12h: ₹{p12.toLocaleString()}
                               </span>
@@ -1283,11 +1283,11 @@ export default function BookingsPage() {
                     </h3>
 
                     {/* Payment Mode Selector (Cash vs Razorpay) */}
-                    <div className="mb-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
+                    <div className="mb-4 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
                       <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block uppercase tracking-wider">
                         Select Payment Mode <span className="text-rose-500">*</span>
                       </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                         <button
                           type="button"
                           onClick={() => {
@@ -1348,7 +1348,7 @@ export default function BookingsPage() {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       <div>
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                           Total Amount (₹)
@@ -1398,11 +1398,11 @@ export default function BookingsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
                     <button
                       type="button"
                       onClick={() => setIsCreateModalOpen(false)}
-                      className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm text-center"
                     >
                       Cancel
                     </button>
@@ -1410,7 +1410,7 @@ export default function BookingsPage() {
                       <button
                         type="submit"
                         disabled={submitting || uploadingImage}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.01]"
+                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.01] text-xs sm:text-sm"
                       >
                         {submitting ? (
                           <>
@@ -1428,7 +1428,7 @@ export default function BookingsPage() {
                       <button
                         type="submit"
                         disabled={submitting || uploadingImage}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/25 transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/25 transition-all text-xs sm:text-sm"
                       >
                         {submitting && <Loader2 size={16} className="animate-spin" />}
                         Save Booking (Cash)
@@ -1444,27 +1444,27 @@ export default function BookingsPage() {
         {/* ---------------- VIEW DETAILS MODAL ---------------- */}
         <AnimatePresence>
           {isViewModalOpen && selectedBooking && (
-            <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+            <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", duration: 0.3 }}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xl w-full max-w-2xl overflow-hidden my-6"
+                className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xl w-full max-w-2xl overflow-hidden my-4 sm:my-6"
               >
                 {/* Modal Header */}
-                <div className="relative p-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-start justify-between border-b border-indigo-900/50">
+                <div className="relative p-4 sm:p-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-start justify-between border-b border-indigo-900/50">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                        <CalendarCheck size={22} />
+                    <div className="flex items-center gap-2.5 sm:gap-3">
+                      <div className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                        <CalendarCheck size={20} className="sm:w-[22px] sm:h-[22px]" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
+                        <h2 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
                           Booking Details
                         </h2>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-indigo-200/90 font-mono bg-indigo-900/60 px-2.5 py-0.5 rounded-md border border-indigo-700/40">
+                          <span className="text-[11px] sm:text-xs text-indigo-200/90 font-mono bg-indigo-900/60 px-2 sm:px-2.5 py-0.5 rounded-md border border-indigo-700/40">
                             ID: #{selectedBooking._id}
                           </span>
                           <button
@@ -1497,15 +1497,15 @@ export default function BookingsPage() {
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6 space-y-5 text-sm max-h-[78vh] overflow-y-auto">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 text-sm max-h-[78vh] overflow-y-auto">
                   {/* Status Badges Bar */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
+                  <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                         Booking Status:
                       </span>
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-black border ${
                           selectedBooking.bookingStatus === "CheckedIn"
                             ? "bg-emerald-500/15 text-emerald-600 border-emerald-500/30 dark:text-emerald-400"
                             : selectedBooking.bookingStatus === "Confirmed"
@@ -1529,7 +1529,7 @@ export default function BookingsPage() {
                         Payment:
                       </span>
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-black border ${
                           selectedBooking.paymentStatus === "Paid"
                             ? "bg-emerald-500/15 text-emerald-600 border-emerald-500/30 dark:text-emerald-400"
                             : selectedBooking.paymentStatus === "PartiallyPaid" ||
@@ -1544,22 +1544,22 @@ export default function BookingsPage() {
                   </div>
 
                   {/* Guest Profile Banner */}
-                  <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3.5">
-                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-black text-xl shadow-md shadow-indigo-500/20 border border-white/20">
+                  <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                    <div className="flex items-center gap-3 sm:gap-3.5">
+                      <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-md shadow-indigo-500/20 border border-white/20 shrink-0">
                         {(
                           selectedBooking.guestId?.firstName?.[0] || "G"
                         ).toUpperCase()}
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-extrabold text-slate-900 dark:text-white text-lg flex items-center gap-2">
+                        <h3 className="font-extrabold text-slate-900 dark:text-white text-base sm:text-lg flex flex-wrap items-center gap-2">
                           {selectedBooking.guestId?.firstName}{" "}
                           {selectedBooking.guestId?.lastName}
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800/50">
                             <ShieldCheck size={12} /> Verified Guest
                           </span>
                         </h3>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
                           <span className="flex items-center gap-1.5">
                             <Phone size={13} className="text-indigo-500" />
                             {selectedBooking.guestId?.phone || "N/A"}
@@ -1585,9 +1585,9 @@ export default function BookingsPage() {
                   </div>
 
                   {/* Stay & Room Info Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                     {/* Dates & Duration Card */}
-                    <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                    <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
                       <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                         <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
                           <Calendar size={15} /> Dates & Stay Plan
@@ -1651,7 +1651,7 @@ export default function BookingsPage() {
                     </div>
 
                     {/* Room & Occupancy Card */}
-                    <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
+                    <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2">
                       <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                         <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
                           <Bed size={15} /> Room & Rates
@@ -1693,7 +1693,7 @@ export default function BookingsPage() {
                   </div>
 
                   {/* Financial Breakdown Grid */}
-                  <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
+                  <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                       <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
                         <CreditCard size={15} /> Financial Summary
@@ -1706,7 +1706,7 @@ export default function BookingsPage() {
                         {selectedBooking.paymentMethod === "Razorpay" ? "💳 Razorpay Online" : "💵 Cash Payment"}
                       </span>
                     </div>
-                    <div className="grid grid-cols-3 gap-3 pt-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1">
                       <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
                         <p className="text-[11px] font-bold text-slate-400 uppercase">
                           Total Bill
@@ -1747,9 +1747,9 @@ export default function BookingsPage() {
                     </div>
 
                     {selectedBooking.razorpayPaymentId && (
-                      <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs">
+                      <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
                         <span className="text-slate-400 font-medium">Razorpay Payment Reference:</span>
-                        <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800/60">
+                        <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800/60 break-all">
                           {selectedBooking.razorpayPaymentId}
                         </span>
                       </div>

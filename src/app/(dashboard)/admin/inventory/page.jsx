@@ -417,22 +417,22 @@ export default function InventoryPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-6 sm:space-y-8 pb-12">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               Inventory Management
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm font-medium">
               Manage restaurant ingredients, housekeeping linen, toiletries, and hotel supplies for{" "}
               {user?.hotelName || user?.name || "your property"}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={loadData}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm font-semibold shadow-sm"
               title="Refresh"
             >
               <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
@@ -442,7 +442,7 @@ export default function InventoryPage() {
             <button
               onClick={handleExportCSV}
               disabled={!items.length}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm font-semibold shadow-sm disabled:opacity-50"
             >
               <Download size={16} />
               Export CSV
@@ -450,7 +450,7 @@ export default function InventoryPage() {
 
             <button
               onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
             >
               <Plus size={18} />
               Add Item
@@ -460,67 +460,67 @@ export default function InventoryPage() {
 
         {/* Action / Error Banners */}
         {actionSuccess && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
+          <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold">
             <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
             {actionSuccess}
           </div>
         )}
         {error && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-sm font-semibold">
+          <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs sm:text-sm font-semibold">
             <AlertCircle size={18} className="text-rose-600 shrink-0" />
             {error}
           </div>
         )}
 
         {/* KPI Metrics Cards Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {/* Total Items */}
-          <div className="p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
-              <Box size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shrink-0">
+              <Box size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Items</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Total Items</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {stats?.totalItems ?? items.length}
               </h3>
             </div>
           </div>
 
           {/* Housekeeping Items */}
-          <div className="p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-md bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-              <Sparkles size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
+              <Sparkles size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Housekeeping Stock</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Housekeeping Stock</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {stats?.housekeepingCount ?? items.filter((i) => ["Housekeeping", "Linen"].includes(i.department)).length}
               </h3>
             </div>
           </div>
 
           {/* Restaurant & Kitchen Items */}
-          <div className="p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-md bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-              <UtensilsCrossed size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold shrink-0">
+              <UtensilsCrossed size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Restaurant & Kitchen</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Restaurant & Kitchen</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {stats?.restaurantCount ?? items.filter((i) => ["Restaurant", "Kitchen"].includes(i.department)).length}
               </h3>
             </div>
           </div>
 
           {/* Low Stock Alerts */}
-          <div className="p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-md bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
-              <AlertTriangle size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold shrink-0">
+              <AlertTriangle size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Low Stock Alerts</p>
-              <h3 className="text-2xl font-black text-rose-600 dark:text-rose-400 mt-0.5">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Low Stock Alerts</p>
+              <h3 className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400 mt-0.5">
                 {(stats?.lowStockCount || 0) + (stats?.outOfStockCount || 0)}
               </h3>
             </div>
@@ -529,13 +529,13 @@ export default function InventoryPage() {
 
         {/* Department Switcher Tabs & View Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto table-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
             <button
               onClick={() => {
                 setActiveDepartment("all");
                 setActiveView("table");
               }}
-              className={`h-10 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 ${
                 activeDepartment === "all" && activeView === "table"
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
                   : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
@@ -549,7 +549,7 @@ export default function InventoryPage() {
                 setActiveDepartment("Housekeeping");
                 setActiveView("table");
               }}
-              className={`h-10 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 ${
                 activeDepartment === "Housekeeping" && activeView === "table"
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
                   : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
@@ -564,7 +564,7 @@ export default function InventoryPage() {
                 setActiveDepartment("Restaurant");
                 setActiveView("table");
               }}
-              className={`h-10 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 ${
                 activeDepartment === "Restaurant" && activeView === "table"
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/25"
                   : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
@@ -576,7 +576,7 @@ export default function InventoryPage() {
 
             <button
               onClick={() => setActiveView("logs")}
-              className={`h-10 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 ${
                 activeView === "logs"
                   ? "bg-slate-800 text-white shadow-md"
                   : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
@@ -590,23 +590,23 @@ export default function InventoryPage() {
 
         {/* Filters and Search Bar */}
         {activeView === "table" && (
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between pt-1">
-            <div className="relative w-full md:w-96">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between pt-1">
+            <div className="relative flex-1 max-w-full sm:max-w-md">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
                 placeholder="Search by item name, SKU, location, or supplier..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-sm font-medium"
+                className="pl-10 h-10 sm:h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium w-full"
               />
             </div>
 
-            <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               {/* Category Filter */}
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="w-full sm:w-auto h-10 sm:h-11 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">All Categories</option>
                 {availableCategories.map((c) => (
@@ -620,7 +620,7 @@ export default function InventoryPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="w-full sm:w-auto h-10 sm:h-11 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="all">All Stock Statuses</option>
                 <option value="in_stock">In Stock</option>
@@ -634,34 +634,34 @@ export default function InventoryPage() {
         {/* Table Content / Main List */}
         {activeView === "table" ? (
           loading ? (
-            <div className="flex flex-col items-center justify-center p-16 text-slate-400 space-y-4 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
+            <div className="flex flex-col items-center justify-center p-16 text-slate-400 space-y-4 bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800">
               <RefreshCw className="w-8 h-8 animate-spin text-indigo-600" />
               <p className="text-sm font-semibold">Loading inventory...</p>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-16 bg-white dark:bg-slate-900 rounded-lg border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500">
+            <div className="flex flex-col items-center justify-center p-12 sm:p-16 bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500 text-center">
               <Package className="w-12 h-12 text-slate-300 mb-3" />
-              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No Inventory Items Found</h3>
-              <p className="text-sm mt-1">
+              <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">No Inventory Items Found</h3>
+              <p className="text-xs sm:text-sm mt-1">
                 {items.length === 0
                   ? 'No inventory items registered yet. Click "Add Item" to add a new item.'
                   : "No items match your search and filter criteria."}
               </p>
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-              <div className="overflow-auto max-h-[480px] relative">
-                <table className="w-full text-left border-collapse whitespace-nowrap">
+            <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto table-scrollbar relative">
+                <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
                   <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                    <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
-                      <th className="py-4 px-6">Item & SKU</th>
-                      <th className="py-4 px-6">Department</th>
-                      <th className="py-4 px-6">Category</th>
-                      <th className="py-4 px-6">Quantity</th>
-                      <th className="py-4 px-6">Unit Price</th>
-                      <th className="py-4 px-6">Location</th>
-                      <th className="py-4 px-6">Status</th>
-                      <th className="py-4 px-6 text-right">Actions</th>
+                    <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-[11px] uppercase font-extrabold tracking-wider text-slate-400">
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Item & SKU</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Department</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Category</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Quantity</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Unit Price</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Location</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6">Status</th>
+                      <th className="py-3.5 sm:py-4 px-4 sm:px-6 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">
@@ -847,19 +847,19 @@ export default function InventoryPage() {
           )
         ) : (
           /* Logs View */
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-            <div className="overflow-auto max-h-[480px] relative">
-              <table className="w-full text-left border-collapse whitespace-nowrap">
+          <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto table-scrollbar relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
                 <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
-                    <th className="py-4 px-6">Date & Time</th>
-                    <th className="py-4 px-6">Item Name</th>
-                    <th className="py-4 px-6">Department</th>
-                    <th className="py-4 px-6">Type</th>
-                    <th className="py-4 px-6">Quantity Changed</th>
-                    <th className="py-4 px-6">New Balance</th>
-                    <th className="py-4 px-6">Reason / Notes</th>
-                    <th className="py-4 px-6">Performed By</th>
+                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-[11px] uppercase font-extrabold tracking-wider text-slate-400">
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Date & Time</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Item Name</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Department</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Type</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Quantity Changed</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">New Balance</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Reason / Notes</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Performed By</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">
@@ -874,17 +874,17 @@ export default function InventoryPage() {
                       const isPositive = log.quantityChanged > 0;
                       return (
                         <tr key={log._id || log.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
-                          <td className="py-4 px-6 text-xs text-slate-400 font-mono">
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 text-xs text-slate-400 font-mono">
                             {new Date(log.createdAt).toLocaleString([], {
                               dateStyle: "short",
                               timeStyle: "short",
                             })}
                           </td>
-                          <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 font-bold text-slate-900 dark:text-white">
                             {log.itemName}
                           </td>
-                          <td className="py-4 px-6 text-xs text-slate-500">{log.department}</td>
-                          <td className="py-4 px-6">
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 text-xs text-slate-500">{log.department}</td>
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6">
                             <span
                               className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                                 log.type === "Stock In" || log.type === "Initial"
@@ -897,16 +897,16 @@ export default function InventoryPage() {
                               {log.type}
                             </span>
                           </td>
-                          <td className="py-4 px-6 font-bold font-mono">
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 font-bold font-mono">
                             <span className={isPositive ? "text-emerald-600" : "text-rose-600"}>
                               {isPositive ? `+${log.quantityChanged}` : log.quantityChanged} {log.unit}
                             </span>
                           </td>
-                          <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 font-bold text-slate-900 dark:text-white">
                             {log.newQuantity} {log.unit}
                           </td>
-                          <td className="py-4 px-6 text-xs text-slate-500">{log.reason || "—"}</td>
-                          <td className="py-4 px-6 text-xs text-slate-500">{log.performedByName || "Admin"}</td>
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 text-xs text-slate-500">{log.reason || "—"}</td>
+                          <td className="py-3.5 sm:py-4 px-4 sm:px-6 text-xs text-slate-500">{log.performedByName || "Admin"}</td>
                         </tr>
                       );
                     })
@@ -936,12 +936,12 @@ export default function InventoryPage() {
       {/* ─── ADD / EDIT MODAL ─────────────────────────────────────────────────── */}
       <AnimatePresence>
         {isAddEditModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 md:p-8 max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-4 sm:p-6 md:p-8 max-w-2xl w-full my-4 sm:my-8 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
                 <div>

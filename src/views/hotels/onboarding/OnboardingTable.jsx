@@ -76,24 +76,24 @@ export function OnboardingTable() {
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             Hotels Onboarding
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             Manage and monitor the onboarding progress of all hotel properties.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             variant="outline"
-            className="h-10 rounded-lg gap-2 font-bold text-sm cursor-pointer"
+            className="flex-1 sm:flex-none h-10 rounded-lg gap-2 font-bold text-xs sm:text-sm cursor-pointer"
           >
             <Download className="w-4 h-4" /> Export CSV
           </Button>
           <Button
-            className="h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-md shadow-indigo-500/20 cursor-pointer"
+            className="flex-1 sm:flex-none h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/20 cursor-pointer text-white"
             onClick={() => router.push("/super-admin/hotels/new")}
           >
             <Plus className="w-4 h-4" /> Add New Hotel
@@ -102,7 +102,7 @@ export function OnboardingTable() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             label: "Total Hotels",
@@ -135,16 +135,16 @@ export function OnboardingTable() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
+            className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex items-center gap-4"
           >
-            <div className={cn("w-12 h-12 rounded-md flex items-center justify-center", stat.bg)}>
-              <stat.icon className={cn("w-6 h-6", stat.color)} />
+            <div className={cn("w-11 h-11 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center shrink-0", stat.bg)}>
+              <stat.icon className={cn("w-5 h-5 sm:w-6 sm:h-6", stat.color)} />
             </div>
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 {stat.label}
               </p>
-              <p className="text-xl font-black text-slate-900 dark:text-white">
+              <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
                 {stat.value}
               </p>
             </div>
@@ -153,11 +153,11 @@ export function OnboardingTable() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-xs overflow-hidden">
         {/* Toolbar */}
-        <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
           <div className="relative w-full sm:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search hotels or owners..."
               value={searchTerm}
@@ -165,19 +165,19 @@ export function OnboardingTable() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-11 h-11 rounded-lg border-slate-100 dark:border-slate-800 focus-visible:ring-indigo-500/20"
+              className="pl-10 h-10 rounded-lg border-slate-200 dark:border-slate-800 text-sm"
             />
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              className="h-11 rounded-lg gap-2 font-bold text-sm flex-1 sm:flex-none"
+              className="h-10 rounded-lg gap-2 font-bold text-xs sm:text-sm flex-1 sm:flex-none"
             >
               <Filter className="w-4 h-4" /> Filters
             </Button>
             <Button
               variant="outline"
-              className="h-11 w-11 rounded-lg p-0 flex-none"
+              className="h-10 w-10 rounded-lg p-0 flex-none"
             >
               <ArrowUpDown className="w-4 h-4" />
             </Button>
@@ -185,29 +185,29 @@ export function OnboardingTable() {
         </div>
 
         {/* Table */}
-        <div className="overflow-auto max-h-[480px] relative">
-          <table className="w-full text-sm text-left border-collapse whitespace-nowrap">
-            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-              <tr>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+        <div className="overflow-x-auto table-scrollbar max-h-[480px] relative">
+          <table className="w-full text-sm text-left border-collapse whitespace-nowrap min-w-[750px]">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-xs">
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest pl-4 sm:pl-6">
                   Hotel Name
                 </th>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Location
                 </th>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Status
                 </th>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Plan
                 </th>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Date Added
                 </th>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest">
                   Plan Expiry (Date &amp; Time)
                 </th>
-                <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right">
+                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[10px] tracking-widest text-right pr-4 sm:pr-6">
                   Actions
                 </th>
               </tr>

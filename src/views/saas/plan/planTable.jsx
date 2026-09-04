@@ -105,24 +105,24 @@ export default function PlanTable() {
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             Plans Management
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             Manage your Plans and pricing across all properties.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button
             variant="outline"
-            className="h-11 rounded-xl gap-2 font-bold text-sm cursor-pointer"
+            className="h-10 sm:h-11 rounded-xl gap-2 font-bold text-xs sm:text-sm cursor-pointer flex-1 sm:flex-none"
           >
             <Download className="w-4 h-4" /> Export CSV
           </Button>
           <Button
-            className="h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-lg shadow-indigo-500/20 cursor-pointer"
+            className="h-10 sm:h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-xs sm:text-sm shadow-lg shadow-indigo-500/20 cursor-pointer flex-1 sm:flex-none"
             onClick={() => setIsAddPlanOpen(true)}
           >
             <Plus className="w-4 h-4" /> Add Plan
@@ -131,7 +131,7 @@ export default function PlanTable() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             label: "Total Plans",
@@ -164,11 +164,11 @@ export default function PlanTable() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
+            className="p-4 sm:p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
           >
             <div
               className={cn(
-                "w-12 h-12 rounded-md flex items-center justify-center",
+                "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
                 stat.bg,
               )}
             >
@@ -178,7 +178,7 @@ export default function PlanTable() {
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 {stat.label}
               </p>
-              <p className="text-xl font-black text-slate-900 dark:text-white">
+              <p className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">
                 {stat.value}
               </p>
             </div>
@@ -187,11 +187,11 @@ export default function PlanTable() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Table Toolbar */}
-        <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 sm:p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="relative w-full sm:w-96">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search plans..."
               value={searchTerm}
@@ -199,19 +199,19 @@ export default function PlanTable() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-80"
+              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-xs sm:text-sm"
             />
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              className="h-10 rounded-lg gap-2 font-bold text-sm flex-1 sm:flex-none"
+              className="h-10 rounded-xl gap-2 font-bold text-xs sm:text-sm flex-1 sm:flex-none"
             >
               <Filter className="w-4 h-4" /> Filters
             </Button>
             <Button
               variant="outline"
-              className="h-10 w-10 rounded-lg p-0 flex-none"
+              className="h-10 w-10 rounded-xl p-0 flex-none"
             >
               <ArrowUpDown className="w-4 h-4" />
             </Button>
@@ -219,8 +219,8 @@ export default function PlanTable() {
         </div>
 
         {/* Table Content */}
-        <div className="overflow-auto max-h-[480px] relative">
-          <table className="w-full text-sm text-left border-collapse whitespace-nowrap">
+        <div className="overflow-x-auto table-scrollbar relative">
+          <table className="w-full text-sm text-left border-collapse whitespace-nowrap min-w-[750px]">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
               <tr>
                 <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">

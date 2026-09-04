@@ -298,15 +298,15 @@ export default function GuestsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
+      <div className="space-y-6 sm:space-y-8 pb-12">
         {/* Header section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-              <Users className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5 sm:gap-3">
+              <Users className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600 dark:text-indigo-400 shrink-0" />
               Guest Directory & Management
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm font-medium">
               Comprehensive database of all registered hotel guests, ID verification documents, and stay histories for{" "}
               <span className="font-bold text-slate-700 dark:text-slate-300">
                 {user?.hotelName || user?.name || "your property"}
@@ -314,10 +314,10 @@ export default function GuestsPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={loadData}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-semibold shadow-sm"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm font-semibold shadow-sm"
               title="Refresh Directory"
             >
               <RefreshCw size={16} className={loading ? "animate-spin text-indigo-600" : ""} />
@@ -325,7 +325,7 @@ export default function GuestsPage() {
             </button>
             <button
               onClick={handleOpenAddModal}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all active:scale-95"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all active:scale-95"
             >
               <Plus size={18} />
               Add Guest
@@ -338,77 +338,77 @@ export default function GuestsPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm font-semibold shadow-sm"
+            className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold shadow-sm"
           >
-            <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
             {actionSuccess}
           </motion.div>
         )}
 
         {/* Stats Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
-              <Users size={24} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shrink-0">
+              <Users size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Guests</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{totalGuestsCount}</h3>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Total Guests</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">{totalGuestsCount}</h3>
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-              <UserCheck size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
+              <UserCheck size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">ID Verified Guests</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{verifiedIdCount}</h3>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">ID Verified Guests</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">{verifiedIdCount}</h3>
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold">
-              <CalendarDays size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold shrink-0">
+              <CalendarDays size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Recorded Stays</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{totalStaysCount}</h3>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Recorded Stays</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">{totalStaysCount}</h3>
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
-              <MapPin size={24} />
+          <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold shrink-0">
+              <MapPin size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Cities Represented</p>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{uniqueCitiesCount}</h3>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Cities Represented</p>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-0.5">{uniqueCitiesCount}</h3>
             </div>
           </div>
         </div>
 
         {/* Filters and Search Bar */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
-          <div className="relative w-full md:w-96">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="relative flex-1 max-w-full sm:max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search guest by name, phone, email, ID or city..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-sm font-medium"
+              className="pl-10 h-10 sm:h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium w-full"
             />
           </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-2 shrink-0">
               <Filter size={16} className="text-slate-400" />
               <span className="text-xs font-bold uppercase text-slate-400">ID Proof:</span>
             </div>
             <select
               value={idTypeFilter}
               onChange={(e) => setIdTypeFilter(e.target.value)}
-              className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="flex-1 sm:flex-none h-10 sm:h-11 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             >
               <option value="ALL">All ID Types</option>
               <option value="Aadhar Card">Aadhar Card</option>
@@ -422,37 +422,37 @@ export default function GuestsPage() {
 
         {/* Table Content */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center p-16 text-slate-400 space-y-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col items-center justify-center p-16 text-slate-400 space-y-4 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800">
             <RefreshCw className="w-8 h-8 animate-spin text-indigo-600" />
             <p className="text-sm font-semibold">Loading guests directory...</p>
           </div>
         ) : error ? (
-          <div className="p-6 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400">
+          <div className="p-5 sm:p-6 rounded-xl sm:rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs sm:text-sm">
             <p className="font-semibold">{error}</p>
           </div>
         ) : filteredGuests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 bg-white dark:bg-slate-900 rounded-3xl border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500">
+          <div className="flex flex-col items-center justify-center p-12 sm:p-16 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border-dashed border-2 border-slate-200 dark:border-slate-800 text-slate-500 text-center">
             <Users className="w-12 h-12 text-slate-300 mb-3" />
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No Guests Found</h3>
-            <p className="text-sm mt-1">
+            <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">No Guests Found</h3>
+            <p className="text-xs sm:text-sm mt-1">
               {guests.length === 0
                 ? 'No guest records found yet. Click "Add Guest" or create a booking to add guests.'
                 : "No guests match your current filter parameters."}
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-            <div className="overflow-auto max-h-[480px] relative">
-              <table className="w-full text-left border-collapse whitespace-nowrap">
+          <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto table-scrollbar relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
                 <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
-                    <th className="py-4 px-6">Guest Info</th>
-                    <th className="py-4 px-6">Contact Number</th>
-                    <th className="py-4 px-6">ID Proof Document</th>
-                    <th className="py-4 px-6">Location</th>
-                    <th className="py-4 px-6">Stays History</th>
-                    <th className="py-4 px-6">Registered On</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-[11px] uppercase font-extrabold tracking-wider text-slate-400">
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Guest Info</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Contact Number</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">ID Proof Document</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Location</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Stays History</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6">Registered On</th>
+                    <th className="py-3.5 sm:py-4 px-4 sm:px-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">
@@ -640,25 +640,25 @@ export default function GuestsPage() {
         {/* Add / Edit Guest Modal */}
         <AnimatePresence>
           {isAddEditModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm">
               <motion.div
                 initial={{ opacity: 0, y: 24, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 12, scale: 0.97 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl flex flex-col max-h-[92vh]"
+                className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl flex flex-col max-h-[92vh]"
               >
                 {/* Modal Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
-                      <User size={20} className="text-white" />
+                <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/30 shrink-0">
+                      <User size={18} className="text-white sm:w-5 sm:h-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black text-slate-900 dark:text-white leading-tight">
+                      <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
                         {editingGuest ? "Edit Guest Profile" : "Register New Guest"}
                       </h3>
-                      <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                      <p className="text-[10px] sm:text-[11px] font-medium text-slate-400 mt-0.5">
                         {editingGuest
                           ? "Update guest details and ID verification"
                           : "Fill in guest info, ID proof and address"}
@@ -668,15 +668,15 @@ export default function GuestsPage() {
                   <button
                     type="button"
                     onClick={() => setIsAddEditModalOpen(false)}
-                    className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   >
-                    <X size={20} />
+                    <X size={18} />
                   </button>
                 </div>
 
                 {/* Scrollable Body */}
                 <form onSubmit={handleSubmitForm} className="flex-1 overflow-y-auto">
-                  <div className="px-6 py-5 space-y-4">
+                  <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-4">
 
                     {/* Error Banner */}
                     {formError && (
@@ -928,22 +928,22 @@ export default function GuestsPage() {
                   </div>
 
                   {/* Sticky Footer */}
-                  <div className="sticky bottom-0 px-6 py-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0">
-                    <p className="text-[11px] text-slate-400 font-medium">
+                  <div className="sticky bottom-0 px-4 sm:px-6 py-3.5 sm:py-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
+                    <p className="text-[11px] text-slate-400 font-medium text-center sm:text-left">
                       <span className="text-rose-500 font-bold">*</span> Required fields
                     </p>
                     <div className="flex items-center gap-2.5">
                       <button
                         type="button"
                         onClick={() => setIsAddEditModalOpen(false)}
-                        className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold transition-colors"
+                        className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs sm:text-sm font-semibold transition-colors text-center"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={submitting || uploadingImage}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/25 transition-all active:scale-95"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-500/25 transition-all active:scale-95"
                       >
                         {submitting ? (
                           <>
@@ -968,24 +968,24 @@ export default function GuestsPage() {
         {/* View Guest Details & Stay History Modal */}
         <AnimatePresence>
           {isViewModalOpen && selectedGuestDetails && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-3xl overflow-hidden my-8"
+                className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-3xl overflow-hidden my-4 sm:my-8"
               >
                 {/* Modal Header */}
-                <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-black text-lg shadow-md">
+                <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-black text-base sm:text-lg shadow-md shrink-0">
                       {`${selectedGuestDetails.firstName?.[0] || ""}${selectedGuestDetails.lastName?.[0] || ""}`.toUpperCase() || "G"}
                     </div>
                     <div>
-                      <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                      <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
                         {`${selectedGuestDetails.firstName || ""} ${selectedGuestDetails.lastName || ""}`.trim()}
                       </h3>
-                      <p className="text-xs font-semibold text-slate-400 flex items-center gap-2">
+                      <p className="text-[11px] sm:text-xs font-semibold text-slate-400 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                         <span>Phone: {selectedGuestDetails.phone}</span>
                         <span>•</span>
                         <span>Registered: {new Date(selectedGuestDetails.createdAt).toLocaleDateString()}</span>
@@ -995,18 +995,18 @@ export default function GuestsPage() {
 
                   <button
                     onClick={() => setIsViewModalOpen(false)}
-                    className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   >
-                    <X size={20} />
+                    <X size={18} />
                   </button>
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[75vh] overflow-y-auto">
                   {/* Guest Info Cards Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {/* Contact & Address */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                    <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
                       <h4 className="text-xs font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
                         <Phone size={14} /> Contact & Address
                       </h4>

@@ -136,14 +136,14 @@ export default function HotelSettingsView() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
             Hotel Settings & Guest Policies
           </h1>
-          <p className="text-slate-500 mt-1 text-sm">
+          <p className="text-slate-500 mt-1 text-xs sm:text-sm">
             Customize your property's policies, terms, front-desk contact, and guest support desk
           </p>
         </div>
@@ -155,7 +155,7 @@ export default function HotelSettingsView() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-bold px-4 py-2 rounded-xl border border-emerald-100 dark:border-emerald-500/20"
+                className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl border border-emerald-100 dark:border-emerald-500/20"
               >
                 <CheckCircle size={16} />
                 Saved Successfully!
@@ -166,7 +166,7 @@ export default function HotelSettingsView() {
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold gap-2 rounded-xl shadow-md shadow-indigo-500/20"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold gap-2 rounded-xl shadow-md shadow-indigo-500/20 text-xs sm:text-sm"
           >
             <Save size={16} />
             {isSaving ? "Saving..." : "Save Changes"}
@@ -174,9 +174,9 @@ export default function HotelSettingsView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
         {/* Sidebar Tabs */}
-        <div className="lg:col-span-1 glass-card p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-1 shadow-sm">
+        <div className="lg:col-span-1 glass-card p-2 sm:p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex lg:flex-col gap-1 overflow-x-auto table-scrollbar shadow-sm">
           {tabItems.map((tab) => {
             const Icon = tab.icon;
             const isSelected = activeTab === tab.id;
@@ -184,14 +184,14 @@ export default function HotelSettingsView() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                className={`w-full flex items-center gap-2.5 sm:gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shrink-0 ${
                   isSelected
                     ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
                     : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <Icon size={18} />
-                {tab.label}
+                <Icon size={17} className="shrink-0" />
+                <span>{tab.label}</span>
               </button>
             );
           })}
@@ -203,11 +203,11 @@ export default function HotelSettingsView() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6"
+              className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-6"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-4">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                     Property Policies & About Us
                   </h2>
                   <p className="text-xs text-slate-500">
@@ -215,16 +215,16 @@ export default function HotelSettingsView() {
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center gap-1.5 overflow-x-auto table-scrollbar pb-1">
                   {[
-                    { id: "privacy", label: "Guest Privacy Policy" },
-                    { id: "terms", label: "Terms & House Rules" },
+                    { id: "privacy", label: "Privacy Policy" },
+                    { id: "terms", label: "Terms & Rules" },
                     { id: "about", label: "About Hotel" },
                   ].map((st) => (
                     <button
                       key={st.id}
                       onClick={() => setPolicySubTab(st.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                         policySubTab === st.id
                           ? "bg-indigo-600 text-white shadow-sm"
                           : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"

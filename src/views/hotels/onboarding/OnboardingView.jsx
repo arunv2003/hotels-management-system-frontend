@@ -41,64 +41,22 @@ import Step8Documents from "./onboardingsteps/Step8Documents";
 import Step9Review from "./onboardingsteps/Step9Review";
 
 const STEPS = [
-  { id: 1, title: "Basic Information", icon: Hotel },
-  { id: 2, title: "Owner Details", icon: User },
-  { id: 3, title: "Location", icon: MapPin },
-  { id: 4, title: "Business Settings", icon: Settings },
-  { id: 5, title: "Hotel Details", icon: Building2 },
-  { id: 6, title: "Amenities", icon: CheckCircle2 },
-  { id: 7, title: "Documents", icon: FileText },
-  { id: 8, title: "Review & Confirm", icon: ShieldCheck },
-  { id: 9, title: "Choose Plan", icon: CreditCard },
+  { id: 1, title: "Basic Information", subtitle: "General property details, star rating & photos", icon: Hotel },
+  { id: 2, title: "Owner Details", subtitle: "Primary contact and administrative credentials", icon: User },
+  { id: 3, title: "Location", subtitle: "Pinpoint exact address and map coordinates", icon: MapPin },
+  { id: 4, title: "Business Settings", subtitle: "Financial year, currency & tax settings", icon: Settings },
+  { id: 5, title: "Hotel Details", subtitle: "Room inventory, floors and room types", icon: Building2 },
+  { id: 6, title: "Amenities", subtitle: "Select available features & facilities", icon: CheckCircle2 },
+  { id: 7, title: "Documents", subtitle: "Upload compliance & verification records", icon: FileText },
+  { id: 8, title: "Review & Confirm", subtitle: "Verify information before activation", icon: ShieldCheck },
+  { id: 9, title: "Choose Plan", subtitle: "Select your subscription package & pay", icon: CreditCard },
 ];
 
 const ProgressHeader = ({ step }) => (
-  <div className="mb-8">
-    <div className="flex items-center justify-between mb-4">
-      <h2 className="text-2xl font-black text-slate-900 dark:text-white">
-        {STEPS.find((s) => s.id === step)?.title}
-      </h2>
-      <p className="text-sm font-bold text-slate-400">
-        Step {step} of 9{" "}
-        <span className="ml-2 text-indigo-600">
-          {Math.round((step / 9) * 100)}%
-        </span>
-      </p>
-    </div>
-    <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: `${(step / 9) * 100}%` }}
-        className="h-full bg-indigo-600"
-      />
-    </div>
-  </div>
-);
-
-const WhySection = ({ title, items }) => (
-  <div className="hidden xl:block w-[300px] shrink-0">
-    <div className="glass-card p-6 rounded-lg border-indigo-100 dark:border-indigo-500/10 bg-indigo-50/30">
-      <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-        <HelpCircle className="w-4 h-4 text-indigo-600" />
-        {title}
-      </h4>
-      <ul className="space-y-4">
-        {items.map((item, i) => (
-          <li
-            key={i}
-            className="flex gap-3 text-sm text-slate-600 dark:text-slate-400"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 shrink-0" />
-            {item}
-          </li>
-        ))}
-      </ul>
-      <div className="mt-8 pt-6 border-t border-indigo-100/50">
-        <p className="text-xs text-slate-400 leading-relaxed italic">
-          &quot;Your information is safe with us and will never be shared.&quot;
-        </p>
-      </div>
-    </div>
+  <div className="mb-2 sm:mb-3">
+    <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+      <span>{STEPS.find((s) => s.id === step)?.title}</span>
+    </h2>
   </div>
 );
 
@@ -228,8 +186,23 @@ function OnboardingContent() {
         }
         break;
       case 2:
-        if (!formData.mobileNumber || !formData.ownerFullName || !formData.ownerEmail || (!editId && !formData.password)) {
-          return "Please fill out all required contact fields" + (!editId ? " including a password." : ".");
+        if (!formData.ownerFullName || formData.ownerFullName.trim().length < 2) {
+          return "Please enter a valid owner full name (minimum 2 characters).";
+        }
+        if (!formData.ownerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.ownerEmail.trim())) {
+          return "Please enter a valid email address.";
+        }
+        const cleanMobile = String(formData.mobileNumber || "").replace(/\D/g, "");
+        if (!cleanMobile || cleanMobile.length !== 10) {
+          return "Please enter a valid 10-digit mobile number.";
+        }
+        if (!editId) {
+          if (!formData.password || formData.password.length < 6) {
+            return "Please enter a password with at least 6 characters.";
+          }
+          if (formData.password !== formData.confirmPassword) {
+            return "Password and Confirm Password do not match.";
+          }
         }
         break;
       case 3:
@@ -583,137 +556,92 @@ function OnboardingContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex overflow-hidden">
-      {/* Sidebar - Desktop Only */}
-      <aside className="hidden lg:flex w-72 border-r border-slate-100 dark:border-slate-800 flex-col p-6 overflow-y-auto">
-        <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="bg-indigo-600 p-2 rounded-xl">
-            <Hotel className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-xl font-black tracking-tight">VEDANTA TECH</span>
-        </div>
-
-        <nav className="space-y-1">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col overflow-hidden">
+      {/* Top Header */}
+      <header className="bg-slate-900/90 backdrop-blur-xl border-b border-slate-800/80 shrink-0 z-30 sticky top-0">
+        {/* Horizontal Modern Stepper Ribbon */}
+        <div className="border-t border-slate-800/60 bg-slate-950/40 px-3 sm:px-4 py-2 overflow-x-auto flex items-center gap-1.5 sm:gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {STEPS.map((s) => {
             const isActive = s.id === step;
             const isCompleted = s.id < step;
+            const IconComponent = s.icon;
             return (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => isCompleted && setStep(s.id)}
                 className={cn(
-                  "w-full flex items-center gap-4 p-3 rounded-xl transition-all group",
+                  "px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-2 transition-all select-none",
                   isActive
-                    ? "bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/20"
+                    ? "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/25 ring-1 ring-indigo-400/40"
                     : isCompleted
-                      ? "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                      : "text-slate-300 dark:text-slate-600 cursor-not-allowed",
+                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-500/20 cursor-pointer"
+                    : "bg-slate-900/40 text-slate-500 border border-slate-800/50 cursor-not-allowed opacity-60"
                 )}
               >
                 <div
                   className={cn(
-                    "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors",
+                    "w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors",
                     isActive
                       ? "bg-white/20 text-white"
                       : isCompleted
-                        ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-400",
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : "bg-slate-800 text-slate-500"
                   )}
                 >
-                  {isCompleted ? <Check className="w-4 h-4" /> : s.id}
+                  {isCompleted ? <Check className="w-3 h-3" /> : s.id}
                 </div>
-                <span className="text-sm font-semibold truncate">
-                  {s.title}
-                </span>
+                <span className="whitespace-nowrap">{s.title}</span>
               </button>
             );
           })}
-        </nav>
-
-        <div className="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
-          <div className="p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 mb-4">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-              Need Help?
-            </p>
-            <p className="text-xs text-slate-400">
-              Contact our setup team 24/7
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full text-xs font-bold rounded-xl"
-            onClick={() => window.open("/customer-support", "_blank")}
-          >
-            Contact Support
-          </Button>
         </div>
-      </aside>
+      </header>
 
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Top Header */}
-        <header className="h-16 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-8 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shrink-0 sticky top-0 z-10">
-          <div className="flex items-center gap-4">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-            >
-              <MoreVertical className="w-5 h-5" />
-            </Button>
-            <div className="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-400">
-              <span>Dashboard</span>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-slate-900 dark:text-white">Onboarding</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-6">
-            <button
-              type="button"
-              className="text-slate-400 hover:text-indigo-600"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              className="text-slate-400 hover:text-indigo-600 relative"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full" />
-            </button>
-            <div className="flex items-center gap-3 pl-6 border-l border-slate-100 dark:border-slate-800">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white leading-none">
-                  {formData.ownerFullName || "Admin"}
-                </p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-                  Owner
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold shadow-lg shadow-indigo-500/20">
-                {(formData.ownerFullName || "HM").slice(0, 2).toUpperCase()}
-              </div>
-            </div>
-          </div>
-        </header>
+      {/* Content Area */}
+      <main className="flex-1 overflow-y-auto px-2 sm:px-4 py-3">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex-1 min-w-0">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 10, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                transition={{ duration: 0.2 }}
+                className="relative bg-slate-900/85 backdrop-blur-2xl border border-slate-800/80 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/50 overflow-hidden"
+              >
+                {/* Background ambient light */}
+                <div className="absolute -top-24 -right-24 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-12">
-          <div className="max-w-6xl mx-auto flex flex-col xl:flex-row gap-12">
-            <div className="flex-1">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={step}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ProgressHeader step={step} />
+                {/* Step Card Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-3.5 border-b border-slate-800/80">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+                      {React.createElement(STEPS.find((s) => s.id === step)?.icon || Hotel, {
+                        className: "w-5 h-5",
+                      })}
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                        {STEPS.find((s) => s.id === step)?.title}
+                      </h2>
+                      <p className="text-xs text-slate-400">
+                        {STEPS.find((s) => s.id === step)?.subtitle}
+                      </p>
+                    </div>
+                  </div>
 
+                  <div className="self-start sm:self-auto flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-950/60 border border-slate-800 text-slate-300">
+                      Step {step} of 9
+                    </span>
+                  </div>
+                </div>
+
+                {/* Step Form Body */}
+                <div className="relative z-10">
                   {step === 1 && (
                     <Step1BasicInfo
                       formData={formData}
@@ -781,167 +709,71 @@ function OnboardingContent() {
                       paymentDetails={paymentDetails}
                     />
                   )}
+                </div>
 
-                  {/* Error Banner */}
-                  {submitError && (
-                    <div className="mt-4 p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-xl text-sm font-semibold text-rose-600 dark:text-rose-400">
-                      {submitError}
-                    </div>
-                  )}
+                {/* Error Banner */}
+                {submitError && (
+                  <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs font-semibold text-rose-400">
+                    {submitError}
+                  </div>
+                )}
 
-                  {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between mt-16 pt-10 border-t border-slate-100 dark:border-slate-800">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={prevStep}
-                      disabled={step === 1 || isSubmitting}
-                      className={cn(
-                        "h-14 px-8 rounded-xl font-bold text-slate-400 flex gap-2",
-                        step === 1 && "opacity-0 invisible",
-                      )}
-                    >
-                      <ArrowLeft className="w-5 h-5" /> Back
-                    </Button>
+                {/* Navigation Buttons */}
+                <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 mt-5 pt-4 border-t border-slate-800/80">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={prevStep}
+                    disabled={step === 1 || isSubmitting}
+                    className={cn(
+                      "w-full sm:w-auto h-10 px-5 rounded-xl font-semibold border-slate-800 bg-slate-950/40 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center gap-2 text-xs sm:text-sm transition-all",
+                      step === 1 && "sm:opacity-0 sm:invisible hidden",
+                    )}
+                  >
+                    <ArrowLeft className="w-4 h-4" /> Back
+                  </Button>
 
-                    {step === 9 ? (
-                      <div className="flex items-center gap-3">
-                        <Button
-                          type="button"
-                          onClick={nextStep}
-                          disabled={(!editId && !paymentVerified) || isSubmitting}
-                          className={cn(
-                            "h-14 px-12 rounded-xl font-bold shadow-xl flex items-center gap-2 transition-all",
-                            !editId && !paymentVerified
-                              ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none"
-                              : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/30"
-                          )}
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <svg className="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                              </svg>
-                              Submitting...
-                            </>
-                          ) : (
-                            <>Complete Setup <Check className="w-5 h-5" /></>
-                          )}
-                        </Button>
-                      </div>
-                    ) : (
+                  {step === 9 ? (
+                    <div className="w-full sm:w-auto flex items-center gap-2.5">
                       <Button
                         type="button"
                         onClick={nextStep}
-                        className="h-14 px-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xl shadow-indigo-500/30 flex gap-2"
+                        disabled={(!editId && !paymentVerified) || isSubmitting}
+                        className={cn(
+                          "w-full sm:w-auto h-10 sm:h-11 px-6 sm:px-8 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-all text-xs sm:text-sm",
+                          !editId && !paymentVerified
+                            ? "bg-slate-800 text-slate-500 cursor-not-allowed shadow-none border border-slate-700/50"
+                            : "bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:opacity-95 text-white shadow-indigo-500/30"
+                        )}
                       >
-                        Next <ArrowRight className="w-5 h-5" />
+                        {isSubmitting ? (
+                          <>
+                            <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                            </svg>
+                            Submitting...
+                          </>
+                        ) : (
+                          <>Complete Setup <Check className="w-4 h-4" /></>
+                        )}
                       </Button>
-                    )}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Why Section Sidebar - Only show on register page */}
-            {pathname === "/register" && (
-              <>
-                {step === 1 && (
-                  <WhySection
-                    title="Why add basic information?"
-                    items={[
-                      "Guest Trust & Recognition: A complete profile with real property photos builds immediate confidence.",
-                      "Custom Invoices & Branding: Your hotel logo and identity are automatically featured across guest bills.",
-                      "Listing Accuracy: Categorizing your property ensures relevant booking options and workflows.",
-                    ]}
-                  />
-                )}
-                {step === 2 && (
-                  <WhySection
-                    title="Why owner details?"
-                    items={[
-                      "Account Security: Direct verification protects property ownership.",
-                      "Important Alerts: Critical notifications regarding bookings and billing.",
-                      "Tax Invoicing: Legal compliance requires verified owner details.",
-                    ]}
-                  />
-                )}
-                {step === 3 && (
-                  <WhySection
-                    title="Why precise location?"
-                    items={[
-                      "Guest Directions: Google Maps integration helps guests reach easily.",
-                      "Local Tax Rules: Automatic tax calculation based on jurisdiction.",
-                      "Timezone Sync: Accurate check-in and check-out scheduling.",
-                    ]}
-                  />
-                )}
-                {step === 4 && (
-                  <WhySection
-                    title="Why business settings?"
-                    items={[
-                      "Automated Billing: Customized invoice prefixes and serials.",
-                      "Financial Reports: Align reports with your country's financial year.",
-                      "Multi-Currency: Display rates in your local operating currency.",
-                    ]}
-                  />
-                )}
-                {step === 5 && (
-                  <WhySection
-                    title="Why room setup?"
-                    items={[
-                      "Real-time Availability: Prevent double bookings across channels.",
-                      "Rate Management: Set different base prices for each room category.",
-                      "Housekeeping Flow: Automatic room cleaning assignments.",
-                    ]}
-                  />
-                )}
-                {step === 6 && (
-                  <WhySection
-                    title="Why list amenities?"
-                    items={[
-                      "Guest Expectation: Clear feature list avoids check-in surprises.",
-                      "Feature Matching: Helps corporate and leisure travelers choose your hotel.",
-                      "In-room Ordering: Match amenities with POS and room service catalogs.",
-                    ]}
-                  />
-                )}
-                {step === 7 && (
-                  <WhySection
-                    title="Why documents upload?"
-                    items={[
-                      "Legal Compliance: Mandatory government KYC and business verification.",
-                      "Fast Approval: Accelerated onboarding with verified paperwork.",
-                      "Security: Encrypted cloud vault exclusively accessible to administrators.",
-                    ]}
-                  />
-                )}
-                {step === 8 && (
-                  <WhySection
-                    title="Why review details?"
-                    items={[
-                      "Zero Errors: Confirm everything is accurate before activating the hotel.",
-                      "Instant Setup: Verify room counts, documents, and contact numbers.",
-                      "Smooth Launch: Ready to choose subscription plan in the next step.",
-                    ]}
-                  />
-                )}
-                {step === 9 && (
-                  <WhySection
-                    title="Why choose plan & payment?"
-                    items={[
-                      "Instant Workspace Activation: Razorpay instant payment verification initializes your multi-tenant portal.",
-                      "Transparent Pricing: No hidden setup fees or surprise charges.",
-                      "Secure Processing: Protected with 256-bit SSL encryption.",
-                    ]}
-                  />
-                )}
-              </>
-            )}
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={nextStep}
+                      className="w-full sm:w-auto h-10 sm:h-11 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:opacity-95 text-white font-bold shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 text-xs sm:text-sm transition-all active:scale-[0.99]"
+                    >
+                      Next Step <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

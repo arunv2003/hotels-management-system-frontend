@@ -101,21 +101,21 @@ export default function HotelOwnerDashboard() {
 
     return (
       <DashboardLayout>
-        <div className="space-y-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Hotel Insights</h1>
-              <p className="text-slate-500 mt-1 text-sm font-medium">Managing {user?.hotelName || "Hotel"} Dashboard</p>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Hotel Insights</h1>
+              <p className="text-slate-500 mt-1 text-xs sm:text-sm font-medium">Managing {user?.hotelName || "Hotel"} Dashboard</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="relative">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:flex-none">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"/>
                 <input
                   type="text"
                   placeholder="Find booking..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full sm:w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </div>
               <button
@@ -127,7 +127,7 @@ export default function HotelOwnerDashboard() {
               </button>
               <Link
                 href="/dashboard/bookings"
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/25 text-sm"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/25 text-xs sm:text-sm"
               >
                 <Plus size={18}/>
                 New Booking
@@ -136,7 +136,7 @@ export default function HotelOwnerDashboard() {
           </div>
 
           {/* Active Subscription Plan Banner / Card */}
-          <div className="py-4 px-5 sm:px-6 rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white shadow-lg relative overflow-hidden border border-indigo-700/30">
+          <div className="py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white shadow-lg relative overflow-hidden border border-indigo-700/30">
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -156,15 +156,15 @@ export default function HotelOwnerDashboard() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/10 text-center">
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <div className="bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/10 text-center flex-1 sm:flex-none">
                   <p className="text-[9px] uppercase font-bold text-indigo-300 tracking-wider">Days Remaining</p>
                   <p className="text-lg font-black text-white leading-tight">{daysLeft} Days</p>
                 </div>
 
                 <Button
                   onClick={() => setShowRenewModal(true)}
-                  className="h-10 px-4 rounded-xl bg-white text-indigo-900 hover:bg-slate-100 font-extrabold text-xs shadow-md hover:scale-[1.02] transition-all flex items-center gap-1.5"
+                  className="flex-1 sm:flex-none h-10 px-4 rounded-xl bg-white text-indigo-900 hover:bg-slate-100 font-extrabold text-xs shadow-md hover:scale-[1.02] transition-all flex items-center justify-center gap-1.5"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   Renew / Upgrade Plan
@@ -176,7 +176,7 @@ export default function HotelOwnerDashboard() {
           </div>
 
           {/* Key Stat Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             <StatCard
               title="Occupancy Rate"
               value={`${occupancyPercent}%`}
@@ -205,10 +205,10 @@ export default function HotelOwnerDashboard() {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Dynamic Recent Bookings Table */}
-            <div className="lg:col-span-2 glass-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="lg:col-span-2 glass-card rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+              <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Recent Bookings</h3>
                   <p className="text-xs text-slate-400 mt-0.5">Latest recorded guest reservations</p>
@@ -244,8 +244,8 @@ export default function HotelOwnerDashboard() {
                   </Link>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse whitespace-nowrap">
+                <div className="overflow-x-auto table-scrollbar relative">
+                  <table className="w-full text-left border-collapse whitespace-nowrap min-w-[650px] sm:min-w-[700px]">
                     <thead>
                       <tr className="bg-slate-50/80 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800">
                         <th className="px-6 py-3.5">Guest</th>

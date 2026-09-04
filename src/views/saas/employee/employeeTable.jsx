@@ -64,25 +64,25 @@ export default function EmployeeTable() {
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             Employee Management
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             Manage your staff directory, roles, and permissions across all
             properties.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button
             variant="outline"
-            className="h-10 rounded-lg gap-2 font-bold text-sm cursor-pointer"
+            className="h-10 rounded-lg gap-2 font-bold text-xs sm:text-sm cursor-pointer flex-1 sm:flex-none"
           >
             <Download className="w-4 h-4" /> Export CSV
           </Button>
           <Button
-            className="h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-sm shadow-md shadow-indigo-500/20 cursor-pointer"
+            className="h-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 gap-2 font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/20 cursor-pointer flex-1 sm:flex-none"
             onClick={() => router.push("/super-admin/employees/create")}
           >
             <Plus className="w-4 h-4" /> Add Employee
@@ -91,7 +91,7 @@ export default function EmployeeTable() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             label: "Total Employees",
@@ -101,55 +101,59 @@ export default function EmployeeTable() {
             bg: "bg-indigo-50 dark:bg-indigo-500/10",
           },
           {
-            label: "Active Staff",
-            value: employees.filter((emp) => emp.isActive).length,
+            label: "Active Now",
+            value: employees.filter((e) => e.status === "active").length,
             icon: CheckCircle2,
             color: "text-emerald-600",
             bg: "bg-emerald-50 dark:bg-emerald-500/10",
           },
           {
+            label: "Departments",
+            value: new Set(employees.map((e) => e.department)).size,
+            icon: Building,
+            color: "text-purple-600",
+            bg: "bg-purple-50 dark:bg-purple-500/10",
+          },
+          {
             label: "On Leave",
-            value: employees.filter((emp) => emp.isOnLeave).length,
+            value: employees.filter((e) => e.status === "on-leave").length,
             icon: Clock,
             color: "text-amber-600",
             bg: "bg-amber-50 dark:bg-amber-500/10",
           },
-          {
-            label: "Departments",
-            value: "6",
-            icon: Building,
-            color: "text-rose-600",
-            bg: "bg-rose-50 dark:bg-rose-500/10",
-          },
         ].map((stat, i) => (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
             key={i}
-            className="p-4 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4"
+            className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center justify-between"
           >
-            <div
-              className={cn(
-                "w-12 h-12 rounded-md flex items-center justify-center",
-                stat.bg,
-              )}
-            >
-              <stat.icon className={cn("w-6 h-6", stat.color)} />
-            </div>
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 {stat.label}
               </p>
-              <p className="text-xl font-black text-slate-900 dark:text-white">
+              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">
                 {stat.value}
               </p>
             </div>
-          </div>
+            <div
+              className={cn(
+                "w-12 h-12 rounded-xl flex items-center justify-center",
+                stat.bg,
+                stat.color,
+              )}
+            >
+              <stat.icon className="w-6 h-6" />
+            </div>
+          </motion.div>
         ))}
       </div>
 
-      {/* Table Section */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+      {/* Main Table Container */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Table Toolbar */}
-        <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 sm:p-6 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="relative w-full sm:w-96">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
@@ -159,19 +163,19 @@ export default function EmployeeTable() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-11 h-11 rounded-lg border-slate-100 dark:border-slate-800 focus-visible:ring-indigo-500/20"
+              className="pl-11 h-10 sm:h-11 rounded-xl border-slate-100 dark:border-slate-800 focus-visible:ring-indigo-500/20 text-xs sm:text-sm"
             />
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              className="h-11 rounded-lg gap-2 font-bold text-sm flex-1 sm:flex-none"
+              className="h-10 sm:h-11 rounded-xl gap-2 font-bold text-xs sm:text-sm flex-1 sm:flex-none"
             >
               <Filter className="w-4 h-4" /> Filters
             </Button>
             <Button
               variant="outline"
-              className="h-11 w-11 rounded-lg p-0 flex-none"
+              className="h-10 sm:h-11 w-10 sm:w-11 rounded-xl p-0 flex-none"
             >
               <ArrowUpDown className="w-4 h-4" />
             </Button>
@@ -179,8 +183,8 @@ export default function EmployeeTable() {
         </div>
 
         {/* Table Content */}
-        <div className="overflow-auto max-h-[480px] relative">
-          <table className="w-full text-sm text-left border-collapse whitespace-nowrap">
+        <div className="overflow-x-auto table-scrollbar relative">
+          <table className="w-full text-sm text-left border-collapse whitespace-nowrap min-w-[700px]">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
               <tr>
                 <th className="px-4 py-2.5 font-black text-slate-400 uppercase text-[10px] tracking-widest">

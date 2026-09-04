@@ -32,6 +32,7 @@ export default function AnnouncementsView() {
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
   const [filterAudience, setFilterAudience] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -78,8 +79,9 @@ export default function AnnouncementsView() {
     const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           content.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === "all" || ann.type === filterType;
+    const matchesStatus = filterStatus === "all" || ann.status === filterStatus;
     const matchesAudience = filterAudience === "all" || ann.audience === filterAudience;
-    return matchesSearch && matchesType && matchesAudience;
+    return matchesSearch && matchesType && matchesStatus && matchesAudience;
   });
 
   const totalPages = Math.ceil(filteredAnnouncements.length / pageSize) || 1;
@@ -245,19 +247,19 @@ export default function AnnouncementsView() {
   return (
     <div className="space-y-8 h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <Megaphone className="text-indigo-600 dark:text-indigo-400" size={32} />
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <Megaphone className="text-indigo-600 dark:text-indigo-400 w-7 h-7 sm:w-8 sm:h-8" />
             Announcements
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1">
             Broadcast platform-wide updates, release notes, and alerts to hotel tenants and partners.
           </p>
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white h-10 px-5 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10"
+          className="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white h-10 sm:h-11 px-4 sm:px-5 gap-2 cursor-pointer transition-all shadow-md hover:shadow-indigo-600/10 font-bold text-xs sm:text-sm self-start sm:self-auto"
         >
           <Plus size={18} />
           Create Announcement
@@ -265,19 +267,19 @@ export default function AnnouncementsView() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: "Total Broadcasts", val: announcements.length, icon: <Megaphone className="text-indigo-600" /> },
           { label: "Active Now", val: activeCount, icon: <CheckCircle2 className="text-emerald-600" /> },
           { label: "Scheduled", val: scheduledCount, icon: <Calendar className="text-amber-600" /> },
           { label: "Total Views/Clicks", val: totalClicks, icon: <Eye className="text-sky-600" /> },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+          <div key={i} className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{stat.label}</span>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
               {stat.icon}
             </div>
           </div>
@@ -285,43 +287,43 @@ export default function AnnouncementsView() {
       </div>
 
       {/* Main Layout: Filters and Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
         {/* Filter bar */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-80">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="relative w-full sm:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
             <Input
               placeholder="Search announcements..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 text-xs sm:text-sm"
             />
           </div>
-          <div className="flex gap-3 w-full md:w-auto overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-950 p-1 rounded-lg border border-slate-200/80 dark:border-slate-800">
-              <span className="text-xs text-slate-400 px-2.5 font-bold">Type:</span>
-              {["all", "info", "success", "warning", "alert"].map((t) => (
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            {/* Status Tabs */}
+            <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex">
+              {["all", "Active", "Draft", "Scheduled"].map((s) => (
                 <button
-                  key={t}
-                  onClick={() => setFilterType(t)}
-                  className={`text-xs px-3 py-1.5 rounded-lg capitalize font-bold transition-all ${
-                    filterType === t
+                  key={s}
+                  onClick={() => setFilterStatus(s)}
+                  className={`text-xs px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition-all ${
+                    filterStatus === s
                       ? "bg-white dark:bg-slate-900 shadow-xs text-indigo-600 dark:text-indigo-400"
                       : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
-                  {t}
+                  {s}
                 </button>
               ))}
             </div>
 
-            <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-950 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800">
-              <span className="text-xs text-slate-400 px-2.5 font-bold">Audience:</span>
+            {/* Audience Tabs */}
+            <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex">
               {["all", "All", "Hotel Admins"].map((a) => (
                 <button
                   key={a}
                   onClick={() => setFilterAudience(a)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  className={`text-xs px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition-all ${
                     filterAudience === a
                       ? "bg-white dark:bg-slate-900 shadow-xs text-indigo-600 dark:text-indigo-400"
                       : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
@@ -335,8 +337,8 @@ export default function AnnouncementsView() {
         </div>
 
         {/* Announcements Table */}
-        <div className="flex-1 overflow-auto max-h-[480px] relative">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
+        <div className="flex-1 overflow-x-auto table-scrollbar relative">
+          <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
               <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
                 <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Title &amp; Type</th>

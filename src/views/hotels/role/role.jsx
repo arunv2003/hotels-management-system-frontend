@@ -542,18 +542,18 @@ export default function HotelRolesPermissionsPage() {
                 </div>
 
                 {/* Permission Matrix */}
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   {/* Action Filter Bar */}
-                  <div className="mb-4 flex flex-wrap gap-2">
-                    <span className="text-xs text-slate-500 mr-2">
-                      Filter by action:
+                  <div className="mb-4 flex items-center gap-2 overflow-x-auto table-scrollbar pb-2">
+                    <span className="text-xs text-slate-500 mr-1 shrink-0">
+                      Filter:
                     </span>
                     <button
                       onClick={() => setFilterAction(null)}
-                      className={`px-2 py-1 text-xs rounded-md transition-all ${
+                      className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all shrink-0 ${
                         !filterAction
                           ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300"
-                          : "bg-slate-100 dark:bg-slate-800 text-slate-600"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                       }`}
                     >
                       All
@@ -566,10 +566,10 @@ export default function HotelRolesPermissionsPage() {
                             filterAction === action.id ? null : action.id
                           )
                         }
-                        className={`px-2 py-1 text-xs rounded-md transition-all flex items-center gap-1 ${
+                        className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 shrink-0 ${
                           filterAction === action.id
-                            ? `bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700`
-                            : "bg-slate-100 dark:bg-slate-800 text-slate-600"
+                            ? `bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300`
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                         }`}
                       >
                         <span>{action.icon}</span>
@@ -599,24 +599,24 @@ export default function HotelRolesPermissionsPage() {
                         >
                           {/* Module Header */}
                           <div
-                            className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors gap-2"
                             onClick={() => toggleModuleExpand(module.id)}
                           >
-                            <div className="flex items-center gap-3 flex-1">
-                              <button type="button" className="p-1">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <button type="button" className="p-1 shrink-0">
                                 {isExpanded ? (
                                   <ChevronDown size={16} />
                                 ) : (
                                   <ChevronRight size={16} />
                                 )}
                               </button>
-                              <span className="text-xl">{module.icon}</span>
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-slate-900 dark:text-white">
+                              <span className="text-xl shrink-0">{module.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-slate-900 dark:text-white text-sm sm:text-base truncate">
                                   {module.label}
                                 </h4>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <div className="flex-1 max-w-[200px]">
+                                  <div className="flex-1 max-w-[150px] sm:max-w-[200px]">
                                     <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                                       <div
                                         className="h-full bg-indigo-500 rounded-full transition-all duration-300"
@@ -625,26 +625,26 @@ export default function HotelRolesPermissionsPage() {
                                     </div>
                                   </div>
                                   <p className="text-xs text-slate-500">
-                                    {enabledCount}/{totalCount} enabled
+                                    {enabledCount}/{totalCount}
                                   </p>
                                 </div>
                               </div>
                             </div>
                             <div
-                              className="flex gap-2"
+                              className="flex gap-2 self-end sm:self-auto"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
                                 type="button"
                                 onClick={() => selectAllForModule(module)}
-                                className="px-2 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded transition-colors"
+                                className="px-2.5 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition-colors"
                               >
                                 Select All
                               </button>
                               <button
                                 type="button"
                                 onClick={() => clearAllForModule(module)}
-                                className="px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
+                                className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                               >
                                 Clear
                               </button>
@@ -653,8 +653,8 @@ export default function HotelRolesPermissionsPage() {
 
                           {/* Module Permissions */}
                           {isExpanded && (
-                            <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                            <div className="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-3">
                                 {ACTIONS.map((action) => {
                                   const available = module.actions.includes(
                                     action.id
@@ -673,7 +673,7 @@ export default function HotelRolesPermissionsPage() {
                                       onClick={() =>
                                         togglePermission(module.id, action.id)
                                       }
-                                      className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                                      className={`flex items-center justify-between p-2.5 sm:p-3 rounded-lg border transition-all ${
                                         checked
                                           ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-300 dark:border-indigo-500/50"
                                           : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-700/50"
@@ -683,12 +683,12 @@ export default function HotelRolesPermissionsPage() {
                                         <span className="text-base">
                                           {action.icon}
                                         </span>
-                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
                                           {action.label}
                                         </span>
                                       </div>
                                       <div
-                                        className={`w-5 h-5 rounded flex items-center justify-center transition-all ${
+                                        className={`w-4 h-4 sm:w-5 sm:h-5 rounded flex items-center justify-center transition-all ${
                                           checked
                                             ? "bg-indigo-600 text-white"
                                             : "border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
@@ -711,19 +711,19 @@ export default function HotelRolesPermissionsPage() {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between gap-3">
+                <div className="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                       Changes are saved locally until you click Save Permissions
                     </p>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <Button
                       variant="outline"
                       onClick={handleReset}
                       disabled={isSaving}
-                      className="cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50"
+                      className="flex-1 sm:flex-initial cursor-pointer border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-xs sm:text-sm"
                     >
                       Reset
                     </Button>
@@ -731,7 +731,7 @@ export default function HotelRolesPermissionsPage() {
                       <Button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="bg-indigo-600 hover:bg-indigo-700 cursor-pointer shadow-lg shadow-indigo-500/25 disabled:opacity-50 gap-2"
+                        className="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-700 cursor-pointer shadow-lg shadow-indigo-500/25 disabled:opacity-50 gap-2 text-xs sm:text-sm"
                       >
                         {isSaving ? (
                           <>

@@ -121,15 +121,15 @@ export default function ReportsView() {
   };
 
   return (
-    <div className="space-y-8 h-full flex flex-col">
+    <div className="space-y-6 sm:space-y-8 h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <FileBarChart2 className="text-indigo-650 dark:text-indigo-400" size={32} />
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <FileBarChart2 className="text-indigo-600 dark:text-indigo-400 shrink-0" size={28} />
             Platform Reports
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm">
             Analyze multi-tenant subscription transactions, user growth trends, and generate audited PDF summaries.
           </p>
         </div>
@@ -137,21 +137,21 @@ export default function ReportsView() {
           variant="outline"
           onClick={fetchReportsData}
           disabled={loading}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-800 gap-2 cursor-pointer"
+          className="w-full sm:w-auto h-10 rounded-xl border-slate-200 dark:border-slate-800 gap-2 cursor-pointer text-xs sm:text-sm"
         >
           <RefreshCcw size={16} className={loading ? "animate-spin" : ""} /> Refresh Reports
         </Button>
       </div>
 
       {/* Overview Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {[
           { label: "Monthly Recurring Revenue", val: mrrText, trend: "+24.5% vs Q1", icon: <TrendingUp className="text-emerald-500" />, trendBg: "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400" },
           { label: "Enterprise Registrations", val: "62 Tiers", trend: "+12.1% MoM", icon: <ArrowUpRight className="text-emerald-500" />, trendBg: "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400" },
           { label: "Active Subscriptions", val: "99.4% Uptime", trend: "0.01% Latency Variance", icon: <CheckCircle className="text-indigo-500" />, trendBg: "bg-indigo-50 text-indigo-850 dark:bg-indigo-500/10 dark:text-indigo-400" },
           { label: "Support Resolution Rate", val: "18.5 min", trend: "-4.2 min decline", icon: <TrendingDown className="text-rose-500" />, trendBg: "bg-rose-50 text-rose-800 dark:bg-rose-500/10 dark:text-rose-400" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm">
+          <div key={i} className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs">
             <div className="flex items-start justify-between">
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">{stat.label}</span>
               <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 ${stat.trendBg}`}>
@@ -159,21 +159,21 @@ export default function ReportsView() {
                 {stat.trend}
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-955 dark:text-white mt-3">{stat.val}</p>
+            <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2 sm:mt-3">{stat.val}</p>
           </div>
         ))}
       </div>
 
       {/* Visual Analytics Graphs using Recharts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Revenue Area Chart */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col h-96">
-          <div className="flex items-center justify-between mb-6">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex flex-col h-80 sm:h-96">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">Monthly Recurring Revenue Growth</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Monthly Recurring Revenue Growth</h3>
               <p className="text-xs text-slate-400">Total platforms earnings accrued across active subscription plans.</p>
             </div>
-            <span className="text-xs font-bold text-slate-500 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700">Year 2026</span>
+            <span className="text-xs font-bold text-slate-500 bg-slate-50 dark:bg-slate-800 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-slate-100 dark:border-slate-700">Year 2026</span>
           </div>
 
           <div className="flex-1 w-full text-xs">
@@ -198,24 +198,24 @@ export default function ReportsView() {
         </div>
 
         {/* Dynamic New Reports Generator */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Zap className="text-indigo-600" size={18} />
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">Instant Report Generator</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Instant Report Generator</h3>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 sm:mb-6">
               Select variables and generate a filtered analytics spreadsheet immediately available for download.
             </p>
 
-            <form onSubmit={handleGenerateReport} className="space-y-4">
+            <form onSubmit={handleGenerateReport} className="space-y-3 sm:space-y-4">
               <div>
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Report Title Name</label>
                 <Input
                   value={newReportParams.name}
                   onChange={(e) => setNewReportParams({ ...newReportParams, name: e.target.value })}
                   placeholder="E.g., Q2 Customer SLA Speed"
-                  className="mt-1.5 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+                  className="mt-1.5 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 text-sm"
                 />
               </div>
 
@@ -236,7 +236,7 @@ export default function ReportsView() {
               <Button
                 type="submit"
                 disabled={isGenerating}
-                className="w-full h-10 rounded-lg bg-slate-900 hover:bg-slate-950 text-white font-bold cursor-pointer transition-all shadow-md mt-2 flex items-center justify-center gap-2 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+                className="w-full h-10 rounded-lg bg-slate-900 hover:bg-slate-950 text-white font-bold cursor-pointer transition-all shadow-md mt-2 flex items-center justify-center gap-2 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-xs sm:text-sm"
               >
                 {isGenerating ? (
                   <>
@@ -253,34 +253,34 @@ export default function ReportsView() {
             </form>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 text-[10px] text-slate-400 leading-normal font-medium mt-4">
+          <div className="pt-4 sm:pt-6 border-t border-slate-100 dark:border-slate-800/80 text-[10px] text-slate-400 leading-normal font-medium mt-4">
             Generated sheets comply strictly with international multi-tenant financial privacy SLA provisions.
           </div>
         </div>
       </div>
 
       {/* Reports Audit Logs Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800/80 shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-xs flex-1 flex flex-col overflow-hidden">
         {/* Filters */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search past logs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              className="pl-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-sm"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto table-scrollbar pb-1 sm:pb-0">
             {["all", "Financial", "Platform Activity", "Customer Support"].map((type) => (
               <button
                 key={type}
                 onClick={() => setFilterType(type)}
-                className={`text-xs px-4 py-2 rounded-xl font-bold border transition-all cursor-pointer ${
+                className={`text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-bold border transition-all cursor-pointer shrink-0 ${
                   filterType === type
-                    ? "bg-slate-900 border-slate-900 text-white dark:bg-indigo-650 dark:border-indigo-650"
-                    : "bg-white border-slate-200 text-slate-655 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
+                    ? "bg-slate-900 border-slate-900 text-white dark:bg-indigo-600 dark:border-indigo-600"
+                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-950 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900"
                 }`}
               >
                 {type}
@@ -290,44 +290,44 @@ export default function ReportsView() {
         </div>
 
         {/* Audit Table */}
-        <div className="flex-1 overflow-auto max-h-[480px] relative">
+        <div className="flex-1 overflow-x-auto table-scrollbar relative">
           {loading ? (
             <div className="py-12 flex items-center justify-center text-slate-400 gap-2">
               <Loader2 className="animate-spin" size={20} />
               <span>Loading compiled reports...</span>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse whitespace-nowrap">
-              <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                <tr className="border-b border-slate-105 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm">
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider pl-6">Compiled Sheet Document Name</th>
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Report Category</th>
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Author Init</th>
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Compilation Date</th>
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Size</th>
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Audit Status</th>
-                  <th className="p-4.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-6">Export</th>
+            <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
+              <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-xs">
+                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs">
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider pl-4 sm:pl-6">Compiled Sheet Document Name</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Report Category</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Author Init</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Compilation Date</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Size</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Audit Status</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right pr-4 sm:pr-6">Export</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-105 dark:divide-slate-800/80">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {paginatedReports.map((rep) => (
-                  <tr key={rep._id || rep.id} className="hover:bg-slate-55/50 dark:hover:bg-slate-800/30 transition-all">
-                    <td className="p-4.5 pl-6 font-bold text-slate-900 dark:text-white max-w-sm truncate">
+                  <tr key={rep._id || rep.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
+                    <td className="p-4 pl-4 sm:pl-6 font-bold text-slate-900 dark:text-white max-w-sm truncate">
                       {rep.name}
                     </td>
-                    <td className="p-4.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                    <td className="p-4 text-xs font-bold text-indigo-600 dark:text-indigo-400">
                       {rep.type}
                     </td>
-                    <td className="p-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
+                    <td className="p-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
                       {rep.generatedBy}
                     </td>
-                    <td className="p-4.5 text-sm text-slate-500 dark:text-slate-450 font-medium">
+                    <td className="p-4 text-sm text-slate-500 dark:text-slate-400 font-medium">
                       {rep.date}
                     </td>
-                    <td className="p-4.5 text-xs text-slate-500 font-mono font-bold">
+                    <td className="p-4 text-xs text-slate-500 font-mono font-bold">
                       {rep.size}
                     </td>
-                    <td className="p-4.5">
+                    <td className="p-4">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
                           rep.status === "Completed"
@@ -338,12 +338,12 @@ export default function ReportsView() {
                         {rep.status}
                       </span>
                     </td>
-                    <td className="p-4.5 text-right pr-6">
+                    <td className="p-4 text-right pr-4 sm:pr-6">
                       {rep.status === "Completed" ? (
                         <Button
                           variant="ghost"
                           onClick={() => handleDownload(rep.name)}
-                          className="h-8.5 px-3 rounded-lg text-slate-500 hover:text-indigo-650 hover:bg-slate-105 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs cursor-pointer"
+                          className="h-8 px-2.5 sm:px-3 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1 font-bold text-xs cursor-pointer"
                         >
                           <Download size={13} />
                           Export
@@ -356,7 +356,7 @@ export default function ReportsView() {
                 ))}
                 {filteredReports.length === 0 && (
                   <tr>
-                    <td colSpan="7" className="p-10 text-center text-slate-400 text-sm font-medium">
+                    <td colSpan="7" className="p-8 sm:p-10 text-center text-slate-400 text-sm font-medium">
                       No generated sheets logged in the archives.
                     </td>
                   </tr>

@@ -346,34 +346,34 @@ export default function PayrollView() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-5 sm:space-y-6">
       {/* Header & Main Actions */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <div className="p-2.5 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20">
-              <Wallet className="w-6 h-6" />
+            <div className="p-2.5 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-600/20 shrink-0">
+              <Wallet className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Payroll Management
             </h1>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
             Manage staff salaries, calculate monthly allowances & deductions, and track payment disbursements.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             onClick={() => setIsBulkModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm flex items-center gap-2 transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
+            className="flex-1 sm:flex-none px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer"
           >
             <Zap className="w-4 h-4 text-amber-500" />
             Auto-Generate Monthly Slips
           </button>
           <button
             onClick={() => handleOpenCreateModal()}
-            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+            className="flex-1 sm:flex-none px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             New Salary Slip
@@ -382,23 +382,23 @@ export default function PayrollView() {
       </div>
 
       {/* Summary KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between"
         >
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
               Total Payroll Expense
             </span>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
               {summaryLoading ? "..." : formatCurrency(summary?.totalPayrollCost)}
             </h3>
-            <p className="text-xs text-slate-400">Total net pay for selected period</p>
+            <p className="text-[11px] sm:text-xs text-slate-400">Total net pay for selected period</p>
           </div>
-          <div className="p-3 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-xl">
-            <DollarSign className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-xl shrink-0">
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </motion.div>
 
@@ -406,21 +406,21 @@ export default function PayrollView() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between"
         >
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
               Total Disbursed (Paid)
             </span>
-            <h3 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+            <h3 className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {summaryLoading ? "..." : formatCurrency(summary?.totalPaid)}
             </h3>
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+            <p className="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-400 font-medium">
               {summary?.paidCount || 0} slip(s) paid
             </p>
           </div>
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-xl">
-            <CheckCircle2 className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-xl shrink-0">
+            <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </motion.div>
 
@@ -428,21 +428,21 @@ export default function PayrollView() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between"
         >
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
               Pending Disbursal
             </span>
-            <h3 className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+            <h3 className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
               {summaryLoading ? "..." : formatCurrency(summary?.totalUnpaid)}
             </h3>
-            <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+            <p className="text-[11px] sm:text-xs text-amber-600 dark:text-amber-400 font-medium">
               {summary?.unpaidCount || 0} slip(s) unpaid
             </p>
           </div>
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-xl">
-            <Clock className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-xl shrink-0">
+            <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </motion.div>
 
@@ -450,26 +450,26 @@ export default function PayrollView() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between"
+          className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between"
         >
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
               Active Staff Members
             </span>
-            <h3 className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            <h3 className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
               {summaryLoading ? "..." : summary?.activeStaffCount || staffList.length || 0}
             </h3>
-            <p className="text-xs text-slate-400">Eligible for monthly salary</p>
+            <p className="text-[11px] sm:text-xs text-slate-400">Eligible for monthly salary</p>
           </div>
-          <div className="p-3 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 rounded-xl">
-            <User className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 rounded-xl shrink-0">
+            <User className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </motion.div>
       </div>
 
       {/* Filters & Search Control Bar */}
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full md:w-72">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+        <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
@@ -480,12 +480,12 @@ export default function PayrollView() {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-start sm:justify-end">
           {/* Month Filter */}
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-700 dark:text-slate-200 font-medium focus:outline-none"
+            className="flex-1 sm:flex-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium focus:outline-none"
           >
             <option value="">All Months</option>
             {MONTH_NAMES.map((name, idx) => (
@@ -499,7 +499,7 @@ export default function PayrollView() {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-700 dark:text-slate-200 font-medium focus:outline-none"
+            className="flex-1 sm:flex-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium focus:outline-none"
           >
             {[currentYear - 2, currentYear - 1, currentYear, currentYear + 1].map((yr) => (
               <option key={yr} value={yr}>
@@ -512,7 +512,7 @@ export default function PayrollView() {
           <select
             value={paymentStatusFilter}
             onChange={(e) => setPaymentStatusFilter(e.target.value)}
-            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-700 dark:text-slate-200 font-medium focus:outline-none"
+            className="flex-1 sm:flex-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium focus:outline-none"
           >
             <option value="all">All Statuses</option>
             <option value="Paid">Paid</option>
@@ -535,7 +535,7 @@ export default function PayrollView() {
       </div>
 
       {/* Salary Slips Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-slate-500 flex items-center justify-center gap-3">
             <RefreshCw className="w-5 h-5 animate-spin text-indigo-600" />
@@ -560,18 +560,18 @@ export default function PayrollView() {
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto table-scrollbar relative">
+            <table className="w-full text-left border-collapse whitespace-nowrap min-w-[750px]">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  <th className="px-6 py-4">Staff Member</th>
-                  <th className="px-6 py-4">Period</th>
-                  <th className="px-6 py-4">Basic Pay</th>
-                  <th className="px-6 py-4">Allowances</th>
-                  <th className="px-6 py-4">Deductions</th>
-                  <th className="px-6 py-4">Net Salary</th>
-                  <th className="px-6 py-4">Payment Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-4 sm:px-6 py-4">Staff Member</th>
+                  <th className="px-4 sm:px-6 py-4">Period</th>
+                  <th className="px-4 sm:px-6 py-4">Basic Pay</th>
+                  <th className="px-4 sm:px-6 py-4">Allowances</th>
+                  <th className="px-4 sm:px-6 py-4">Deductions</th>
+                  <th className="px-4 sm:px-6 py-4">Net Salary</th>
+                  <th className="px-4 sm:px-6 py-4">Payment Status</th>
+                  <th className="px-4 sm:px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">

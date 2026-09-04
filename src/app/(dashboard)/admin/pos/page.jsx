@@ -1175,25 +1175,23 @@ export default function POSPage() {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col h-[calc(100vh-4rem)] -m-8">
+      <div className="flex flex-col min-h-[calc(100vh-4rem)] -m-3 sm:-m-6 lg:-m-8">
         {/* ── Top Header ──────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-8 py-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 lg:px-8 py-3 sm:py-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0 gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
               <Store className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white leading-none">Point of Sale</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-none">Point of Sale</h1>
               <p className="text-xs text-slate-400 mt-0.5">MongoDB Connected POS Catalog ({products.length} Products)</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-
-
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors shadow-sm"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors shadow-sm"
             >
               <PlusCircle size={15} />
               Add Product
@@ -1201,7 +1199,7 @@ export default function POSPage() {
 
             <button
               onClick={() => setShowHistoryModal(true)}
-              className="flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition-colors"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition-colors"
             >
               <ListOrdered size={15} />
               Orders History
@@ -1214,24 +1212,24 @@ export default function POSPage() {
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
           {/* ── Left: Product Catalog ──────────────────────────────────── */}
           <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
             {/* Search + Category Bar */}
-            <div className="px-6 pt-5 pb-3 shrink-0">
-              <div className="relative mb-4">
+            <div className="px-3 sm:px-6 pt-3 sm:pt-5 pb-3 shrink-0">
+              <div className="relative mb-3 sm:mb-4">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search products in database..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all outline-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 sm:py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all outline-none"
                 />
               </div>
 
               {/* Category Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+              <div className="flex items-center gap-2 overflow-x-auto table-scrollbar pb-2">
                 {CATEGORIES.map((cat) => {
                   const Icon = cat.icon;
                   const active = activeCategory === cat.id;
@@ -1255,20 +1253,20 @@ export default function POSPage() {
             </div>
 
             {/* Product Grid */}
-            <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <div className="flex-1 overflow-y-auto px-3 sm:px-6 pb-6">
               {loading ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-400">
+                <div className="flex flex-col items-center justify-center h-64 text-slate-400">
                   <Loader2 size={32} className="animate-spin mb-2 text-indigo-600" />
                   <p className="text-sm font-medium">Fetching dynamic items from MongoDB...</p>
                 </div>
               ) : filteredProducts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-400">
+                <div className="flex flex-col items-center justify-center h-64 text-slate-400">
                   <Store size={48} className="mb-3 opacity-30" />
                   <p className="font-medium">No items found</p>
                   <p className="text-sm mb-4">Add products using the "Add Product" button above</p>
                 </div>
               ) : (
-                <motion.div layout className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                   <AnimatePresence>
                     {filteredProducts.map((product) => (
                       <ProductCard
@@ -1287,9 +1285,9 @@ export default function POSPage() {
           </div>
 
           {/* ── Right: Cart & Billing Panel ───────────────────────────── */}
-          <div className="w-[380px] shrink-0 flex flex-col bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800">
+          <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0 flex flex-col bg-white dark:bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-slate-800">
             {/* Cart Header */}
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+            <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="relative">
                   <ShoppingCart className="w-5 h-5 text-slate-700 dark:text-slate-300" />
@@ -1299,7 +1297,7 @@ export default function POSPage() {
                     </span>
                   )}
                 </div>
-                <span className="font-bold text-slate-900 dark:text-white">Current Order</span>
+                <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Current Order</span>
               </div>
               {cart.length > 0 && (
                 <button
@@ -1313,7 +1311,7 @@ export default function POSPage() {
             </div>
 
             {/* Guest / Room Input */}
-            <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
+            <div className="px-4 sm:px-6 py-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
@@ -1321,23 +1319,23 @@ export default function POSPage() {
                   placeholder="Guest name or Room no. (optional)"
                   value={guestRoom}
                   onChange={(e) => setGuestRoom(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all outline-none"
                 />
               </div>
             </div>
 
             {/* Cart Items List */}
-            <div className="flex-1 overflow-y-auto px-6 py-2">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 max-h-72 lg:max-h-none">
               <AnimatePresence>
                 {cart.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center h-full text-slate-400 py-12"
+                    className="flex flex-col items-center justify-center h-full text-slate-400 py-8 lg:py-12"
                   >
-                    <ShoppingCart size={44} className="mb-3 opacity-25" />
+                    <ShoppingCart size={40} className="mb-2.5 opacity-25" />
                     <p className="font-medium text-sm">Cart is empty</p>
-                    <p className="text-xs mt-1">Click on any product to add to order</p>
+                    <p className="text-xs mt-0.5">Click on any product to add to order</p>
                   </motion.div>
                 ) : (
                   cart.map((item) => (
@@ -1355,14 +1353,14 @@ export default function POSPage() {
 
             {/* Billing Summary */}
             {cart.length > 0 && (
-              <div className="border-t border-slate-100 dark:border-slate-800 px-6 py-4 shrink-0 space-y-4">
+              <div className="border-t border-slate-100 dark:border-slate-800 px-4 sm:px-6 py-4 shrink-0 space-y-4">
                 {/* Discount options */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                     <Percent size={14} />
                     <span className="text-xs font-medium">Discount</span>
                   </div>
-                  <div className="flex gap-1.5 ml-auto">
+                  <div className="flex flex-wrap gap-1">
                     {[0, 5, 10, 15, 20].map((d) => (
                       <button
                         key={d}
@@ -1380,7 +1378,7 @@ export default function POSPage() {
                 </div>
 
                 {/* Totals */}
-                <div className="space-y-2 text-sm">
+                <div className="space-y-1.5 text-sm">
                   <div className="flex justify-between text-slate-500 dark:text-slate-400">
                     <span>Subtotal</span>
                     <span>₹{subtotal.toFixed(2)}</span>
@@ -1415,15 +1413,15 @@ export default function POSPage() {
                         <button
                           key={pm.id}
                           onClick={() => setPaymentMethod(pm.id)}
-                          className={`flex items-center gap-2.5 p-3 rounded-xl border text-sm font-semibold transition-all ${
+                          className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition-all ${
                             active
                               ? `${c.bg} ${c.text} border-current`
                               : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
                           }`}
                         >
-                          <Icon size={16} />
-                          {pm.label}
-                          {active && <Check size={13} className="ml-auto" />}
+                          <Icon size={15} />
+                          <span className="truncate">{pm.label}</span>
+                          {active && <Check size={12} className="ml-auto shrink-0" />}
                         </button>
                       );
                     })}
@@ -1435,7 +1433,7 @@ export default function POSPage() {
                   whileTap={{ scale: 0.97 }}
                   onClick={handleCheckout}
                   disabled={checkoutLoading}
-                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2.5 shadow-xl shadow-indigo-500/30 transition-all"
+                  className="w-full py-3.5 sm:py-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-indigo-500/30 transition-all"
                 >
                   {checkoutLoading ? (
                     <Loader2 size={18} className="animate-spin" />

@@ -54,28 +54,23 @@ export default function Pagination({
 
   // Generate smart page numbers array with ellipses
   const getPageNumbers = () => {
-    if (safeTotalPages <= 7) {
+    if (safeTotalPages <= 5) {
       return Array.from({ length: safeTotalPages }, (_, i) => i + 1);
     }
 
     const pages = [];
-    if (safeCurrentPage <= 4) {
-      // Near beginning: 1, 2, 3, 4, 5, "...", totalPages
-      for (let i = 1; i <= 5; i++) pages.push(i);
+    if (safeCurrentPage <= 3) {
+      for (let i = 1; i <= 3; i++) pages.push(i);
       pages.push("ellipsis-end");
       pages.push(safeTotalPages);
-    } else if (safeCurrentPage >= safeTotalPages - 3) {
-      // Near end: 1, "...", totalPages-4, totalPages-3, totalPages-2, totalPages-1, totalPages
+    } else if (safeCurrentPage >= safeTotalPages - 2) {
       pages.push(1);
       pages.push("ellipsis-start");
-      for (let i = safeTotalPages - 4; i <= safeTotalPages; i++) pages.push(i);
+      for (let i = safeTotalPages - 2; i <= safeTotalPages; i++) pages.push(i);
     } else {
-      // Middle: 1, "...", current-1, current, current+1, "...", totalPages
       pages.push(1);
       pages.push("ellipsis-start");
-      pages.push(safeCurrentPage - 1);
       pages.push(safeCurrentPage);
-      pages.push(safeCurrentPage + 1);
       pages.push("ellipsis-end");
       pages.push(safeTotalPages);
     }
@@ -88,14 +83,14 @@ export default function Pagination({
   return (
     <div
       className={cn(
-        "p-4 sm:p-5 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 select-none",
+        "p-3 sm:p-5 bg-slate-50/70 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 select-none",
         className
       )}
     >
       {/* Left side: Results summary & optional rows-per-page selector */}
-      <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
+      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400 text-center sm:text-left">
         {showSummary && (
-          <p className="tracking-wide">
+          <p className="tracking-wide text-[11px] sm:text-xs">
             Showing{" "}
             <span className="font-bold text-slate-800 dark:text-slate-200">
               {startRecord}
@@ -118,13 +113,13 @@ export default function Pagination({
 
         {(showPageSize || onPageSizeChange) && (
           <div className="flex items-center gap-1.5 ml-1">
-            <span className="text-slate-400 font-medium">Rows:</span>
+            <span className="text-slate-400 font-medium text-[11px] sm:text-xs">Rows:</span>
             <select
               value={pageSize}
               onChange={(e) => {
                 if (onPageSizeChange) onPageSizeChange(Number(e.target.value));
               }}
-              className="h-8 px-2 rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="h-7 sm:h-8 px-1.5 sm:px-2 rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             >
               {pageSizeOptions.map((opt) => (
                 <option key={opt} value={opt}>
@@ -146,7 +141,7 @@ export default function Pagination({
           disabled={isFirst}
           onClick={() => handlePageSelect(1)}
           className={cn(
-            "h-9 px-2.5 sm:px-3 rounded-xl text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
+            "h-8 sm:h-9 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
             isFirst && "opacity-40 cursor-not-allowed hover:bg-white dark:hover:bg-slate-950 hover:text-slate-700"
           )}
           title="First Page (<)"
@@ -162,7 +157,7 @@ export default function Pagination({
           disabled={isFirst}
           onClick={() => handlePageSelect(safeCurrentPage - 1)}
           className={cn(
-            "h-9 px-2.5 sm:px-3 rounded-xl text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
+            "h-8 sm:h-9 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
             isFirst && "opacity-40 cursor-not-allowed hover:bg-white dark:hover:bg-slate-950 hover:text-slate-700"
           )}
           title="Previous Page (<<)"
@@ -171,13 +166,13 @@ export default function Pagination({
         </Button>
 
         {/* Page Number Buttons */}
-        <div className="flex items-center gap-1 mx-0.5 sm:mx-1">
+        <div className="flex items-center gap-1 mx-0.5">
           {getPageNumbers().map((item, idx) => {
             if (typeof item === "string") {
               return (
                 <span
                   key={`ellipsis-${idx}`}
-                  className="w-7 sm:w-8 text-center text-slate-400 font-bold text-xs select-none"
+                  className="w-5 sm:w-7 text-center text-slate-400 font-bold text-xs select-none"
                 >
                   ...
                 </span>
@@ -193,7 +188,7 @@ export default function Pagination({
                 size="sm"
                 onClick={() => handlePageSelect(item)}
                 className={cn(
-                  "w-9 h-9 p-0 rounded-xl text-xs font-bold transition-all",
+                  "w-8 h-8 sm:w-9 sm:h-9 p-0 rounded-lg sm:rounded-xl text-xs font-bold transition-all",
                   isActive
                     ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 hover:bg-indigo-700 border-indigo-600"
                     : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -213,7 +208,7 @@ export default function Pagination({
           disabled={isLast}
           onClick={() => handlePageSelect(safeCurrentPage + 1)}
           className={cn(
-            "h-9 px-2.5 sm:px-3 rounded-xl text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
+            "h-8 sm:h-9 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
             isLast && "opacity-40 cursor-not-allowed hover:bg-white dark:hover:bg-slate-950 hover:text-slate-700"
           )}
           title="Next Page (>>)"
@@ -229,7 +224,7 @@ export default function Pagination({
           disabled={isLast}
           onClick={() => handlePageSelect(safeTotalPages)}
           className={cn(
-            "h-9 px-2.5 sm:px-3 rounded-xl text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
+            "h-8 sm:h-9 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-extrabold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-200 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-all",
             isLast && "opacity-40 cursor-not-allowed hover:bg-white dark:hover:bg-slate-950 hover:text-slate-700"
           )}
           title="Last Page (>)"

@@ -106,28 +106,28 @@ export default function RoomsPage() {
     <DashboardLayout>
       <div className="p-6 md:p-8 space-y-8 max-w-[1600px] mx-auto">
         {/* Header section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
               Rooms Management
             </h1>
-            <p className="text-sm text-slate-500 font-medium mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
               Configure room units, physical allocation, pricing & real-time operational status
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={loadData}
               disabled={loading}
-              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors shrink-0"
               title="Refresh inventory"
             >
               <RefreshCw size={18} className={loading ? 'animate-spin text-indigo-600' : ''} />
             </button>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all cursor-pointer"
             >
               <Plus size={18} />
               Add Room
@@ -138,7 +138,7 @@ export default function RoomsPage() {
         {/* Global Action Banner */}
         {actionSuccess && (
           <div className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
-            <CheckCircle2 size={18} className="text-emerald-600" />
+            <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
             {actionSuccess}
           </div>
         )}
@@ -146,7 +146,7 @@ export default function RoomsPage() {
         {/* Room Types Allocation Cards */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <Layers size={20} className="text-indigo-600" />
               Room Type Allocations & Limits
             </h2>
@@ -160,7 +160,7 @@ export default function RoomsPage() {
               No room types assigned to your hotel yet. Contact administrator to assign room types.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
               {summary.map((st, idx) => {
                 const percent = st.numberOfRooms > 0 ? Math.min(100, Math.round((st.createdCount / st.numberOfRooms) * 100)) : 0;
                 const isFull = st.remainingSlots <= 0;
@@ -171,14 +171,14 @@ export default function RoomsPage() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all relative overflow-hidden"
+                    className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                   >
                     <div className="flex items-start justify-between">
                       <div>
                         <span className="text-xs font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
                           Room Type
                         </span>
-                        <h3 className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
+                        <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-0.5">
                           {st.roomType}
                         </h3>
                       </div>
@@ -209,22 +209,22 @@ export default function RoomsPage() {
         </div>
 
         {/* Filters & Search Controls */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
-          <div className="relative w-full md:w-80">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="relative w-full sm:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search by Room Number..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-sm font-medium"
+              className="pl-10 h-10 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-sm font-medium"
             />
           </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none"
+              className="flex-1 sm:flex-none h-10 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none"
             >
               <option value="all">All Room Types</option>
               {summary.map((st) => (
@@ -237,7 +237,7 @@ export default function RoomsPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="h-11 px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold focus:outline-none"
+              className="flex-1 sm:flex-none h-10 px-3 sm:px-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold focus:outline-none"
             >
               <option value="all">All Statuses</option>
               <option value="Available">Available</option>
@@ -268,18 +268,18 @@ export default function RoomsPage() {
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-            <div className="overflow-auto max-h-[480px] relative">
-              <table className="w-full text-left border-collapse whitespace-nowrap">
-                <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs uppercase font-extrabold tracking-wider text-slate-400">
-                    <th className="py-4 px-6">Room Number</th>
-                    <th className="py-4 px-6">Room Type</th>
-                    <th className="py-4 px-6">Floor</th>
-                    <th className="py-4 px-6">12h Price</th>
-                    <th className="py-4 px-6">24h Price</th>
-                    <th className="py-4 px-6">Status</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
+            <div className="overflow-x-auto table-scrollbar relative">
+              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[700px]">
+                <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-xs">
+                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xs text-xs uppercase font-extrabold tracking-wider text-slate-400">
+                    <th className="py-4 px-4 sm:px-6">Room Number</th>
+                    <th className="py-4 px-4 sm:px-6">Room Type</th>
+                    <th className="py-4 px-4 sm:px-6">Floor</th>
+                    <th className="py-4 px-4 sm:px-6">12h Price</th>
+                    <th className="py-4 px-4 sm:px-6">24h Price</th>
+                    <th className="py-4 px-4 sm:px-6">Status</th>
+                    <th className="py-4 px-4 sm:px-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm font-medium">
@@ -289,30 +289,30 @@ export default function RoomsPage() {
 
                     return (
                       <tr key={room._id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
-                        <td className="py-4 px-6 font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <td className="py-4 px-4 sm:px-6 font-bold text-slate-900 dark:text-white flex items-center gap-3">
                           <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-xs">
                             {room.roomNumber}
                           </div>
                           Room {room.roomNumber}
                         </td>
-                        <td className="py-4 px-6 font-semibold text-slate-700 dark:text-slate-300">
+                        <td className="py-4 px-4 sm:px-6 font-semibold text-slate-700 dark:text-slate-300">
                           {roomTypeName}
                         </td>
-                        <td className="py-4 px-6 text-slate-500">
+                        <td className="py-4 px-4 sm:px-6 text-slate-500">
                           {room.floor || 'N/A'}
                         </td>
-                        <td className="py-4 px-6 font-bold text-emerald-600 dark:text-emerald-400">
+                        <td className="py-4 px-4 sm:px-6 font-bold text-emerald-600 dark:text-emerald-400">
                           ₹{Number(room.price12h || 0).toLocaleString()}
                         </td>
-                        <td className="py-4 px-6 font-bold text-indigo-600 dark:text-indigo-400">
+                        <td className="py-4 px-4 sm:px-6 font-bold text-indigo-600 dark:text-indigo-400">
                           ₹{Number(room.price24h || 0).toLocaleString()}
                         </td>
-                        <td className="py-4 px-6">
+                        <td className="py-4 px-4 sm:px-6">
                           <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${statusColors[room.status] || 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                             {room.status}
                           </span>
                         </td>
-                        <td className="py-4 px-6 text-right">
+                        <td className="py-4 px-4 sm:px-6 text-right">
                           {isDeleting ? (
                             <div className="flex items-center justify-end gap-2">
                               <span className="text-xs font-bold text-rose-600 mr-1">Confirm delete?</span>

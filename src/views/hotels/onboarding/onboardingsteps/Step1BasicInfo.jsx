@@ -10,6 +10,7 @@ import {
   ImageIcon,
   CheckCircle2,
   AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import ImageCropModal from "@/lib/imagecrop/ImageCropModal";
 import { CloudinaryImage } from "@/routes/saas/cloudinary/cloudinary.route";
@@ -17,19 +18,19 @@ import { CloudinaryImage } from "@/routes/saas/cloudinary/cloudinary.route";
 function UploadOverlay({ progress, error }) {
   if (progress === null && !error) return null;
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 rounded-2xl z-10">
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xs rounded-xl z-10">
       {error ? (
         <div className="flex flex-col items-center gap-1 px-3 text-center">
-          <AlertCircle className="w-6 h-6 text-rose-400" />
-          <span className="text-xs text-rose-300 font-semibold">
+          <AlertCircle className="w-5 h-5 text-rose-400" />
+          <span className="text-[10px] text-rose-300 font-semibold">
             Upload failed
           </span>
         </div>
       ) : progress === 100 ? (
-        <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+        <CheckCircle2 className="w-7 h-7 text-emerald-400 animate-in zoom-in-50" />
       ) : (
         <>
-          <svg className="w-14 h-14 -rotate-90" viewBox="0 0 44 44">
+          <svg className="w-10 h-10 -rotate-90" viewBox="0 0 44 44">
             <circle
               cx="22"
               cy="22"
@@ -51,7 +52,7 @@ function UploadOverlay({ progress, error }) {
               style={{ transition: "stroke-dashoffset 0.3s ease" }}
             />
           </svg>
-          <span className="text-white font-bold text-sm mt-1">{progress}%</span>
+          <span className="text-white font-bold text-xs mt-0.5">{progress}%</span>
         </>
       )}
     </div>
@@ -70,7 +71,7 @@ function CroppableUpload({
   const [rawSrc, setRawSrc] = useState(null);
   const [rawName, setRawName] = useState("image.jpg");
   const [cropOpen, setCropOpen] = useState(false);
-  const [progress, setProgress] = useState(null); // null | 0-100
+  const [progress, setProgress] = useState(null);
   const [error, setError] = useState(false);
 
   const handleFileChange = (e) => {
@@ -121,58 +122,74 @@ function CroppableUpload({
   const preview = value?.previewUrl;
 
   return (
-    <div className="space-y-3">
-      <Label className="text-xs font-bold uppercase text-slate-400">
-        {label}
-      </Label>
-      {preview ? (
-        <div className="relative group">
-          <div
-            className={cn(
-              "overflow-hidden border-2 border-indigo-200 dark:border-indigo-500/30 bg-slate-50 dark:bg-slate-800",
-              aspect === 1 ? "w-32 h-32 rounded-2xl" : "w-full rounded-2xl",
-            )}
-            style={aspect !== 1 ? { aspectRatio: "16/9" } : {}}
-          >
-            <img
-              src={preview}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
-            <UploadOverlay progress={progress} error={error} />
-          </div>
-          {progress === null && !error && (
-            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                type="button"
-                onClick={() => inputRef.current?.click()}
-                className="px-3 py-1.5 bg-white/90 text-slate-900 text-xs font-bold rounded-xl hover:bg-white transition-colors"
-              >
-                Change
-              </button>
-              <button
-                type="button"
-                onClick={handleRemove}
-                className="p-1.5 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-colors"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label className="text-xs font-semibold text-slate-300">
+          {label}
+        </Label>
+        <span className="text-[10px] font-medium text-slate-500">1:1 Square</span>
+      </div>
+
+      <div className="flex items-center gap-3">
+        {preview ? (
+          <div className="relative group shrink-0">
+            <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-indigo-500/40 bg-slate-900 shadow-md">
+              <img
+                src={preview}
+                alt="preview"
+                className="w-full h-full object-cover"
+              />
+              <UploadOverlay progress={progress} error={error} />
             </div>
+            {progress === null && !error && (
+              <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/60 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  className="px-2 py-0.5 bg-white text-slate-900 text-[10px] font-bold rounded hover:bg-slate-100 transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemove}
+                  className="p-1 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="w-20 h-20 shrink-0 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-indigo-400 transition-all bg-slate-950/40 hover:bg-indigo-500/5 group cursor-pointer"
+          >
+            <UploadCloud className="w-5 h-5 transition-transform group-hover:scale-110" />
+            <span className="text-[10px] font-semibold">Upload</span>
+          </button>
+        )}
+
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-white">
+            {preview ? "Logo Uploaded" : "Upload Brand Logo"}
+          </p>
+          <p className="text-[11px] text-slate-400 mt-0.5">
+            PNG, JPG or WebP. Recommend 500x500px square format.
+          </p>
+          {preview && (
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="mt-1.5 text-[11px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
+            >
+              Replace Logo
+            </button>
           )}
         </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className={cn(
-            "border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 transition-colors bg-slate-50 dark:bg-slate-800/50",
-            aspect === 1 ? "h-32 w-32" : "w-full py-8",
-          )}
-        >
-          <UploadCloud className="w-7 h-7" />
-          <span className="text-xs font-semibold">Upload</span>
-        </button>
-      )}
+      </div>
+
       <input
         ref={inputRef}
         type="file"
@@ -265,17 +282,23 @@ function MultiImageUpload({ label, folder, value = [], onChange }) {
   };
 
   return (
-    <div className="space-y-3">
-      <Label className="text-xs font-bold uppercase text-slate-400">
-        {label}
-      </Label>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label className="text-xs font-semibold text-slate-300">
+          {label}
+        </Label>
+        <span className="text-[10px] font-medium text-slate-500">
+          {value.length} photo{value.length === 1 ? "" : "s"} added (16:9)
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
         {value.map((img, idx) => {
           const st = states[idx];
           return (
             <div
               key={idx}
-              className="relative group rounded-2xl overflow-hidden border-2 border-indigo-200 dark:border-indigo-500/30 bg-slate-100 dark:bg-slate-800"
+              className="relative group rounded-xl overflow-hidden border border-indigo-500/30 bg-slate-900 shadow-sm"
               style={{ aspectRatio: "16/9" }}
             >
               <img
@@ -288,11 +311,11 @@ function MultiImageUpload({ label, folder, value = [], onChange }) {
                 error={st?.error ?? false}
               />
               {!st && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
                   <button
                     type="button"
                     onClick={() => handleRemove(idx)}
-                    className="p-1.5 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-colors"
+                    className="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -301,16 +324,18 @@ function MultiImageUpload({ label, folder, value = [], onChange }) {
             </div>
           );
         })}
+
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 transition-colors bg-slate-50 dark:bg-slate-800/50"
+          className="rounded-xl border-2 border-dashed border-slate-700 hover:border-indigo-500 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-indigo-400 transition-all bg-slate-950/40 hover:bg-indigo-500/5 cursor-pointer group"
           style={{ aspectRatio: "16/9" }}
         >
-          <ImageIcon className="w-6 h-6" />
-          <span className="text-xs font-semibold">Add Photo</span>
+          <ImageIcon className="w-4 h-4 transition-transform group-hover:scale-110" />
+          <span className="text-[10px] font-semibold">+ Add Photo</span>
         </button>
       </div>
+
       <input
         ref={inputRef}
         type="file"
@@ -331,111 +356,124 @@ function MultiImageUpload({ label, folder, value = [], onChange }) {
   );
 }
 
-export default function Step1BasicInfo({ formData, updateFormData }) {
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
-        <div className="w-full md:w-1/3 p-6 bg-indigo-50 rounded-[2rem] flex items-center justify-center border border-indigo-100 dark:border-indigo-500/10">
-          <img
-            src="https://img.freepik.com/free-vector/hotel-building-concept-illustration_114360-1559.jpg"
-            alt="hotel"
-            className="w-full h-auto mix-blend-multiply opacity-100"
-          />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-xl font-bold mb-2">Hotel Information</h3>
-          <p className="text-slate-500 text-sm">
-            Tell us about your hotel and its basic details.
-          </p>
-        </div>
-      </div>
+const RATING_LABELS = {
+  1: "1-Star Budget",
+  2: "2-Star Standard",
+  3: "3-Star Comfort",
+  4: "4-Star Premium",
+  5: "5-Star Luxury",
+};
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Hotel Name <span className="text-red-500">*</span>
+export default function Step1BasicInfo({ formData, updateFormData }) {
+  const currentRating = Number(formData.starRating) || 3;
+
+  return (
+    <div className="space-y-4">
+      {/* Primary Input Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        {/* Hotel Name */}
+        <div className="space-y-1.5">
+          <Label className="text-xs font-semibold text-slate-300">
+            Hotel Name <span className="text-rose-500">*</span>
           </Label>
           <Input
             value={formData.hotelName}
             onChange={(e) => updateFormData({ hotelName: e.target.value })}
-            placeholder="Enter hotel name"
-            className="h-12 rounded-xl"
+            placeholder="e.g. Grand Palace Resort"
+            className="h-10 rounded-xl bg-slate-950/60 border-slate-800 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
-        <div className="space-y-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Hotel Type <span className="text-red-500">*</span>
+
+        {/* Hotel Type */}
+        <div className="space-y-1.5">
+          <Label className="text-xs font-semibold text-slate-300">
+            Property Type <span className="text-rose-500">*</span>
           </Label>
-          <select
-            value={formData.hotelType}
-            onChange={(e) => updateFormData({ hotelType: e.target.value })}
-            className="w-full h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm text-slate-900 dark:text-white"
-          >
-            {[
-              ["", "Select Hotel Type"],
-              ["hotel", "Hotel"],
-              ["resort", "Resort"],
-              ["hostel", "Hostel"],
-              ["apartment", "Apartment"],
-              ["guest-house", "Guest House"],
-              ["homestay", "Homestay"],
-              ["villa", "Villa"],
-              ["boutique-hotel", "Boutique Hotel"],
-              ["business-hotel", "Business Hotel"],
-              ["extended-stay", "Extended Stay"],
-              ["residence-hotel", "Residence Hotel"],
-              ["resort-hotel", "Resort Hotel"],
-            ].map(([v, l]) => (
-              <option
-                key={v}
-                value={v}
-                className="bg-white dark:bg-slate-900 text-black dark:text-white"
-              >
-                {l}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={formData.hotelType}
+              onChange={(e) => updateFormData({ hotelType: e.target.value })}
+              className="w-full h-10 px-3 rounded-xl border border-slate-800 bg-slate-950/60 text-sm text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 appearance-none cursor-pointer"
+            >
+              {[
+                ["", "Select Property Type"],
+                ["hotel", "Hotel"],
+                ["resort", "Resort"],
+                ["hostel", "Hostel"],
+                ["apartment", "Apartment"],
+                ["guest-house", "Guest House"],
+                ["homestay", "Homestay"],
+                ["villa", "Villa"],
+                ["boutique-hotel", "Boutique Hotel"],
+                ["business-hotel", "Business Hotel"],
+                ["extended-stay", "Extended Stay"],
+                ["residence-hotel", "Residence Hotel"],
+                ["resort-hotel", "Resort Hotel"],
+              ].map(([v, l]) => (
+                <option
+                  key={v}
+                  value={v}
+                  className="bg-slate-900 text-white"
+                >
+                  {l}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Brand / Chain Name (Optional)
+
+        {/* Brand Name */}
+        <div className="space-y-1.5 md:col-span-2">
+          <Label className="text-xs font-semibold text-slate-300">
+            Brand / Chain Name <span className="text-[11px] text-slate-500 font-normal">(Optional)</span>
           </Label>
           <Input
             value={formData.brandName}
             onChange={(e) => updateFormData({ brandName: e.target.value })}
-            placeholder="Enter brand or chain name"
-            className="h-12 rounded-xl"
+            placeholder="e.g. Marriott International, Taj Group, or standalone"
+            className="h-10 rounded-xl bg-slate-950/60 border-slate-800 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
-        <div className="space-y-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Star Rating <span className="text-red-500">*</span>
+
+        {/* Star Rating */}
+        <div className="space-y-1.5">
+          <Label className="text-xs font-semibold text-slate-300">
+            Star Rating <span className="text-rose-500">*</span>
           </Label>
-          <div className="flex gap-1 items-center">
-            {[1, 2, 3, 4, 5].map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => updateFormData({ starRating: s.toString() })}
-                className={cn(
-                  "p-1 transition-colors",
-                  Number(formData.starRating) >= s
-                    ? "text-amber-400"
-                    : "text-slate-200",
-                )}
-              >
-                <Star
-                  className={cn(
-                    "w-6 h-6",
-                    Number(formData.starRating) >= s && "fill-current",
-                  )}
-                />
-              </button>
-            ))}
+          <div className="flex items-center gap-3 h-10 px-3 rounded-xl bg-slate-950/60 border border-slate-800">
+            <div className="flex gap-1 items-center">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => updateFormData({ starRating: s.toString() })}
+                  className="p-1 hover:scale-110 transition-transform cursor-pointer"
+                >
+                  <Star
+                    className={cn(
+                      "w-5 h-5 transition-colors",
+                      currentRating >= s
+                        ? "text-amber-400 fill-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]"
+                        : "text-slate-700 hover:text-slate-500",
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
+            <span className="text-xs font-bold text-amber-400/90 pl-1 border-l border-slate-800">
+              {RATING_LABELS[currentRating] || `${currentRating} Stars`}
+            </span>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
+
+        {/* Established Year */}
+        <div className="space-y-1.5">
+          <Label className="text-xs font-semibold text-slate-300">
             Established Year
           </Label>
           <Input
@@ -443,47 +481,51 @@ export default function Step1BasicInfo({ formData, updateFormData }) {
             onChange={(e) =>
               updateFormData({ establishedYear: e.target.value })
             }
-            placeholder="Select year"
-            className="h-12 rounded-xl"
+            placeholder="e.g. 2018"
+            className="h-10 rounded-xl bg-slate-950/60 border-slate-800 text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label className="text-xs font-bold uppercase text-slate-400">
-            Hotel Description <span className="text-red-500">*</span>
+
+        {/* Hotel Description */}
+        <div className="space-y-1.5 md:col-span-2">
+          <Label className="text-xs font-semibold text-slate-300">
+            Hotel Description <span className="text-rose-500">*</span>
           </Label>
           <textarea
             value={formData.hotelDescription}
             onChange={(e) =>
               updateFormData({ hotelDescription: e.target.value })
             }
-            className="w-full h-32 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-sm resize-none"
-            placeholder="Describe your hotel"
+            rows={2}
+            className="w-full min-h-[64px] p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 text-sm text-white placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 resize-none transition-all"
+            placeholder="Provide a brief summary of your property, atmosphere, and key highlights..."
           />
         </div>
       </div>
 
-      {/* Hotel Logo */}
-      <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-lg">
-        <CroppableUpload
-          label={<>Hotel Logo <span className="text-red-500">*</span></>}
-          hint="Square (1:1)"
-          aspect={1}
-          cropShape="rect"
-          folder="hotel-logos"
-          value={formData.hotelLogo}
-          onChange={(val) => updateFormData({ hotelLogo: val })}
-        />
-      </div>
+      {/* Media Upload Area (Logo & Photos) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+        {/* Hotel Logo Card */}
+        <div className="p-3.5 border border-slate-800/80 rounded-2xl bg-slate-950/40 backdrop-blur-xs">
+          <CroppableUpload
+            label={<>Hotel Logo <span className="text-rose-500">*</span></>}
+            aspect={1}
+            cropShape="rect"
+            folder="hotel-logos"
+            value={formData.hotelLogo}
+            onChange={(val) => updateFormData({ hotelLogo: val })}
+          />
+        </div>
 
-      {/* Hotel Images */}
-      <div className="p-6 border border-slate-100 dark:border-slate-800 rounded-lg">
-        <MultiImageUpload
-          label={<>Hotel Images <span className="text-red-500">*</span> (1600 × 900)</>}
-          hint="16:9"
-          folder="hotel-images"
-          value={formData.hotelImages || []}
-          onChange={(val) => updateFormData({ hotelImages: val })}
-        />
+        {/* Hotel Images Card */}
+        <div className="p-3.5 border border-slate-800/80 rounded-2xl bg-slate-950/40 backdrop-blur-xs">
+          <MultiImageUpload
+            label={<>Hotel Images <span className="text-rose-500">*</span></>}
+            folder="hotel-images"
+            value={formData.hotelImages || []}
+            onChange={(val) => updateFormData({ hotelImages: val })}
+          />
+        </div>
       </div>
     </div>
   );
