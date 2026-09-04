@@ -19,7 +19,7 @@ export const Sidebar = () => {
     const handleLogout = async () => {
         await logout();
         closeMobile();
-        router.push("/login");
+        router.push("/");
     };
 
     useEffect(() => {
