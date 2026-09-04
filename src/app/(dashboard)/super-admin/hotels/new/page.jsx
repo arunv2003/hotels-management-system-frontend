@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import DashboardLayout from "@/components/shared/DashboardLayout";
 import { OnboardingView } from "@/views/hotels/onboarding/OnboardingView";
 
@@ -10,4 +13,5 @@ export default function NewHotelOnboardingPage() {
     </DashboardLayout>
   );
 }
+
 
