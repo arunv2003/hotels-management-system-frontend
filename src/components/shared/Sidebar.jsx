@@ -83,21 +83,34 @@ export const Sidebar = () => {
 
     const sidebarContent = (isMobile = false) => (
       <div className="flex flex-col h-full w-full">
-        <div className="flex items-center justify-between py-5 px-3 mb-2 shrink-0">
+        <div className="flex items-center justify-between py-4 px-3 mb-2 shrink-0">
           {(!isCollapsed || isMobile) && (
-            <div className="flex items-center gap-3 px-2">
-              <div className="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20 shrink-0">
-                <BrandIcon className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2.5 px-2">
+              <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-md shadow-indigo-500/10 border border-slate-200/80 dark:border-slate-800 flex items-center justify-center overflow-hidden shrink-0">
+                <img
+                  src="/chacha-vatiza-logo.png"
+                  alt="CHACHA VATIZA HOTELS"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white">
-                VEDANTA TECH
-              </span>
+              <div className="flex flex-col min-w-0">
+                <span className="font-black text-base tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+                  CHACHA VATIZA
+                </span>
+                <span className="text-[10px] tracking-widest uppercase font-bold text-amber-600 dark:text-amber-400">
+                  HOTELS
+                </span>
+              </div>
             </div>
           )}
 
           {isCollapsed && !isMobile && (
-            <div className="mx-auto bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20">
-              <BrandIcon className="w-5 h-5 text-white" />
+            <div className="mx-auto w-10 h-10 rounded-xl bg-white p-1 shadow-md shadow-indigo-500/10 border border-slate-200/80 dark:border-slate-800 flex items-center justify-center overflow-hidden">
+              <img
+                src="/chacha-vatiza-logo.png"
+                alt="CHACHA VATIZA HOTELS"
+                className="w-full h-full object-contain"
+              />
             </div>
           )}
 

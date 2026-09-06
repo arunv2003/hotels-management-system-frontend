@@ -231,14 +231,18 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Hotel className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-lg shadow-indigo-500/20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform">
+              <img
+                src="/chacha-vatiza-logo.png"
+                alt="CHACHA VATIZA HOTELS"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-black tracking-tight text-white flex items-center gap-1.5">
-                VEDANTA TECH
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-400 font-bold border border-indigo-500/30">
-                  SaaS
+              <span className="text-base font-black tracking-tight text-white flex items-center gap-1.5 leading-tight">
+                CHACHA VATIZA
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30 uppercase tracking-wide">
+                  HOTELS
                 </span>
               </span>
             </div>
@@ -1000,11 +1004,18 @@ export default function LandingPage() {
       <footer className="py-12 px-4 sm:px-6 border-t border-slate-800/80 bg-slate-950 text-left">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md">
-                <Hotel className="w-4 h-4" />
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center overflow-hidden shadow-md shrink-0">
+                <img
+                  src="/chacha-vatiza-logo.png"
+                  alt="CHACHA VATIZA HOTELS"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="text-base font-bold text-white tracking-tight">VEDANTA TECH</span>
+              <div className="flex flex-col">
+                <span className="text-base font-bold text-white tracking-tight leading-tight">CHACHA VATIZA</span>
+                <span className="text-[10px] tracking-widest uppercase font-bold text-amber-400">HOTELS</span>
+              </div>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed mb-3">
               The next-generation cloud operating system for boutique stays, luxury resorts, and hotel chains.
@@ -1043,7 +1054,7 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between pt-6 border-t border-slate-800/80 text-[11px] text-slate-500 font-medium">
-          <p>© {new Date().getFullYear()} VEDANTA TECH TECHNOLOGIES INC. ALL RIGHTS RESERVED.</p>
+          <p>© {new Date().getFullYear()} CHACHA VATIZA HOTELS. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-6 mt-3 md:mt-0">
             <Link href="/privacy-policy" className="hover:text-slate-300 transition-colors">Privacy Policy</Link>
             <Link href="/terms-and-conditions" className="hover:text-slate-300 transition-colors">Terms of Service</Link>

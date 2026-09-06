@@ -89,11 +89,15 @@ export default function LoginPage() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md mx-auto relative z-10">
           <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-flex items-center justify-center p-2.5 sm:p-3 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-500/30 mb-4 sm:mb-6">
-              <Hotel className="w-7 h-7 sm:w-8 sm:h-8 text-white"/>
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl p-2 shadow-xl shadow-indigo-500/10 border border-slate-200/80 dark:border-slate-800 mb-4 sm:mb-6 overflow-hidden">
+              <img
+                src="/chacha-vatiza-logo.png"
+                alt="CHACHA VATIZA HOTELS"
+                className="w-full h-full object-contain"
+              />
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Welcome Back
+              CHACHA VATIZA HOTELS
             </h1>
             <p className="text-slate-500 text-xs sm:text-sm mt-1.5 sm:mt-2">
               Log in to manage your hotel ecosystem

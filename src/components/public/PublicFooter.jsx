@@ -9,12 +9,21 @@ export default function PublicFooter() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-12 sm:mb-16">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 p-2 rounded-xl shadow-md shadow-indigo-500/20">
-              <Hotel className="w-5 h-5 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-white p-1 shadow-md border border-slate-200/80 dark:border-slate-800 flex items-center justify-center overflow-hidden shrink-0">
+              <img
+                src="/chacha-vatiza-logo.png"
+                alt="CHACHA VATIZA HOTELS"
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              VEDANTA TECH
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                CHACHA VATIZA
+              </span>
+              <span className="text-[11px] tracking-widest uppercase font-bold text-amber-600 dark:text-amber-400">
+                HOTELS
+              </span>
+            </div>
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
             The intelligent operating system for modern hotels and hospitality enterprises. Built for scale, designed for simplicity.
@@ -99,7 +108,7 @@ export default function PublicFooter() {
       </div>
 
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-200/60 dark:border-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400 gap-4 text-center md:text-left">
-        <p>© {new Date().getFullYear()} VEDANTA TECH. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} CHACHA VATIZA HOTELS. All rights reserved.</p>
         <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
           <Link href="/privacy-policy" className="hover:text-indigo-600 transition-colors">Privacy Policy</Link>
           <Link href="/terms-and-conditions" className="hover:text-indigo-600 transition-colors">Terms & Conditions</Link>

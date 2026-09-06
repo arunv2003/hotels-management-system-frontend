@@ -15,8 +15,13 @@ export const viewport = {
 };
 
 export const metadata = {
-    title: "VEDANTA TECH | Scalable Hotel Management SaaS",
-    description: "Advanced Multi-Tenant Hotel Management Platform",
+    title: "CHACHA VATIZA HOTELS | Hotel Management System",
+    description: "Intelligent Multi-Tenant Hotel Management Platform",
+    icons: {
+        icon: "/favicon.ico",
+        shortcut: "/favicon.ico",
+        apple: "/icon.png",
+    },
 };
 import { OnboardingProvider } from "@/context/OnboardingContext";
 export default function RootLayout({ children, }) {

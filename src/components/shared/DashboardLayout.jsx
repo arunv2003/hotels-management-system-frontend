@@ -47,6 +47,20 @@ export default function DashboardLayout({ children, type }) {
             <Menu className="w-5 h-5" />
           </button>
 
+          {/* Header Mobile Brand */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <div className="w-8 h-8 rounded-lg bg-white p-0.5 shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-center overflow-hidden shrink-0">
+              <img
+                src="/chacha-vatiza-logo.png"
+                alt="CHACHA VATIZA HOTELS"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span className="text-xs font-black text-slate-900 dark:text-white tracking-tight">
+              CHACHA VATIZA
+            </span>
+          </div>
+
           {isHotelUser && subscription && (
             <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold">

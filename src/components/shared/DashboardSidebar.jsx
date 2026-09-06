@@ -126,10 +126,23 @@ export function DashboardSidebar({ type = "hotel", }) {
     const userType = user?.userType || user?.role;
     const items = (userType === "super-admin" || userType === "Employee") ? saasNavItems : hotelNavItems;
     return (<Sidebar variant="inset" collapsible="icon">
-      <SidebarHeader className="h-16 flex items-center px-6">
-        <div className="flex items-center gap-2 font-bold text-xl text-primary">
-          <Hotel className="h-6 w-6"/>
-          <span className="group-data-[collapsible=icon]:hidden">VEDANTA TECH</span>
+      <SidebarHeader className="h-16 flex items-center px-4">
+        <div className="flex items-center gap-2.5 font-bold text-lg text-primary">
+          <div className="w-9 h-9 rounded-xl bg-white p-1 shadow-sm border border-slate-200/80 dark:border-slate-800 flex items-center justify-center overflow-hidden shrink-0">
+            <img
+              src="/chacha-vatiza-logo.png"
+              alt="CHACHA VATIZA HOTELS"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="group-data-[collapsible=icon]:hidden flex flex-col min-w-0 text-left">
+            <span className="font-black text-sm tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+              CHACHA VATIZA
+            </span>
+            <span className="text-[9px] tracking-wider uppercase font-bold text-amber-600 dark:text-amber-400">
+              HOTELS
+            </span>
+          </div>
         </div>
       </SidebarHeader>
       <SidebarContent>

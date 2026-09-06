@@ -19,12 +19,21 @@ export default function PublicNavbar() {
     <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-900 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
-          <div className="bg-indigo-600 p-2 sm:p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <Hotel className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white p-1 shadow-md shadow-indigo-500/10 border border-slate-200/80 dark:border-slate-800 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform">
+            <img
+              src="/chacha-vatiza-logo.png"
+              alt="CHACHA VATIZA HOTELS"
+              className="w-full h-full object-contain"
+            />
           </div>
-          <span className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            VEDANTA TECH
-          </span>
+          <div className="flex flex-col">
+            <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+              CHACHA VATIZA
+            </span>
+            <span className="text-[10px] tracking-widest uppercase font-bold text-amber-600 dark:text-amber-400 -mt-0.5">
+              HOTELS
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Links */}
