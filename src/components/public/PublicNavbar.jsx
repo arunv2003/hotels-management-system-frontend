@@ -26,6 +26,7 @@ export default function PublicNavbar() {
               className="w-full h-full object-contain"
             />
           </div>
+          {/* hhh */}
           <div className="flex flex-col">
             <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-tight">
               CHACHA VATIZA
