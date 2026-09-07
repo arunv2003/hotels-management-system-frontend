@@ -272,7 +272,7 @@ function OnboardingContent() {
       }
 
       const razorpayOptions = {
-        key: orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_RqJtOyGfDiW0vw",
+        key: orderData.keyId || process.env.RAZORPAY_KEY_ID || "rzp_test_RqJtOyGfDiW0vw",
         amount: orderData.amount,
         currency: orderData.currency || "INR",
         name: "VEDANTA TECH SaaS",
